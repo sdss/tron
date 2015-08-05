@@ -1,8 +1,27 @@
+"""
+Start the hub server, including all Nubs for connections.
+"""
+
 import sys
+import socket
 
 import CPL
 import g
 import hub
+
+def determine_location(location=None):
+    """Return a location based on the domain name."""
+    if location is None:
+        fqdn = socket.getfqdn()
+    else:
+        return location
+
+    if 'apo' in fqdn:
+        return 'APO'
+    elif 'lco' in fqdn:
+        return 'LCO'
+    else:
+        return None
 
 def startAllConnections(names):
     """ Create all default connections, as defined by the proper configuration file. """
@@ -18,6 +37,7 @@ def startAllConnections(names):
                 sys.stderr.write("hubcmd.warn failed\n")
     
 hub.init()
-startAllConnections(CPL.cfg.get('hub', 'nubs', doFlush=True))
+location = determine_location()
+startAllConnections(CPL.cfg.get(location, 'nubs', doFlush=True))
 
 hub.run()

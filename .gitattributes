@@ -209,7 +209,9 @@ clients/guiders/sfocus.py -text
 clients/nohup.out -text
 clients/ping/ping.py -text
 clients/zargs.py -text
+config/apo.py -text
 config/hub.py -text
+config/lco.py -text
 /deep_reload.py -text
 /g.py -text
 /hub.py -text
