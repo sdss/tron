@@ -21,9 +21,10 @@ nubs = ('client',
         'TUI')
 
 actors = dict(alerts=    dict(host="sdss4-hub.lco.cl", port=9995, actorName='alertsActor'),
-              apo=       dict(host="sdss4-hub.lco.cl", port=9990, actorName='apoActor'),
+              lco=       dict(host="sdss4-hub.lco.cl", port=9990, actorName='apoActor'),
               gcamera=   dict(host="sdss4-hub.lco.cl", port=9993, actorName='gcameraICC'),
-              # ecamera=   dict(host="sdss4-hub.lco.cl", port=9987, actorName='ecameraICC              guider=    dict(host="sdss4-hub.lco.cl", port=9994, actorName='guiderActor'),
+              # ecamera=   dict(host="sdss4-hub.lco.cl", port=9987, actorName='ecameraICC),
+              guider=    dict(host="sdss4-hub.lco.cl", port=9994, actorName='guiderActor'),
               toy=       dict(host="sdss4-hub.lco.cl", port=9000, actorName='toyActor'),
               sop=       dict(host="sdss4-hub.lco.cl", port=9989, actorName='sopActor'),
 

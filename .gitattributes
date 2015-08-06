@@ -213,6 +213,7 @@ clients/zargs.py -text
 config/apo.py -text
 config/hub.py -text
 config/lco.py -text
+config/test.py -text
 /deep_reload.py -text
 /g.py -text
 /hub.py -text
