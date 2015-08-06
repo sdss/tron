@@ -12,6 +12,7 @@ CPL/Object.py -text
 CPL/__init__.py -text
 CPL/cfg.py -text
 CPL/dates.py -text
+CPL/location.py -text
 CPL/log.py -text
 CPL/protocol.html -text
 CPL/qstr.py -text

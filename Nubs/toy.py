@@ -11,7 +11,7 @@ import g
 name = 'toy'
 
 def start(poller):
-    cfg = CPL.cfg.get('hub', 'actors', doFlush=True)[name]
+    cfg = CPL.cfg.get(g.location, 'actors', doFlush=True)[name]
     stop()
 
     initCmds = ('ping',

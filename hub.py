@@ -120,8 +120,8 @@ def getSetHubVersion():
     g.KVs.setKV('hub', 'version', version, None)
 
 def loadKeys():
-    rootDir = CPL.cfg.get('hub', 'httpRoot')
-    host = CPL.cfg.get('hub', 'httpHost')
+    rootDir = CPL.cfg.get(g.location, 'httpRoot')
+    host = CPL.cfg.get(g.location, 'httpHost')
 
     g.KVs.setKV('hub', 'httpRoot', [host, rootDir], None)
 
@@ -164,11 +164,10 @@ def _loadWords(wordlist):
         if fp:
             fp.close()
 
-        loadCmd = 'cmdSet = mod.%s()' % (modName)
-        CPL.log('hub.loadWords', 'loading vocabulary word %s with %s...' % (w, loadCmd))
+        CPL.log('hub.loadWords', 'loading vocabulary word %s from %s...' % (w, modName))
 
         try:
-            exec(loadCmd)
+            cmdSet = getattr(mod,modName)()
             try:
                 dropActor(cmdSet)
             except:
@@ -410,9 +409,6 @@ def validateCommanderNames(nub, programName, username):
             n += 1
 
     return proposedName
-    
-def listKeys(match, **argv):
-    cmd = argv.get('cmd')
     
 def getActor(cmd):
     """ Find either an actor or vocabulary word matching the given command.

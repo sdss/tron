@@ -3,25 +3,10 @@ Start the hub server, including all Nubs for connections.
 """
 
 import sys
-import socket
 
 import CPL
 import g
 import hub
-
-def determine_location(location=None):
-    """Return a location based on the domain name."""
-    if location is None:
-        fqdn = socket.getfqdn()
-    else:
-        return location
-
-    if 'apo' in fqdn:
-        return 'APO'
-    elif 'lco' in fqdn:
-        return 'LCO'
-    else:
-        return None
 
 def startAllConnections(names):
     """ Create all default connections, as defined by the proper configuration file. """
@@ -30,14 +15,19 @@ def startAllConnections(names):
         try:
             hub.startNub(n)
         except Exception, e:
-            sys.stderr.write("FAILED to start nub %s: %s\n" % (n, e))
+            msg = "FAILED to start nub %s: %s\n" % (n, e)
+            sys.stderr.write(msg)
             try:
-                g.hubcmd.warn('text=%s' % (CPL.qstr('FAILED to start nub %s: %s\n', n, e)))
+                g.hubcmd.warn('text=%s' % (CPL.qstr(msg)))
             except:
                 sys.stderr.write("hubcmd.warn failed\n")
     
+# NOTE: jkp: I don't like it, but I'll work with the "everything's global" setup
+# for now to store the location.
+# TODO: hub should be a class we init() anyway!
+g.location = CPL.location.determine_location()
+
 hub.init()
-location = determine_location()
-startAllConnections(CPL.cfg.get(location, 'nubs', doFlush=True))
+startAllConnections(CPL.cfg.get(g.location, 'nubs', doFlush=True))
 
 hub.run()

@@ -5,6 +5,7 @@ from log import *
 from qstr import *
 from tcmd import *
 from tback import *
+from location import *
 from Logfile import *
 from LLock import *
 from dates import *

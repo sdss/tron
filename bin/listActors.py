@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import os
-import CPL.cfg
+import CPL
+
+location = CPL.location.determine_location()
 
 def getActors(actorName=None, hostName=None):
     # Bootstrap the whole configuration system
@@ -9,7 +11,7 @@ def getActors(actorName=None, hostName=None):
                                 os.path.join(os.environ['TRON_DIR'], 'config'))
     CPL.cfg.init(path=configPath, verbose=False)
     
-    actors = CPL.cfg.get('hub', 'actors')
+    actors = CPL.cfg.get(location, 'actors')
     if actorName:
         actors = dict([(key, val) for key, val in actors.items() if key == actorName])
     if hostName:

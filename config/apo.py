@@ -1,4 +1,4 @@
-"""Configuration for LCO."""
+"""Configuration for APO."""
 
 # Which words to load internally.
 vocabulary = ('perms', 'hub', 'keys', 'msg')
