@@ -1,7 +1,5 @@
 """Configuration for testing."""
 
-# Which words to load internally.
-vocabulary = ('perms', 'hub', 'keys', 'msg')
 nubs = ('client',
         'nclient',
 

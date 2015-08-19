@@ -25,7 +25,7 @@ def startAllConnections(names):
 # NOTE: jkp: I don't like it, but I'll work with the "everything's global" setup
 # for now to store the location.
 # TODO: hub should be a class we init() anyway!
-g.location = CPL.location.determine_location()
+g.location = CPL.location.determine_location('test')
 
 hub.init()
 startAllConnections(CPL.cfg.get(g.location, 'nubs', doFlush=True))
