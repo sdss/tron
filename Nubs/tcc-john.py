@@ -27,10 +27,10 @@ def start(poller):
                 'mir status')
 
     safeCmds = r"(^show )|(status$)"
-    
+
     d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
     e = ASCIICmdEncoder(EOL='\r', debug=1)
-    tcc = SocketActorNub(poller, 'sdss4-tcc', 2500,
+    tcc = SocketActorNub(poller, 'localhost', 25000,
                          #grabCID="ping", # Send an empty command to just get a CID
                          initCmds=initCmds, safeCmds=safeCmds,
                          needsAuth=False,
@@ -38,7 +38,7 @@ def start(poller):
                          logDir=os.path.join(hub_globals.logDir, name),
                          debug=1)
     hub.addActor(tcc)
-    
+
 def stop():
     n = hub.findActor(name)
     if n:
