@@ -211,6 +211,8 @@ clients/ping/ping.py -text
 clients/zargs.py -text
 config/hub.py -text
 /deep_reload.py -text
+etc/config.ini -text
+etc/opscore.module -text
 /g.py -text
 /hub.py -text
 /passwords -text
