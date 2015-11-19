@@ -164,11 +164,10 @@ def _loadWords(wordlist):
         if fp:
             fp.close()
 
-        loadCmd = 'cmdSet = mod.%s()' % (modName)
-        CPL.log('hub.loadWords', 'loading vocabulary word %s with %s...' % (w, loadCmd))
+        CPL.log('hub.loadWords', 'loading vocabulary word %s from %s...' % (w, modName))
 
         try:
-            exec(loadCmd)
+            cmdSet = getattr(mod,modName)()
             try:
                 dropActor(cmdSet)
             except:
@@ -411,9 +410,6 @@ def validateCommanderNames(nub, programName, username):
 
     return proposedName
     
-def listKeys(match, **argv):
-    cmd = argv.get('cmd')
-    
 def getActor(cmd):
     """ Find either an actor or vocabulary word matching the given command.
     """
@@ -484,50 +480,6 @@ def runCmd(c):
     
     c.finish("Eval=%s" % (CPL.qstr(ret)), src='hub')
     CPL.log("hub.runCmd", "ret = %r" % (ret))
-
-
-def listenTo(**argv):
-    """ Arrange for the given events to be accepted. """
-    pass
-
-def loadVocab(**argv):
-    """ Load the entire Vocabulary, overwriting any existing info. """
-
-    # First, (re-)load the entire Nubs module. Let that fail to the top
-    # level.
-    #
-    fp, pathname, description = imp.find_module('Vocab')
-    vocab_mod = imp.load_module('Vocab', fp, pathname, description)
-    if fp:
-        fp.close()
-     
-    # Now try to load the module itself.
-    #
-    try:
-        CPL.log('hub.loadVocab', 'trying to (re-)load vocabulary')
-        fp, pathname, description = imp.find_module(name, vocab_mod.__path__)
-    except:
-        raise
-
-    try:
-        mod = imp.load_module(name, fp, pathname, description)
-    finally:
-        # Since we may exit via an exception, close fp explicitly.
-        if fp:
-            fp.close()
-
-    # And call the start() function.
-    #
-    CPL.log('hub.startAConnection', 'starting Nub %s...' % (name))
-    mod.start(g.poller)
-
-def stopNub(id):
-    """  """
-
-    n = findNub(id)
-    if n:
-        n.shutdown(notifyHub=False)
-        dropNub(n)
 
 def forceReload(name, all=True):
     """ Do whatever we can to force a given module/package to be reloaded.

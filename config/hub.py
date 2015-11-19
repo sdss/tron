@@ -1,7 +1,7 @@
 import os
 
 # Where to save the logs
-logDir = '/data/logs/tron'
+logDir = '/tmp/data/logs/tron'
 
 # TODO: this will no longer work, since we're not checking in the password file any more.
 # TODO: consider keyring python module?
