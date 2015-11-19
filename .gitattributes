@@ -19,7 +19,6 @@ CPL/strcvt.py -text
 CPL/tback.py -text
 CPL/tcmd.py -text
 CPL/tqstr.py -text
-Client/Actor.py -text
 Client/Command.py -text
 Client/CommandLink.py -text
 Client/FilterQueue.py -text
@@ -47,8 +46,6 @@ Hub/Command/Encoders/BinaryCmdEncoder.py -text
 Hub/Command/Encoders/CommandEncoder.py -text
 Hub/Command/Encoders/RawCmdEncoder.py -text
 Hub/Command/Encoders/__init__.py -text
-Hub/Command/XXCommandDecoders.py -text
-Hub/Command/XXCommandEncoders.py -text
 Hub/Command/__init__.py -text
 Hub/KV/KVDict.py -text
 Hub/KV/__init__.py -text
