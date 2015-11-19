@@ -1,9 +1,9 @@
 __all__ = ['Command']
-           
-import re 
+
+import re
 import time
 
-from RO.Alg import OrderedDict
+from collections import OrderedDict
 import CPL
 from Hub.Reply.Reply import Reply
 import Parsing

@@ -2,7 +2,7 @@ __all__ = ['Reply']
 
 import time
 
-from RO.Alg import OrderedDict
+from collections import OrderedDict
 import CPL
 import Parsing
 

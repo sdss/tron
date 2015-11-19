@@ -26,8 +26,7 @@ import re
 import signal
 import sys
 import time
-from RO.Alg import OrderedDict
-#import collections
+from collections import OrderedDict
 
 import svnVersion
 import CPL

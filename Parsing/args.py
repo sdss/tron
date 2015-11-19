@@ -3,7 +3,7 @@ __all__ = ['parseArgs', 'match']
 import re
 
 import CPL
-from RO.Alg import OrderedDict
+from collections import OrderedDict
 from Exceptions import ParseException
 from dequote import dequote
 

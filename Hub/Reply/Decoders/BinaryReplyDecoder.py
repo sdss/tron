@@ -8,7 +8,7 @@ import pixel16
 
 import g
 import CPL
-from RO.Alg import OrderedDict
+from collections import OrderedDict
 from Parsing import *
 
 from ReplyDecoder import ReplyDecoder
