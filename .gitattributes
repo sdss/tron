@@ -20,13 +20,11 @@ CPL/tback.py -text
 CPL/tcmd.py -text
 CPL/tqstr.py -text
 Client/Actor.py -text
-Client/ClientFilter.py -text
 Client/Command.py -text
 Client/CommandLink.py -text
 Client/FilterQueue.py -text
 Client/FullReply.py -text
 Client/HubLink.py -text
-Client/OrderedDict.py -text
 Client/README.txt -text
 Client/Reply.py -text
 Client/__init__.py -text
@@ -114,7 +112,6 @@ Nubs/guider.py -text
 Nubs/hartmann.py -text
 Nubs/mcp.py -text
 Nubs/nclient.py -text
-Nubs/ping.py -text
 Nubs/platedb.py -text
 Nubs/rawin.py -text
 Nubs/sop.py -text
