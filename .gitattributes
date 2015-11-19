@@ -122,7 +122,6 @@ Nubs/tcc-john.py -text
 Nubs/tcc.py -text
 Nubs/tcc25m-old.py -text
 Nubs/toy.py -text
-Nubs/zargs.py -text
 Parsing/Exceptions.py -text
 Parsing/__init__.py -text
 Parsing/args.py -text
@@ -139,9 +138,6 @@ bin/listActors.py -text
 bin/now -text
 bin/tron -text
 bin/www-access -text
-clients/nohup.out -text
-clients/ping/ping.py -text
-clients/zargs.py -text
 config/hub.py -text
 /deep_reload.py -text
 etc/config.ini -text
@@ -150,8 +146,5 @@ etc/tron.module -text
 /hub.py -text
 /passwords -text
 /runhub.py -text
-scripts/dither.py -text
-scripts/echelle-check.py -text
-scripts/m3.py -text
 /svnVersion.py -text
 ups/tron.table -text
