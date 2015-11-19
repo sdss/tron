@@ -1,10 +1,10 @@
 __all__ = ['CommandDecoder']
 
-import CPL
+import Misc
 
-class CommandDecoder(CPL.Object):
+class CommandDecoder(Misc.Object):
     def __init__(self, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
         
         self.name = argv.get('name', '.unnamed')
         self.nubID = None

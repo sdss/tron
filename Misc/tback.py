@@ -5,7 +5,7 @@ import pprint
 import sys
 import traceback
 
-import CPL
+import Misc
 
 def tback(system, e, info=None):
     """ Log a decently informative traceback. """
@@ -15,7 +15,7 @@ def tback(system, e, info=None):
         toptrace = inspect.trace()[-1]
     except:
         one_liner = "%s: %s: %s" % (e, sys.exc_type, sys.exc_value)
-        CPL.error(system, "======== exception botch: %s" % (one_liner))
+        Misc.error(system, "======== exception botch: %s" % (one_liner))
         return
                 
     tr_list = []
@@ -32,6 +32,6 @@ def tback(system, e, info=None):
         i += 1
         
     ex_list = traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback)
-    CPL.error(system, "\n======== exception: %s\n" % (''.join(ex_list)))
-    CPL.error(system, "\n======== exception details: %s\n" % (''.join(tr_list)))
+    Misc.error(system, "\n======== exception: %s\n" % (''.join(ex_list)))
+    Misc.error(system, "\n======== exception details: %s\n" % (''.join(tr_list)))
 

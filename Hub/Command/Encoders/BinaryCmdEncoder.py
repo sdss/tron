@@ -2,7 +2,7 @@ __all__ = ['BinaryCmdEncoder']
            
 import struct
 
-import CPL
+import Misc
 from CommandEncoder import CommandEncoder
         
 class BinaryCmdEncoder(CommandEncoder):
@@ -24,6 +24,6 @@ class BinaryCmdEncoder(CommandEncoder):
                              length, cmd.actorMid, cmd.actorCid, str, csum, 4)
 
         if self.debug > 3:
-            CPL.log('BinaryCmdEncoder', "cmd=%s data=%r" % (cmd, packet))
+            Misc.log('BinaryCmdEncoder', "cmd=%s data=%r" % (cmd, packet))
 
         return packet

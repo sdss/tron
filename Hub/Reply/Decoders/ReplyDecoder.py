@@ -1,14 +1,14 @@
 __all__ = ['ReplyDecoder']
 
-import CPL
+import Misc
 
-class ReplyDecoder(CPL.Object):
+class ReplyDecoder(Misc.Object):
     """ Base class for decoders for incoming replies. 
        
     """
     
     def __init__(self, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
 
         self.name = argv.get('name', 'unnamed')
         self.nubID = None

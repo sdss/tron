@@ -16,7 +16,7 @@ import socket
 import time
 from threading import *
 
-import CPL
+import Misc
 
 class NullIO(object):
     """ A Trick class to allow forcing the PollHandler to re-configure its outputs.
@@ -36,11 +36,11 @@ class NullIO(object):
         """
 
         if self.debug > 0:
-            CPL.log('NullIO', 'reading token')
+            Misc.log('NullIO', 'reading token')
 
         d = os.read(self.fd, 1)
     
-class PollHandler(CPL.Object):
+class PollHandler(Misc.Object):
     """ Wrap the poll() system call.
 
         IOHandler instances get registered/unregistered for input
@@ -55,7 +55,7 @@ class PollHandler(CPL.Object):
         """
         
     def __init__(self, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
         
         self.poller = select.poll()
 
@@ -81,7 +81,7 @@ class PollHandler(CPL.Object):
     def __del__(self):
 
         self.poller = None
-        CPL.Object.__del__(self)
+        Misc.Object.__del__(self)
 
     def addTimer(self, timer):
         """ Add a timer.
@@ -144,14 +144,14 @@ class PollHandler(CPL.Object):
         
         fd = obj.getInputFd()
         if fd == None or fd == -1:
-            CPL.log("IOHandler.addInput", "fd for obj=%s was %s!" % (obj, fd))
+            Misc.log("IOHandler.addInput", "fd for obj=%s was %s!" % (obj, fd))
             return
 
         self.lock.acquire()
         
         pollInfo = self.files.get(fd, None)
         if self.debug > 2:
-            CPL.log('Poll.registry', 'adding input for fd=%r obj=%s info=%r' % (fd, obj, pollInfo))
+            Misc.log('Poll.registry', 'adding input for fd=%r obj=%s info=%r' % (fd, obj, pollInfo))
 
         if pollInfo:
             eventMask = pollInfo.get('eventMask', 0)
@@ -174,7 +174,7 @@ class PollHandler(CPL.Object):
             os.write(self.loopback, 'I')
 
         if self.debug > 2:
-            CPL.log('Poll.registry', '%s added input %r(%s): %s' %
+            Misc.log('Poll.registry', '%s added input %r(%s): %s' %
                     (id(self), fd, self.flagNames(eventMask), `obj`))
 
         return lastHandler
@@ -192,14 +192,14 @@ class PollHandler(CPL.Object):
         """
         fd = obj.getOutputFd()
         if fd == None or fd == -1:
-            CPL.log('Poll.registry', 'Cannot add output for fd=%r' % (fd,))
+            Misc.log('Poll.registry', 'Cannot add output for fd=%r' % (fd,))
             return 
 
         self.lock.acquire()
         pollInfo = self.files.get(fd, None)
 
         if self.debug > 2:
-            CPL.log('Poll.registry', 'adding output for fd=%r obj=%s info=%r' % (fd, obj, pollInfo))
+            Misc.log('Poll.registry', 'adding output for fd=%r obj=%s info=%r' % (fd, obj, pollInfo))
 
         if pollInfo:
             lastHandler = pollInfo.get('outputHandler', None)
@@ -226,7 +226,7 @@ class PollHandler(CPL.Object):
             os.write(self.loopback, 'O')
         
         if self.debug > 2:
-            CPL.log('Poll.registry', '%s added output %r(%s): obj=%s info=%s' %
+            Misc.log('Poll.registry', '%s added output %r(%s): obj=%s info=%s' %
                     (id(self), fd, self.flagNames(eventMask), obj, pollInfo))
 
         return lastHandler
@@ -238,17 +238,17 @@ class PollHandler(CPL.Object):
         """ Unregister an input. """
 
         if fd == None or fd == -1:
-            CPL.log('Poll.registry', 'Cannot remove input for fd=%r' % (fd,))
+            Misc.log('Poll.registry', 'Cannot remove input for fd=%r' % (fd,))
             return 
 
         self.lock.acquire()
         
         pollInfo = self.files.get(fd, None)
         if self.debug > 2:
-            CPL.log('Poll.registry', 'removing input for fd=%r info=%r' % (fd, pollInfo))
+            Misc.log('Poll.registry', 'removing input for fd=%r info=%r' % (fd, pollInfo))
         
         if fd == None:
-            CPL.log('Poll.registry', 'cannot change input for fd=None')
+            Misc.log('Poll.registry', 'cannot change input for fd=None')
             self.lock.release()
             return
         
@@ -256,7 +256,7 @@ class PollHandler(CPL.Object):
             eventMask = pollInfo['eventMask']
             eventMask &= ~select.POLLIN
         else:
-            CPL.log("Poll.registry", "removeInput clearing all IO for unregistered object fd=%r." % (fd))
+            Misc.log("Poll.registry", "removeInput clearing all IO for unregistered object fd=%r." % (fd))
             self.lock.release()
             return
         
@@ -265,18 +265,18 @@ class PollHandler(CPL.Object):
             pollInfo['inputHandler'] = None
             self.poller.register(fd, eventMask)
             if self.debug > 2:
-                CPL.log('Poll.registry', 'removed input %r and set mask to %s' % (fd, self.flagNames(eventMask)))
+                Misc.log('Poll.registry', 'removed input %r and set mask to %s' % (fd, self.flagNames(eventMask)))
         else:
-            CPL.log('Poll.registry', 'entirely removed (via in) fd=%s' % (fd))
+            Misc.log('Poll.registry', 'entirely removed (via in) fd=%s' % (fd))
 
             try:
                 self.poller.unregister(fd)
             except Exception, e:
-                CPL.log('Poll.registry', 'removeInput poller could not unregister fd=%s err=%s' % (fd, e))
+                Misc.log('Poll.registry', 'removeInput poller could not unregister fd=%s err=%s' % (fd, e))
             try:
                 del self.files[fd]
             except Exception, e:
-                CPL.log('Poll.registry', 'removeInput could not delete fd=%s err=%s' % (fd, e))
+                Misc.log('Poll.registry', 'removeInput could not delete fd=%s err=%s' % (fd, e))
 
         
         self.lock.release()
@@ -295,10 +295,10 @@ class PollHandler(CPL.Object):
 
         pollInfo = self.files.get(fd, None)
         if self.debug > 2:
-            CPL.log('Poll.registry', 'removing output for fd=%r info=%r' % (fd, pollInfo))
+            Misc.log('Poll.registry', 'removing output for fd=%r info=%r' % (fd, pollInfo))
 
         if fd == None:
-            CPL.log('Poll.registry', 'cannot change output for fd=None')
+            Misc.log('Poll.registry', 'cannot change output for fd=None')
             self.lock.release()
             return
         
@@ -306,7 +306,7 @@ class PollHandler(CPL.Object):
             eventMask = pollInfo['eventMask']
             eventMask &= ~select.POLLOUT
         else:
-            CPL.log("Poll.registry", "removeOutput clearing all IO for unregistered object fd=%r" % (fd))
+            Misc.log("Poll.registry", "removeOutput clearing all IO for unregistered object fd=%r" % (fd))
             self.lock.release()
             return
         
@@ -316,18 +316,18 @@ class PollHandler(CPL.Object):
             self.poller.register(fd, eventMask)
 
             if self.debug > 2:
-                CPL.log('Poll.registry', 'removed output fd=%s and set mask to %s' % (fd, self.flagNames(eventMask)))
+                Misc.log('Poll.registry', 'removed output fd=%s and set mask to %s' % (fd, self.flagNames(eventMask)))
         else:
-            CPL.log('Poll.registry', 'entirely removing (via out) fd=%s' % (fd))
+            Misc.log('Poll.registry', 'entirely removing (via out) fd=%s' % (fd))
             try:
                 self.poller.unregister(fd)
             except Exception, e:
-                CPL.log('Poll.registry', 'removeOutput poller could not unregister fd=%s err=%s' % (fd, e))
+                Misc.log('Poll.registry', 'removeOutput poller could not unregister fd=%s err=%s' % (fd, e))
                 
             try:
                 del self.files[fd]
             except Exception, e:
-                CPL.log('Poll.registry', 'removeOutput could not delete fd=%s err=%s' % (fd, e))
+                Misc.log('Poll.registry', 'removeOutput could not delete fd=%s err=%s' % (fd, e))
                 
         self.lock.release()
 
@@ -377,13 +377,13 @@ class PollHandler(CPL.Object):
     def run(self):
         """ Wait for I/O and dispatch to handlers. """
 
-        CPL.log("PollHandler.run", "running...")
+        Misc.log("PollHandler.run", "running...")
 
         while 1:
             if self.debug > 7:
-                CPL.log("PollHandler.run", "loop, threaded=%s, id=%s" % (bool(self.looper!=None), id(self)))
+                Misc.log("PollHandler.run", "loop, threaded=%s, id=%s" % (bool(self.looper!=None), id(self)))
                 if self.debug > 8:
-                    CPL.log("PollHandler.run", "files=%s" % (self.fileNames()))
+                    Misc.log("PollHandler.run", "files=%s" % (self.fileNames()))
 
             # Calculate the proper timeout. Basically, use the loop default
             # or the next item in .timedCallbacks
@@ -402,19 +402,19 @@ class PollHandler(CPL.Object):
             try:
                 events = self.poller.poll(timeout * 1000.0)
             except (socket.error, os.error, "error"), e:
-                CPL.log("PollHandler.run",
+                Misc.log("PollHandler.run",
                         "poll trying to clean up: %s" % (e,))
                 try:
                     fd, eString = e
                     self.removeOutputFd(fd)
                     self.removeInputFd(fd)
                 except:
-                    CPL.log("PollHandler.run",
+                    Misc.log("PollHandler.run",
                             "poll failed with unknown error exception: %s" % (e,))
             except Exception, e:
-                CPL.log("PollHandler.run", "poll failed with: %s (%s)" % (e, type(e)))
+                Misc.log("PollHandler.run", "poll failed with: %s (%s)" % (e, type(e)))
                 if type(e) == type((),) and len(e) == 2:
-                    CPL.log("PollHandler.run",
+                    Misc.log("PollHandler.run",
                             "poll trying to clean up mess: %s" % (e,))
                     fd, errString = e
                     self.removeOutputFd(fd)
@@ -429,7 +429,7 @@ class PollHandler(CPL.Object):
                     self.timeoutHandler()
                 else:
                     if self.debug > 8:
-                        CPL.log("PollHandler.run", "time out on poll, with no timeoutHandler!")
+                        Misc.log("PollHandler.run", "time out on poll, with no timeoutHandler!")
 
             # Regardless of whether we got here by timeout or by event, check the timed callbacks for
             # expired events.
@@ -460,15 +460,15 @@ class PollHandler(CPL.Object):
                 fd, flag = event
 
                 if self.debug > 4:
-                    CPL.log("PollHandler.run", "got fd=%s events=%s" % (fd, self.flagNames(flag)))
+                    Misc.log("PollHandler.run", "got fd=%s events=%s" % (fd, self.flagNames(flag)))
                     
                 if flag & ~(select.POLLIN | select.POLLOUT):
-                    CPL.log("PollHandler.run", "poll got exception flags: fd=%r, flag=%s" % (fd, self.flagNames(flag)))
+                    Misc.log("PollHandler.run", "poll got exception flags: fd=%r, flag=%s" % (fd, self.flagNames(flag)))
                 
                 try:
                     d = self.files[fd]
                 except KeyError, e:
-                    CPL.log("PollHandler.run", "invalid file on poll: %s" % (`fd`))
+                    Misc.log("PollHandler.run", "invalid file on poll: %s" % (`fd`))
                     
                     continue
 
@@ -494,7 +494,7 @@ class PollHandler(CPL.Object):
                 if flag & (select.POLLHUP | select.POLLERR):
                     # On HUP or ERR, let the readInput() or mayOutput() discover the error and act on it.
                     #
-                    CPL.log("PollHandler.run", "HUP/ERR (%s) on poll: %s" % (self.flagNames(flag), `fd`))
+                    Misc.log("PollHandler.run", "HUP/ERR (%s) on poll: %s" % (self.flagNames(flag), `fd`))
                     outputHandler = d.get('outputHandler', None)
                     inputHandler = d.get('inputHandler', None)
                     if outputHandler:
@@ -503,9 +503,9 @@ class PollHandler(CPL.Object):
                         inputHandler.shutdown()
 
                 if flag & select.POLLNVAL:
-                    # I don't know what I'm doing here. -- CPL
+                    # I don't know what I'm doing here. -- Misc
                     #
-                    CPL.log("PollHandler.run", "NVAL (%s) on poll: %s" % (self.flagNames(flag), `fd`))
+                    Misc.log("PollHandler.run", "NVAL (%s) on poll: %s" % (self.flagNames(flag), `fd`))
 
                     outputHandler = d.get('outputHandler', None)
                     inputHandler = d.get('inputHandler', None)

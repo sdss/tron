@@ -1,6 +1,6 @@
 __all__ = ['dequote']
 
-import CPL
+import Misc
 
 def dequote(s):
     """ Convert s as a possibly quoted string to an unquoted string.
@@ -8,7 +8,7 @@ def dequote(s):
     If s is quoted, strip the quotes and unescape internal quotes..
     """
 
-    # CPL.log("DEQUOTE", "IN q=%r= s=%r=" % (q, s))
+    # Misc.log("DEQUOTE", "IN q=%r= s=%r=" % (q, s))
 
     if s == None:
         return None
@@ -35,7 +35,7 @@ def dequote(s):
         #
         sNoQuotes = sNoQuotes.replace('\\\\', '\\')
 
-        # CPL.log("DEQUOTE", "OUT q=%r= s=%r=" % (q, sNoQuotes))
+        # Misc.log("DEQUOTE", "OUT q=%r= s=%r=" % (q, sNoQuotes))
 
         return sNoQuotes
 

@@ -6,9 +6,9 @@ import os
 import socket
 import time
 
-import CPL
+import Misc
 
-class IOHandler(CPL.Object):
+class IOHandler(Misc.Object):
     """ Stub class for IO connections that can be managed by a PollHandler. 
     
     This is the class that is called when input is available to be read and
@@ -28,11 +28,11 @@ class IOHandler(CPL.Object):
     """
 
     def __init__(self, poller, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
 
         self.poller = poller
 
-        CPL.log("IOHandler.init", "IOHandler(argv=%s)" % (argv))
+        Misc.log("IOHandler.init", "IOHandler(argv=%s)" % (argv))
         
         # The IO size tweaks would mean something for slow network links.
         #
@@ -44,7 +44,7 @@ class IOHandler(CPL.Object):
         self.in_f = self.out_f = None
         self.in_fd = self.out_fd = None
         self.outQueue = []
-        self.queueLock = CPL.LLock(debug = (argv.get('debug', 0) > 7))
+        self.queueLock = Misc.LLock(debug = (argv.get('debug', 0) > 7))
         self.setInputFile(argv.get('in_f', None))
         self.setOutputFile(argv.get('out_f', None))
 
@@ -66,7 +66,7 @@ class IOHandler(CPL.Object):
         """ Unregister ourselves """
 
         why = argv.get('why', "just cuz")
-        CPL.log("IOhandler.ioshutdown", "what=%s why=%s" % (self, why))
+        Misc.log("IOhandler.ioshutdown", "what=%s why=%s" % (self, why))
                 
         self.setOutputFile(None)
         self.setInputFile(None)
@@ -84,7 +84,7 @@ class IOHandler(CPL.Object):
         """ Change the input file. Close and unregister any old file. Register the new one for input. """
         
         if self.debug > 2:
-            CPL.log("IOHandler.setInput", "%s changing input %s to %s" % (self, self.in_f, f))
+            Misc.log("IOHandler.setInput", "%s changing input %s to %s" % (self, self.in_f, f))
 
         # Detach and possibly close existing .in_f
         #
@@ -94,7 +94,7 @@ class IOHandler(CPL.Object):
                 try:
                     self.in_f.close()
                 except:
-                    CPL.error("IOHandler.setInput", "failed to close input for %s", self)
+                    Misc.error("IOHandler.setInput", "failed to close input for %s", self)
 
         # Establish new .in_f
         #
@@ -112,7 +112,7 @@ class IOHandler(CPL.Object):
         """
         
         if self.debug > 2:
-            CPL.log("IOHandler.setOutput", "%s changing output %s to %s. queue=%s" % \
+            Misc.log("IOHandler.setOutput", "%s changing output %s to %s. queue=%s" % \
                     (self, self.out_f, f, self.outQueue))
 
         if self.out_f != None:
@@ -121,7 +121,7 @@ class IOHandler(CPL.Object):
                 try:
                     self.out_f.close()
                 except:
-                    CPL.error("IOHandler.setOutput", "failed to close output for %s", self)
+                    Misc.error("IOHandler.setOutput", "failed to close output for %s", self)
             
         # Establish new .out_f
         #
@@ -191,7 +191,7 @@ class IOHandler(CPL.Object):
                 self.maxQueue = len(self.outQueue)
 
             if self.debug > 4:
-                CPL.log("IOHandler.queueForOutput",
+                Misc.log("IOHandler.queueForOutput",
                         "appended %r to queue (len=%d) of %s" % \
                         (s, len(self.outQueue), self))
             if mustRegister:
@@ -219,19 +219,19 @@ class IOHandler(CPL.Object):
             readIn = os.read(self.in_fd, self.tryToRead)
         except socket.error, e:
             error = "socket exception %s" % (e,)
-            CPL.log("IOHandler.readInput", error)
+            Misc.log("IOHandler.readInput", error)
             readIn = ""
         except os.error, e:
             error = "os exception %s" % (e,)
-            CPL.log("IOHandler.readInput", error)
+            Misc.log("IOHandler.readInput", error)
             readIn = ""
         except:
             error = "unknown exception %s" % (e,)
-            CPL.log("IOHandler.readInput", error)
+            Misc.log("IOHandler.readInput", error)
             readIn = ""
 
         if self.debug > 4:
-            CPL.log("IOHandler.readInput", "read len=%d %r" % (len(readIn), readIn[:50]))
+            Misc.log("IOHandler.readInput", "read len=%d %r" % (len(readIn), readIn[:50]))
 
         # I/O error: by being called, we are told that we have input. But the read
         # showed no available input.
@@ -278,21 +278,21 @@ class IOHandler(CPL.Object):
 
             wlen = min(len(qtop), self.tryToWrite)
             if self.debug > 5:
-                CPL.log("IOHandler.mayOutput", "writing len=%d wlen=%d %r" % \
+                Misc.log("IOHandler.mayOutput", "writing len=%d wlen=%d %r" % \
                         (len(qtop), wlen, qtop[:min(wlen, 50)]))
                 
             try:
                 wrote = os.write(self.out_fd, qtop[:wlen])
             except socket.error, e:
-                CPL.log("IOHandler.mayOutput", "socket exception %r" % (e,))
+                Misc.log("IOHandler.mayOutput", "socket exception %r" % (e,))
                 self.shutdown(why=str(e))
                 return
             except os.error, e:
-                CPL.log("IOHandler.mayOutput", "os exception %r" % (e,))
+                Misc.log("IOHandler.mayOutput", "os exception %r" % (e,))
                 self.shutdown(why=str(e))
                 return
             except Exception, e:
-                CPL.log("IOHandler.mayOutput", "unhandled exception %r" % (e,))
+                Misc.log("IOHandler.mayOutput", "unhandled exception %r" % (e,))
                 self.shutdown(why=str(e))
                 return
 
@@ -323,7 +323,7 @@ class IOHandler(CPL.Object):
                     break
                 
                 if self.debug > 5:
-                    CPL.log("IOHandler.mayOutput", "queue len=%d" % (len(self.outQueue)))
+                    Misc.log("IOHandler.mayOutput", "queue len=%d" % (len(self.outQueue)))
 
                 # Quit if we only write one item or if we have written alot.
                 #
@@ -342,16 +342,16 @@ class IOHandler(CPL.Object):
         """
 
         cmd.inform('ioConfig=%s,%d,%d,"%s"' % \
-                   (CPL.qstr(name),
+                   (Misc.qstr(name),
                     self.tryToRead, self.tryToWrite, self.tryToWriteMany))
         cmd.inform('ioQueue=%s,%d,%d,%d' % \
-                   (CPL.qstr(name),
+                   (Misc.qstr(name),
                     len(self.outQueue), self.totalQueued, self.maxQueue))
         cmd.inform('ioReads=%s,%d,%d,%d' % \
-                   (CPL.qstr(name),
+                   (Misc.qstr(name),
                     self.totalReads, self.totalBytesRead, self.largestRead))
         cmd.inform('ioWrites=%s,%d,%d,%d,%d' % \
-                   (CPL.qstr(name),
+                   (Misc.qstr(name),
                     self.totalOutputs, self.totalWrites, self.totalBytesWritten, self.largestWrite))
         if doFinish:
             cmd.finish()

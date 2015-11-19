@@ -4,7 +4,7 @@ __all__ = ['PollAccept']
 
 import socket
 
-import CPL
+import Misc
 import IOHandler
 
 class PollAccept(IOHandler.IOHandler):
@@ -50,7 +50,7 @@ class PollAccept(IOHandler.IOHandler):
         return "PollAccept(host=%s port=%s depth=%s)" % (self.host, self.port, self.depth)
     
     def shutdown(self, **argv):
-        CPL.log("PollAccept.shutdown", "shutting down %s" % (self))
+        Misc.log("PollAccept.shutdown", "shutting down %s" % (self))
 
         self.poller.removeInput(self)
         self.listenFd.close()
@@ -60,7 +60,7 @@ class PollAccept(IOHandler.IOHandler):
 
     def readInput(self):
 
-        CPL.log("IOAccept.readInput", "accepting...")
+        Misc.log("IOAccept.readInput", "accepting...")
         newfd, addr = self.listenFd.accept()
 
         # Listen for a single connect. Kill ourselves if we should.

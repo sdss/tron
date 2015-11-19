@@ -3,7 +3,7 @@ __all__ = ['perms']
 import time
 import os
 
-import CPL
+import Misc
 from Hub.KV.KVDict import *
 from Vocab.InternalCmd import *
 import g

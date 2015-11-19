@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 import os
-import CPL.cfg
+import Misc.cfg
 
 def getActors(actorName=None, hostName=None):
     # Bootstrap the whole configuration system
     configPath = os.environ.get('CONFIG_DIR',
                                 os.path.join(os.environ['TRON_DIR'], 'config'))
-    CPL.cfg.init(path=configPath, verbose=False)
+    Misc.cfg.init(path=configPath, verbose=False)
     
-    actors = CPL.cfg.get('hub', 'actors')
+    actors = Misc.cfg.get('hub', 'actors')
     if actorName:
         actors = dict([(key, val) for key, val in actors.items() if key == actorName])
     if hostName:

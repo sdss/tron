@@ -1,6 +1,6 @@
 __all__ = ['RawReplyDecoder']
 
-import CPL
+import Misc
 from ReplyDecoder import ReplyDecoder
 from Parsing import parseRawReply
 
@@ -26,11 +26,11 @@ class RawReplyDecoder(ReplyDecoder):
             buf += newData
         
         if self.debug > 5:
-            CPL.log('Stdin.extractReply', "called with EOL=%r and buf=%r" % (self.EOL, buf))
+            Misc.log('Stdin.extractReply', "called with EOL=%r and buf=%r" % (self.EOL, buf))
 
         eol = buf.find(self.EOL)
         if self.debug > 4:
-            CPL.log('Stdin.extractReply', "eol at %d in buffer %r" % (eol, buf))
+            Misc.log('Stdin.extractReply', "eol at %d in buffer %r" % (eol, buf))
 
         # No complete reply found. make sure to return
         # the unmolested buffer.
@@ -42,7 +42,7 @@ class RawReplyDecoder(ReplyDecoder):
         buf = buf[eol+len(self.EOL):]
 
         if self.debug > 2:
-            CPL.log('Stdin.extractReply', "hoping to parse %r" % (replyString))
+            Misc.log('Stdin.extractReply', "hoping to parse %r" % (replyString))
 
         for c in self.stripChars:
             replyString = replyString.replace(c, '')
@@ -50,7 +50,7 @@ class RawReplyDecoder(ReplyDecoder):
         r = parseRawReply(replyString)
         
         if self.debug > 3:
-            CPL.log('RawReplyDecoder.extractReply', "extracted %r, returning %r" % (r, buf))
+            Misc.log('RawReplyDecoder.extractReply', "extracted %r, returning %r" % (r, buf))
 
         return r, buf
 

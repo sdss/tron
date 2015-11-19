@@ -3,7 +3,7 @@ __all__ = ['RawActorNub']
 from ActorNub import ActorNub
 from SocketActorNub import SocketActorNub
 
-import CPL
+import Misc
 import g
 
 class RawActorNub(SocketActorNub, ActorNub):
@@ -20,14 +20,14 @@ class RawActorNub(SocketActorNub, ActorNub):
         try:
             replyText = r['RawText']
             if replyText == " OK":
-                CPL.log('rawReply', 'converting reply flag')
+                Misc.log('rawReply', 'converting reply flag')
                 r['flag'] = ':'
                 cmdDone = True
                 self.activeMid += 1
             else:
-                CPL.log('rawReply', 'not converting reply flag :%s:' % (replyText))
+                Misc.log('rawReply', 'not converting reply flag :%s:' % (replyText))
         except Exception, e:
-            CPL.log('rawReply', 'ignoring exceptoin: %s' % (e))
+            Misc.log('rawReply', 'ignoring exceptoin: %s' % (e))
         
         r['cid'] = 0
         r['mid'] = activeMid

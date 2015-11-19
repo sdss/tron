@@ -1,10 +1,10 @@
 __all__ = ['CommandEncoder']
            
-import CPL
+import Misc
 
-class CommandEncoder(CPL.Object):
+class CommandEncoder(Misc.Object):
     def __init__(self, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
         
         self.name = argv.get('name', 'unnamed')
         self.nubID = None

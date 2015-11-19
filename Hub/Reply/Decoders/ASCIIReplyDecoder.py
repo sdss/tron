@@ -1,7 +1,7 @@
 __all__ = ['ASCIIReplyDecoder']
 
 import g
-import CPL
+import Misc
 from Parsing import *
 from ReplyDecoder import ReplyDecoder
 
@@ -36,11 +36,11 @@ class ASCIIReplyDecoder(ReplyDecoder):
             buf += newData
         
         if self.debug > 5:
-            CPL.log('Stdin.extractReply', "called with EOL=%r and buf=%r" % (self.EOL, buf))
+            Misc.log('Stdin.extractReply', "called with EOL=%r and buf=%r" % (self.EOL, buf))
 
         eol = buf.find(self.EOL)
         if self.debug > 4:
-            CPL.log('Stdin.extractReply', "eol at %d in buffer %r" % (eol, buf))
+            Misc.log('Stdin.extractReply', "eol at %d in buffer %r" % (eol, buf))
 
         # No complete reply found. make sure to return
         # the unmolested buffer.
@@ -52,7 +52,7 @@ class ASCIIReplyDecoder(ReplyDecoder):
         buf = buf[eol+len(self.EOL):]
 
         if self.debug > 2:
-            CPL.log('Stdin.extractReply', "hoping to parse (CIDfirst=%s) %r" % (self.cidFirst, replyString))
+            Misc.log('Stdin.extractReply', "hoping to parse (CIDfirst=%s) %r" % (self.cidFirst, replyString))
 
         for c in self.stripChars:
             replyString = replyString.replace(c, '')
@@ -62,11 +62,11 @@ class ASCIIReplyDecoder(ReplyDecoder):
         try:
             r = parseASCIIReply(replyString, cidFirst=self.cidFirst)
         except SyntaxError, e:
-            CPL.log("ASCIIReplyDecoder", "Parsing error from %s: %r" % (self.name, e))
+            Misc.log("ASCIIReplyDecoder", "Parsing error from %s: %r" % (self.name, e))
             return None, buf
         
         if self.debug > 3:
-            CPL.log('Stdin.extractReply', "extracted %r, returning %r" % (r, buf))
+            Misc.log('Stdin.extractReply', "extracted %r, returning %r" % (r, buf))
 
         return r, buf
 

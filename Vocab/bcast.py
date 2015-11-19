@@ -2,7 +2,7 @@ __all__ = ['bcast']
 
 import time
 
-import CPL
+import Misc
 import Hub
 import Vocab.InternalCmd as InternalCmd
 
@@ -51,7 +51,7 @@ class bcast(InternalCmd.InternalCmd):
             cmd.fail('bcastTxt="could not parse command line"')
             return
         if leftover:
-            cmd.fail('bcastTxt=%s' % (CPL.qstr("could not completely parse command line. Leftovers=%s" % (leftover))))
+            cmd.fail('bcastTxt=%s' % (Misc.qstr("could not completely parse command line. Leftovers=%s" % (leftover))))
             return
 
         #  2) Construct a pseudo-Command to go with it.

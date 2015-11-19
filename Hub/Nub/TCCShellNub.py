@@ -1,6 +1,6 @@
 __all__ = ['TCCShellNub']
 
-import CPL
+import Misc
 import Hub.Reply
 from ShellNub import ShellNub
 
@@ -22,7 +22,7 @@ class TCCShellNub(ShellNub):
         """ Override the default copeWithInput to set our .cid from the YourUserNum key. """
         
         if self.debug > 5:
-            CPL.log('TCCShell.copeWithInput', "Nub %s read: %r, with buf=%r" % (self.name, s, self.inputBuffer))
+            Misc.log('TCCShell.copeWithInput', "Nub %s read: %r, with buf=%r" % (self.name, s, self.inputBuffer))
 
         while 1:
             # Connections to the TCC's tccuser captive account return lines
@@ -35,7 +35,7 @@ class TCCShellNub(ShellNub):
             reply, leftover = self.decoder.decode(self.inputBuffer, s)
             s = None
             if self.debug > 5:
-                CPL.log('TCCShell.copeWithInput', "decoded: %s, yielding buf=%r" % (reply, leftover))
+                Misc.log('TCCShell.copeWithInput', "decoded: %s, yielding buf=%r" % (reply, leftover))
 
             self.inputBuffer = leftover
             if not reply:
@@ -53,7 +53,7 @@ class TCCShellNub(ShellNub):
                 newCID = self.findUserNum(reply['KVs'])
                 if newCID != None:
                     self.cid = newCID
-                    CPL.log('TCCShell.copeWithInput', "setting CID=%s" % (self.cid))
+                    Misc.log('TCCShell.copeWithInput', "setting CID=%s" % (self.cid))
                     self.connected()
                     
             cmd = self.getCmdForReply(reply)
