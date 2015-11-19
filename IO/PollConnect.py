@@ -5,7 +5,7 @@ __all__ = ['PollConnect']
 import socket
 
 import IOHandler
-import CPL
+import Misc
 
 class PollConnect(IOHandler.IOHandler):
     """ Provide asynchronous socket accept() handling. """
@@ -50,7 +50,7 @@ class PollConnect(IOHandler.IOHandler):
 
     def readInput(self):
 
-        CPL.log("IOAccept.readInput", "accepting...")
+        Misc.log("IOAccept.readInput", "accepting...")
         newfd, addr = self.listenFd.accept()
 
         # Listen for a single connect. Kill ourselves if we should.

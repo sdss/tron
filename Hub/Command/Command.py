@@ -4,12 +4,12 @@ import re
 import time
 
 from collections import OrderedDict
-import CPL
+import Misc
 from Hub.Reply.Reply import Reply
 import Parsing
 import g
 
-class Command(CPL.Object):
+class Command(Misc.Object):
     """ Maintain everything required to shepherd a command through the hub.
 
     Basically, we need to track the commander's MID and CID, the internal XID,
@@ -37,7 +37,7 @@ class Command(CPL.Object):
             - cmdrID is .actorname.
         """
 
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
 
         # An internally unique identifier for the command. We could use cmdr + the Commander's
         # CID + MID, but that would leave us trusting the Cmdr.
@@ -52,7 +52,7 @@ class Command(CPL.Object):
         except:
             self.cmdrName = cmdrID
             if len(cmdrID) > 0 and cmdrID[0] != '.':
-                CPL.log("Command", "no commander %s" % (cmdrID))
+                Misc.log("Command", "no commander %s" % (cmdrID))
                     
         # How the caller wants the command identified.
         if cid == None:
@@ -93,15 +93,15 @@ class Command(CPL.Object):
         
         if g.hubcmd != None and self.bcastCmdInfo:
             g.hubcmd.diag("CmdIn=%s,%s,%s" %
-                          (CPL.qstr(self.cmdrCid), 
-                           CPL.qstr(self.actorName),
-                           CPL.qstr(self.cmd)),
+                          (Misc.qstr(self.cmdrCid), 
+                           Misc.qstr(self.actorName),
+                           Misc.qstr(self.cmd)),
                           src='cmds')
             
     def __str__(self):
         return "Command(xid=%s, cmdr=%s, cmdrCid=%s, cmdrMid=%s, actor=%s, cmd=%s)" % \
                (self.xid, self.cmdrName, self.cmdrCid, self.cmdrMid, self.actorName,
-                CPL.qstr(self.cmd))
+                Misc.qstr(self.cmd))
 
 
     def _names(self):
@@ -123,9 +123,9 @@ class Command(CPL.Object):
         if g.hubcmd != None and self.bcastCmdInfo:
             g.hubcmd.diag(("CmdQueued=%d,%0.2f,%s,%s,%s,%s,%s" %
                            (self.xid, self.ctime,
-                            CPL.qstr(self.cmdrCid), self.cmdrMid,
-                            CPL.qstr(self.actorName), self.actorMid,
-                            CPL.qstr(self.cmd))),
+                            Misc.qstr(self.cmdrCid), self.cmdrMid,
+                            Misc.qstr(self.actorName), self.actorMid,
+                            Misc.qstr(self.cmd))),
                           src='cmds')
 
     def connectToActor(self, cid, mid):
@@ -161,12 +161,12 @@ class Command(CPL.Object):
         """ Return our commander. """
 
         for c in g.commanders.values():
-            CPL.log("Command.cmdr()" , "checking %s in %s" % (self.cmdrName, c))
+            Misc.log("Command.cmdr()" , "checking %s in %s" % (self.cmdrName, c))
             if self.cmdrName == c.name:
-                CPL.log("Command.cmdr()" , "matched %s in %s" % (self.cmdrName, c))
+                Misc.log("Command.cmdr()" , "matched %s in %s" % (self.cmdrName, c))
                 return c
 
-        CPL.log("Command.cmdr()" , "no cmdr %s in %s" % (self.cmdrName, g.commanders))
+        Misc.log("Command.cmdr()" , "no cmdr %s in %s" % (self.cmdrName, g.commanders))
         return None
         
         
@@ -184,15 +184,15 @@ class Command(CPL.Object):
         # of the line as the value. This avoids infinite loops.
         #
         
-        # CPL.log('eatAVee', 'called with %s' % (s))
+        # Misc.log('eatAVee', 'called with %s' % (s))
         
         matches = self.v_re.match(s)
         if matches:
             return matches.groupdict()
         else:
-            g.hubcmd.inform('ParseError=%s' % (CPL.qstr("Consuming all trailing text '%s'" % (s))),
+            g.hubcmd.inform('ParseError=%s' % (Misc.qstr("Consuming all trailing text '%s'" % (s))),
                             src='hub')
-        return {'val':CPL.qstr(s), 'rest':''}
+        return {'val':Misc.qstr(s), 'rest':''}
 
     def eatAString(self, s):
         # Match a quoting-escaped string.
@@ -209,7 +209,7 @@ class Command(CPL.Object):
         # the string matched.
         #
     
-        # CPL.log('eatAString', 'called with %s' % (s))
+        # Misc.log('eatAString', 'called with %s' % (s))
     
         level = 0
     
@@ -239,7 +239,7 @@ class Command(CPL.Object):
         if c == "\\" and level % 2 == 1:
             add += "\\"
        
-        g.hubcmd.inform([('ParseError', CPL.qstr('appended %s to string %s' % (add, s)))],
+        g.hubcmd.inform([('ParseError', Misc.qstr('appended %s to string %s' % (add, s)))],
                         src='hub')
         s += add
         return {'val':s, 'level':1, 'rest':''}
@@ -267,12 +267,12 @@ class Command(CPL.Object):
     
         match = self.kv_re.match(s)
         if match == None:
-            g.hubcmd.inform([('ParseError', CPL.qstr("No key-value found at '%s'" % (s)))],
+            g.hubcmd.inform([('ParseError', Misc.qstr("No key-value found at '%s'" % (s)))],
                             src='hub')
             return None
         
         d = match.groupdict()
-        CPL.log("Command.parseKV", "kv_re=%s" % (d))
+        Misc.log("Command.parseKV", "kv_re=%s" % (d))
         
         rest = d['rest']
     
@@ -294,7 +294,7 @@ class Command(CPL.Object):
                     dv = self.eatAString(rest)
     
                     if dv['level'] != 0:
-                        CPL.log('parseKV', 'warning: eatAString returned with %s' % (dv))
+                        Misc.log('parseKV', 'warning: eatAString returned with %s' % (dv))
                 else:
                     dv = self.eatAVee(rest)
     
@@ -394,7 +394,7 @@ class Command(CPL.Object):
         if not hasattr(self, 'argv'):
             self.parse()
             
-        CPL.log("MCCommand.coverArgs",
+        Misc.log("MCCommand.coverArgs",
                 "requiredArgs=%r optionalArgs=%r ignoreFirst=%r argv=%r" \
                 % (requiredArgs, optionalArgs, ignoreFirst, self.argv))
 
@@ -429,7 +429,7 @@ class Command(CPL.Object):
             else:
                 leftovers.append((k,v))
 
-        CPL.log("MCCommand.coverArgs",
+        Misc.log("MCCommand.coverArgs",
                 "raw=%r requiredMatches=%r optionalMatches=%r unmatched=%r leftovers=%r" \
                 % (self.argv, requiredMatches, optionalMatches, requiredArgs, leftovers))
                 
@@ -472,7 +472,7 @@ class Command(CPL.Object):
         bcast = argv.get('bcast', True)
         
         if self.debug > 0:
-            CPL.log("Command.makeAndSendReply", "src = %r, flag = %s, KVs = %r" % (src, flag, KVs))
+            Misc.log("Command.makeAndSendReply", "src = %r, flag = %s, KVs = %r" % (src, flag, KVs))
         
         r = Reply(self, flag, KVs, src=src, bcast=bcast)
         self.reply(r, **argv)
@@ -481,7 +481,7 @@ class Command(CPL.Object):
         """ Finally register a Reply's KVs and offer it to any interested parties."""
 
         if self.debug > 1:
-            CPL.log("Command.sendReply", "reply = %r" % (r))
+            Misc.log("Command.sendReply", "reply = %r" % (r))
 
         if not argv.get('noRegister', False):
             g.KVs.setKVsFromReply(r)
@@ -492,6 +492,6 @@ class Command(CPL.Object):
         if r.finishesCommand():
             # del g.pendingCommands[self.xid]
             if self.bcastCmdInfo:
-                g.hubcmd.diag("CmdDone=%s,%s" % (self.xid, CPL.qstr(r.flag.lower())),
+                g.hubcmd.diag("CmdDone=%s,%s" % (self.xid, Misc.qstr(r.flag.lower())),
                               src="cmds")
             

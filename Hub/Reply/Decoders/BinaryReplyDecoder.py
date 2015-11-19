@@ -7,7 +7,7 @@ import tempfile
 import pixel16
 
 import g
-import CPL
+import Misc
 from collections import OrderedDict
 from Parsing import *
 
@@ -60,13 +60,13 @@ class BinaryReplyDecoder(ReplyDecoder):
 
         # Possibly fiddle the data bits.
         if self.doByteSwapFirst:
-            CPL.log("Binary.saveImage", "byteswap first")
+            Misc.log("Binary.saveImage", "byteswap first")
             pixel16.byteswap(image)
         if self.doSignFlip:
-            CPL.log("Binary.saveImage", "signflip")
+            Misc.log("Binary.saveImage", "signflip")
             pixel16.uflip(image)
         if self.doByteSwapLast:
-            CPL.log("Binary.saveImage", "byteswap last")
+            Misc.log("Binary.saveImage", "byteswap last")
             pixel16.byteswap(image)
 
         written = os.write(f, image)
@@ -76,7 +76,7 @@ class BinaryReplyDecoder(ReplyDecoder):
         remain = len(image) % 2880
 
         if remain > 0:
-            CPL.log("Binary.saveImage", "padding %d-byte data with %d null bytes" % (len(image), 2880-remain))
+            Misc.log("Binary.saveImage", "padding %d-byte data with %d null bytes" % (len(image), 2880-remain))
             os.write(f, '\000' * (2880 - remain))
                  
         os.close(f)
@@ -127,12 +127,12 @@ class BinaryReplyDecoder(ReplyDecoder):
                struct.unpack('>BBihh', buf[:10])
         if dummy != 1:
             # Complain, but don't fail.
-            CPL.log('Hub.decap', 'dummy=%d is_file=%d length=%d mid=%d cid=%d' % \
+            Misc.log('Hub.decap', 'dummy=%d is_file=%d length=%d mid=%d cid=%d' % \
                     (dummy, is_file, length, mid, cid))
         is_file = is_file > 1
         
         if self.debug >= 5:
-            CPL.log("Binary.decap", "is_file=%s length=%d (%d) cid=%d mid=%d" %\
+            Misc.log("Binary.decap", "is_file=%s length=%d (%d) cid=%d mid=%d" %\
                     (is_file, length, len(buf), cid, mid))
 
         fullLength = length + 10 + 2
@@ -155,30 +155,30 @@ class BinaryReplyDecoder(ReplyDecoder):
         csum, trailer = struct.unpack('>BB', buf[fullLength-2:fullLength])
 
         # Calculate & check checksum of message body.
-        #   Because images come through here, we need to C this. -- CPL
+        #   Because images come through here, we need to C this. -- Misc
         #
         my_csum = 0
         if not is_file:
             for i in xrange(10, fullLength - 10 + 1):
                 my_csum ^= ord(buf[i])
             if my_csum != csum:
-                CPL.log('Hub.decap', 'csum(%d) != calculated csum(%d)' %
+                Misc.log('Hub.decap', 'csum(%d) != calculated csum(%d)' %
                         (csum, my_csum))
 
         # Magic trailer value. I don't know what this means, but ctrl-d can be Unix EOF.    
         #
         if trailer != 4:
-            CPL.error('Hub.decap', 'trailer is not 4 (%d)' % (trailer))
-            CPL.log('Hub.decap', "mid=%d cid=%d len=%d msg='%s'" \
+            Misc.error('Hub.decap', 'trailer is not 4 (%d)' % (trailer))
+            Misc.log('Hub.decap', "mid=%d cid=%d len=%d msg='%s'" \
                     % (mid, cid, length, msg))
 
         buf = buf[fullLength:]
         
         if self.debug >= 7:
-            CPL.log("Binary.decap", "csum=%d match=%s trailer=%d left=%d (%r) msg=(%r)" %\
+            Misc.log("Binary.decap", "csum=%d match=%s trailer=%d left=%d (%r) msg=(%r)" %\
                     (csum, csum == my_csum, trailer, len(buf), buf, msg))
         elif self.debug >= 5:
-            CPL.log("Binary.decap", "csum=%d match=%s trailer=%d left=%d (%r)" %\
+            Misc.log("Binary.decap", "csum=%d match=%s trailer=%d left=%d (%r)" %\
                     (csum, csum == my_csum, trailer, len(buf), buf))
 
         d = {'mid':mid,
@@ -200,7 +200,7 @@ class BinaryReplyDecoder(ReplyDecoder):
             if match == None:
                 d['flag'] = 'w'
                 KVs = OrderedDict()
-                KVs['UNPARSEDTEXT'] = CPL.qstr(msg)
+                KVs['UNPARSEDTEXT'] = Misc.qstr(msg)
                 d['KVs'] = KVs
 
                 return d, buf
@@ -214,11 +214,11 @@ class BinaryReplyDecoder(ReplyDecoder):
                 KVs = parseKVs(msg_d['rest'])
             except ParseException, e:
                 KVs = e.KVs
-                KVs['UNPARSEDTEXT'] = CPL.qstr(e.leftoverText)
+                KVs['UNPARSEDTEXT'] = Misc.qstr(e.leftoverText)
             except Exception, e:
-                CPL.log("parseASCIIReply", "unexpected Exception: %s" % (e))
+                Misc.log("parseASCIIReply", "unexpected Exception: %s" % (e))
                 KVs = OrderedDict()
-                KVs['RawLine'] = CPL.qstr(msg_d['rest'])
+                KVs['RawLine'] = Misc.qstr(msg_d['rest'])
         
             d['KVs'] = KVs
 

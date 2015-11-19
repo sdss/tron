@@ -17,7 +17,7 @@ __all__ = ['eatAVee', 'eatAString',
 import exceptions
 import re
 
-import CPL
+import Misc
 from collections import OrderedDict
 from Exceptions import ParseException
 
@@ -32,7 +32,7 @@ def eatAVee(s):
       - any unmatched input, including the terminating character.
     """
     
-    # CPL.log('eatAVee', 'called with %s' % (s))
+    # Misc.log('eatAVee', 'called with %s' % (s))
 
     s = s.lstrip()
     if len(s) == 0:
@@ -74,7 +74,7 @@ def eatAString(s):
       
     """
     
-    # CPL.log('eatAString', 'called with %s' % (s))
+    # Misc.log('eatAString', 'called with %s' % (s))
 
     if len(s) == 0:
         raise ParseException("unexpected empty string while parsing", leftoverText='')
@@ -100,7 +100,7 @@ def eatAString(s):
     # OK, we fell off the end of the string without matching the closing quote.
     # Force the string to look OK so that nobody else needs to deal with a mangled string.
     #
-    CPL.log('eatAString', 'adding closing section (esc=%s) to string %r' % (escaping, s))
+    Misc.log('eatAString', 'adding closing section (esc=%s) to string %r' % (escaping, s))
 
     if escaping:
         s = "%s\\%s" % (s, startQuote)
@@ -210,7 +210,7 @@ def parseKVs(s):
         if key == None:
             break
 
-        # CPL.log('parseKVs', 'key=%r val=%r rest=%r' % (key, values, rest))
+        # Misc.log('parseKVs', 'key=%r val=%r rest=%r' % (key, values, rest))
         KVs[key] = values
 
     return KVs
@@ -261,7 +261,7 @@ def parseASCIIReply(s, cidFirst=False):
         d['RawText'] = s
 
         kvs = OrderedDict()
-        kvs['RawLine'] = [CPL.qstr(s)]
+        kvs['RawLine'] = [Misc.qstr(s)]
         d['KVs'] = kvs
         return d
 
@@ -274,11 +274,11 @@ def parseASCIIReply(s, cidFirst=False):
         leftoverText = e.leftoverText
 
         # In this case, quote the offending text.
-        KVs['UNPARSEDTEXT'] = [CPL.qstr(leftoverText)]
+        KVs['UNPARSEDTEXT'] = [Misc.qstr(leftoverText)]
     except Exception, e:
-        CPL.log("parseASCIIReply", "unexpected Exception: %s" % (e))
+        Misc.log("parseASCIIReply", "unexpected Exception: %s" % (e))
         KVs = OrderedDict()
-        KVs['UNPARSEDTEXT'] = [CPL.qstr(d['rest'])]
+        KVs['UNPARSEDTEXT'] = [Misc.qstr(d['rest'])]
         
     d['KVs'] = KVs
     d['RawText'] = s
@@ -297,10 +297,10 @@ def parseRawReply(s, keyName="RawText"):
     d['cid'] = 0 
     d['flag'] = 'i'
 
-    CPL.log('parseRawReply', 'consumed :%r:' % (s))
+    Misc.log('parseRawReply', 'consumed :%r:' % (s))
     
     kvs = OrderedDict()
-    kvs[keyName] = [CPL.qstr(s)]
+    kvs[keyName] = [Misc.qstr(s)]
     d['KVs'] = kvs
     d['RawText'] = s
     return d

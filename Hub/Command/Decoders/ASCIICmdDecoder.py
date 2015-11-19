@@ -2,7 +2,7 @@ __all__ = ['ASCIICmdDecoder']
 
 import re
 
-import CPL
+import Misc
 from Hub.Command import Command
 import g
 
@@ -53,7 +53,7 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
         self.hackEOL = argv.get('hackEOL', False)
         
         if self.needCID and not self.needMID:
-            CPL.log("ASCIICmdDecoder", "if CID is needed, than MID must also be.")
+            Misc.log("ASCIICmdDecoder", "if CID is needed, than MID must also be.")
         if self.needMID == False:
             self.mid = 1
 
@@ -75,7 +75,7 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
         eol = buf.find(self.EOL)
         
         if self.debug > 2:
-            CPL.log('ASCIICmdDecoder.extractCmd', "EOL at %d in buffer %r" % (eol, buf))
+            Misc.log('ASCIICmdDecoder.extractCmd', "EOL at %d in buffer %r" % (eol, buf))
 
         # No complete command found. Return the original buffer so that the caller
         # can easily determine that no input was consumed.
@@ -89,9 +89,9 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
                 self.EOL = '\r' + self.EOL
                 self.hackEOL = False
                 eol = buf.find(self.EOL)
-                CPL.log('ASCIICmdDecoder.decode', "adjusted EOL to %r (at %d) in: %r" % (self.EOL, eol, buf))
+                Misc.log('ASCIICmdDecoder.decode', "adjusted EOL to %r (at %d) in: %r" % (self.EOL, eol, buf))
                 g.hubcmd.warn('Text=%s' % \
-                              CPL.qstr("adjusted EOL for %s to %r (at %d) in: %r" % (self.name, self.EOL, eol, buf)),
+                              Misc.qstr("adjusted EOL for %s to %r (at %d) in: %r" % (self.name, self.EOL, eol, buf)),
                               src='hub')
                 if eol == -1:
                     return None, buf
@@ -103,7 +103,7 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
             match = self.mctc_re.match(cmdString)
             if match == None:
                 g.hubcmd.fail('ParseError=%s' % \
-                              (CPL.qstr('xxx Command from %s could not be parsed: %r' % \
+                              (Misc.qstr('xxx Command from %s could not be parsed: %r' % \
                                         (self.name, cmdString))),
                               src='hub')
                 return None, buf
@@ -112,7 +112,7 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
             match = self.mtc_re.match(cmdString)
             if match == None:
                 g.hubcmd.fail('ParseError=%s' % \
-                              (CPL.qstr('Command from %s could not be parsed: %r' % \
+                              (Misc.qstr('Command from %s could not be parsed: %r' % \
                                         (self.name, cmdString))),
                               src='hub')
                 return None, buf
@@ -126,7 +126,7 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
 
             if match == None:
                 g.hubcmd.fail('ParseError' % \
-                              (CPL.qstr('Command from %s could not be parsed: %r' % \
+                              (Misc.qstr('Command from %s could not be parsed: %r' % \
                                        (self.name, cmdString))),
                               src='hub')
                 return None, buf

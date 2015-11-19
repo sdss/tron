@@ -1,6 +1,6 @@
 __all__ = ['RawCmdDecoder']
 
-import CPL
+import Misc
 from Hub.Command import Command
 
 import CommandDecoder
@@ -33,7 +33,7 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
         self.mid = 1
 
         if self.debug > 1:
-            CPL.log('RawCmdDecoder.init', "target=%s cmdWrapper=%s" % (self.target, self.cmdWrapper))
+            Misc.log('RawCmdDecoder.init', "target=%s cmdWrapper=%s" % (self.target, self.cmdWrapper))
 
     def decode(self, buf, newData):
         """ Find and extract a single complete command from the given buffer. 
@@ -53,7 +53,7 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
         eol = buf.find(self.EOL)
         
         if self.debug > 3:
-            CPL.log('RawCmdDecoder.extractCmd', "EOL at %d in buffer %r" % (eol, buf))
+            Misc.log('RawCmdDecoder.extractCmd', "EOL at %d in buffer %r" % (eol, buf))
 
         # No complete command found. Return the original buffer so that the caller
         # can easily determine that no input was consumed.
@@ -69,7 +69,7 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
         for c in self.stripChars:
             cmdString = cmdString.replace(c, '')
         if self.debug > 3:
-            CPL.log('RawCmdDecoder.extractCmd', "cmdString=%r" % (cmdString))
+            Misc.log('RawCmdDecoder.extractCmd', "cmdString=%r" % (cmdString))
 
         if self.cmdWrapper:
             cmdString = "%s raw=%s" % (self.cmdWrapper, cmdString)

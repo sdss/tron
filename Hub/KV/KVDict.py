@@ -3,7 +3,7 @@ __all__ = ['KV', 'KVDict',
 
 import time
 
-import CPL
+import Misc
 from collections import OrderedDict
 from Misc.cdict import cdict
 
@@ -96,12 +96,12 @@ class KV(object):
         return "KV(key=%s, val=%s, ctime=%0.4f, cmd=%s)" % (self.key, self.val, t, cmd)
     
         
-class KVDict(CPL.Object):
+class KVDict(Misc.Object):
     """ The main Key=Value dictionary. 
     """
     
     def __init__(self, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
         self.sources = cdict(dictType=OrderedDict)
 
     def keyNamesForKVs(self, KVs):
@@ -117,7 +117,7 @@ class KVDict(CPL.Object):
             src = reply.src
             
         if self.debug > 5:
-            CPL.log("KVDict.setKV", "src=%r, key=%r, val=%r" % (src, key, val))
+            Misc.log("KVDict.setKV", "src=%r, key=%r, val=%r" % (src, key, val))
             
         if src not in self.sources:
             self.sources[src] = cdict(dictType=OrderedDict)
@@ -131,7 +131,7 @@ class KVDict(CPL.Object):
         
     def setKVs(self, src, KVs, reply):
         if self.debug > 3:
-            CPL.log("KVDict.setKVs", "src = %r, keys = %r" % (src, KVs))
+            Misc.log("KVDict.setKVs", "src = %r, keys = %r" % (src, KVs))
         
         for key, val in KVs.iteritems():
             self.setKV(src, key, val, reply)
@@ -145,7 +145,7 @@ class KVDict(CPL.Object):
 
     def getKey(self, src, key, default=None):
         if self.debug > 3:
-            CPL.log("KVDict.getKey", "get src=%s key=%s" % (src, key))
+            Misc.log("KVDict.getKey", "get src=%s key=%s" % (src, key))
             
         if src not in self.sources:
             return default
@@ -158,9 +158,9 @@ class KVDict(CPL.Object):
     def addSource(self, source):
         """ Register the fact that a given source exists. """
 
-        CPL.log("KVDict.addSource", "adding source %s" % (source))
+        Misc.log("KVDict.addSource", "adding source %s" % (source))
         if source in self.sources:
-            CPL.log("KVDict.addSource", "source %s already exists" % (source))
+            Misc.log("KVDict.addSource", "source %s already exists" % (source))
             return
         self.sources[source] = cdict(dictType=OrderedDict)
 
@@ -207,7 +207,7 @@ class KVDict(CPL.Object):
         vals = OrderedDict()
 
         if self.debug > 5:
-            CPL.log("KVDict.getValues", "get src=%s keys=%s" % (src, keys))
+            Misc.log("KVDict.getValues", "get src=%s keys=%s" % (src, keys))
 
         d = self.sources.get(src, None)
         if d == None:
@@ -219,7 +219,7 @@ class KVDict(CPL.Object):
         unmatched = []
         for k in keys:
             if k == None:
-                CPL.log("getKVs", "ignoring None key value in %r" % (keys))
+                Misc.log("getKVs", "ignoring None key value in %r" % (keys))
                 continue
             
             try:

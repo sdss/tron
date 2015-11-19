@@ -2,7 +2,7 @@ __all__ = ['LLock']
 
 from threading import Lock
 
-import CPL
+import Misc
 
 class LLock(object):
     """ Debugging Lock. Can print when the acquire & release calls are made. """
@@ -17,20 +17,20 @@ class LLock(object):
         self.name = name
         
         if self.debug > 0:
-            CPL.log("LLock.create", "name=%s" % (self.name))
+            Misc.log("LLock.create", "name=%s" % (self.name))
         
     def acquire(self, block=True, src="up"):
         if self.debug > 0:
-            CPL.log("LLock.acquiring", "name=%s, block=%s, src=%s" % \
+            Misc.log("LLock.acquiring", "name=%s, block=%s, src=%s" % \
                     (self.name, block, src))
         self.lock.acquire(block)
         if self.debug > 0:
-            CPL.log("LLock.acquired", "name=%s, block=%s, src=%s" % \
+            Misc.log("LLock.acquired", "name=%s, block=%s, src=%s" % \
                     (self.name, block, src))
         
     def release(self, src="up"):
         if self.debug > 0:
-            CPL.log("LLock.release", "name=%s, src=%s" % \
+            Misc.log("LLock.release", "name=%s, src=%s" % \
                     (self.name, src))
         self.lock.release()
         

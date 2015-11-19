@@ -3,7 +3,7 @@ __all__ = ['Reply']
 import time
 
 from collections import OrderedDict
-import CPL
+import Misc
 import Parsing
 
 """
@@ -15,7 +15,7 @@ import Parsing
        - flag, actorCid, actorMid, src, KVs
 """
 
-class Reply(CPL.Object):
+class Reply(Misc.Object):
     
     def __init__(self, cmd, flag, KVs, bcast=True, **argv):
         """ Create a parsed Reply.
@@ -27,7 +27,7 @@ class Reply(CPL.Object):
                   latter are parsed into OrderedDicts.
         """
 
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
         
         self.ctime = time.time()
         self.cmd = cmd
@@ -70,7 +70,7 @@ class Reply(CPL.Object):
                 elif type(i) in (list, tuple) and len(i) == 2:
                     k, v, junk = Parsing.parseKV("%s=%s" % i)
                 else:
-                    CPL.log('Reply', 'kvl item is not a string: %r' % (i))
+                    Misc.log('Reply', 'kvl item is not a string: %r' % (i))
                     raise Exception("kvl == %r" % (i))
 
         return od

@@ -6,7 +6,7 @@ __all__ = ['init', 'get', 'flush']
 import os
 import sys
 
-from CPL.Exceptions import ICCError
+from Misc.Exceptions import ICCError
 
 cfgCache = None
 

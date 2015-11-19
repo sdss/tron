@@ -1,6 +1,6 @@
 __all__ = ['RawReplyEncoder']
            
-import CPL
+import Misc
 from Hub.KV.KVDict import kvAsASCII
 from ReplyEncoder import ReplyEncoder
 from ASCIIReplyEncoder import ASCIIReplyEncoder
@@ -28,7 +28,7 @@ class RawReplyEncoder(ReplyEncoder):
         if self.keyName:
             rawVal = r.KVs.get(self.keyName, '')
             val = dequote(rawVal)
-            CPL.log('RAWDEQUOTE', "rawVal=%r val=%r" % (rawVal, val))
+            Misc.log('RAWDEQUOTE', "rawVal=%r val=%r" % (rawVal, val))
         else:
             val = self.encodeKeys(r.src, r.KVs)
             
@@ -48,14 +48,14 @@ class RawReplyEncoder(ReplyEncoder):
         """
         
         if self.debug > 5:
-            CPL.log("ASCIIReplyEnc.encode", "encoding %r" % (KVs,))
+            Misc.log("ASCIIReplyEnc.encode", "encoding %r" % (KVs,))
         if KVs == None:
             return ""
         
         keylist = []
         for k, v in KVs.iteritems():
             if self.debug > 5:
-                CPL.log("ASCIIReplyEnc.encode", "encoding %r=%r" % (k, v))
+                Misc.log("ASCIIReplyEnc.encode", "encoding %r=%r" % (k, v))
 
             keylist.append(kvAsASCII(k, v))
             
