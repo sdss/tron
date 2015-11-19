@@ -19,15 +19,6 @@ CPL/strcvt.py -text
 CPL/tback.py -text
 CPL/tcmd.py -text
 CPL/tqstr.py -text
-Client/Command.py -text
-Client/CommandLink.py -text
-Client/FilterQueue.py -text
-Client/FullReply.py -text
-Client/HubLink.py -text
-Client/README.txt -text
-Client/Reply.py -text
-Client/__init__.py -text
-Client/client.py -text
 Docs/1.txt -text
 Docs/DISchanges -text
 Docs/FITS.txt -text
