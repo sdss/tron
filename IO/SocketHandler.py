@@ -3,7 +3,7 @@
 __all__ = ['SocketHandler']
 
 import IOHandler
-import CPL
+import Misc
 
 class SocketHandler(IOHandler):
     """ Class for IO connections that are connected to a socket. """
@@ -14,11 +14,11 @@ class SocketHandler(IOHandler):
         self.debug = 1
         
     def readInput(self):
-        # CPL.log("Cat.readInput", "reading...")
+        # Misc.log("Cat.readInput", "reading...")
         try:
             readIn = self.in_f.recv(self.tryToRead)
         except socket.error, e:
-            CPL.log("Cat.readInput", "exception %r" % (sys.exc_info,))
+            Misc.log("Cat.readInput", "exception %r" % (sys.exc_info,))
             self.poller.removeInput(self)
             if len(self.outBuffer) > 0:
                 self.poller.removeOutput(self)
@@ -30,17 +30,17 @@ class SocketHandler(IOHandler):
             raise
 
         if self.debug:
-            CPL.log("Cat.readInput", "read len=%d %r" % (len(readIn), readIn[:30]))
+            Misc.log("Cat.readInput", "read len=%d %r" % (len(readIn), readIn[:30]))
         self.inBuffer += readIn
 
     def mayOutput(self):
         if self.debug:
-            CPL.log("Cat.mayOutput", "writing len=%d %r" % (len(self.outBuffer), self.outBuffer[:30]))
+            Misc.log("Cat.mayOutput", "writing len=%d %r" % (len(self.outBuffer), self.outBuffer[:30]))
 
         try:
             sent = self.out_f.send(self.outBuffer[:self.tryToWrite])
         except socket.error, e:
-            CPL.log("Cat.mayOutput", "exception %r" % (e,))
+            Misc.log("Cat.mayOutput", "exception %r" % (e,))
             self.poller.removeOutput(self)
             try:
                 self.poller.removeInput(self)

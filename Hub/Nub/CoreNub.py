@@ -1,6 +1,6 @@
 __all__ = ['CoreNub']
 
-import CPL
+import Misc
 
 import IO
 import hub
@@ -44,7 +44,7 @@ class CoreNub(IO.IOHandler):
 
         logDir = argv.get("logDir", None)
         if logDir:
-            self.log = CPL.Logfile(logDir, EOL='', doEncode=True)
+            self.log = Misc.Logfile(logDir, EOL='', doEncode=True)
         else:
             self.log = None
             
@@ -77,7 +77,7 @@ class CoreNub(IO.IOHandler):
         notifyHub = argv.get('notifyHub', True)
         why = argv.get('why', '')
         
-        CPL.log("Hub.shutdown", "notify=%s why=%s" % (notifyHub, why))
+        Misc.log("Hub.shutdown", "notify=%s why=%s" % (notifyHub, why))
         
         if notifyHub:
             hub.dropNub(self)

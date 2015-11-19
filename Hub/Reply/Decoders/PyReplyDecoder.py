@@ -2,7 +2,7 @@ __all__ = ['PyReplyDecoder']
 
 import cPickle
 
-import CPL
+import Misc
 import g
 from ReplyDecoder import ReplyDecoder
 
@@ -26,11 +26,11 @@ class PyReplyDecoder(ReplyDecoder):
             buf += newData
         
         if self.debug > 3:
-            CPL.log('PyReply.decoder', "called with EOL=%r and buf=%r" % (self.EOL, buf))
+            Misc.log('PyReply.decoder', "called with EOL=%r and buf=%r" % (self.EOL, buf))
 
         eol = buf.find(self.EOL)
         if self.debug > 2:
-            CPL.log('PyReply.decoder', "eol at %d in buffer %r" % (eol, buf))
+            Misc.log('PyReply.decoder', "eol at %d in buffer %r" % (eol, buf))
 
         # No complete reply found. make sure to return
         # the unmolested buffer.
@@ -46,10 +46,10 @@ class PyReplyDecoder(ReplyDecoder):
         try:
             r = cPickle.loads(replyString)
         except SyntaxError, e:
-            CPL.log("PyReply.decoder", "Failed to unpickle %r" % (replyString))
+            Misc.log("PyReply.decoder", "Failed to unpickle %r" % (replyString))
             return None, buf
         
         if self.debug > 5:
-            CPL.log('PyReply.decoder', "extracted %r, returning %r" % (r, buf))
+            Misc.log('PyReply.decoder', "extracted %r, returning %r" % (r, buf))
 
         return r, buf

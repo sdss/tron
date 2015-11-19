@@ -2,8 +2,8 @@ __all__ = ['parseArgs', 'match']
 
 import re
 
-import CPL
-from RO.Alg import OrderedDict
+import Misc
+from collections import OrderedDict
 from Exceptions import ParseException
 from dequote import dequote
 
@@ -124,7 +124,7 @@ def parseArgs(s):
 
         KVs[key] = values
 
-    #CPL.log('parseArgs', 'KVs: %s' % (KVs))
+    #Misc.log('parseArgs', 'KVs: %s' % (KVs))
     return KVs
 
 def match(argv, opts):
@@ -165,7 +165,7 @@ def match(argv, opts):
             converter = want[opt]
             if converter == None:
                 if arg != None:
-                    raise Exception("option %s takes no argument" % (CPL.qstr(opt, tquote="'")))
+                    raise Exception("option %s takes no argument" % (Misc.qstr(opt, tquote="'")))
                 matches[opt] = None
             else:
                 try:

@@ -1,4 +1,4 @@
-class cdict:
+class cdict(object):
     """Dictionary, that has case-insensitive keys.
     
     Keys are retained in their original form

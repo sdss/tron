@@ -6,7 +6,7 @@ __all__ = ['CommanderNub',
 from NubAuth import NubAuth
 import CoreNub
 from Hub.Reply.ReplyTaster import ReplyTaster
-import CPL
+import Misc
 
 import g
 import hub
@@ -43,7 +43,7 @@ class CommanderNub(CoreNub.CoreNub):
     def setNames(self, programName, username):
         """ Set our program and usernames. """
 
-        CPL.log('CommandeNub.setNames', 'setting name for %s to %s.%s' % (self, programName, username))
+        Misc.log('CommandeNub.setNames', 'setting name for %s to %s.%s' % (self, programName, username))
         
         newName = hub.validateCommanderNames(self, programName, username)
         self.setName(newName)
@@ -67,7 +67,7 @@ class CommanderNub(CoreNub.CoreNub):
         """
 
         if self.debug > 2:
-            CPL.log('Nub.copeWithInput', "CommanderNub %s read: %r" % (self.name, s))
+            Misc.log('Nub.copeWithInput', "CommanderNub %s read: %r" % (self.name, s))
 
         # Find and execute _every_ complete input.
         # The only time this function gets called is when new input comes in, so we
@@ -118,7 +118,7 @@ class CommanderNub(CoreNub.CoreNub):
             if self.log:
                 self.log.log(er, note='>')
         else:
-            CPL.log("CommanderNub.reply", "not bcast; rID=%s selfID=%s" % (r.cmd.cmdrID, self.ID))
+            Misc.log("CommanderNub.reply", "not bcast; rID=%s selfID=%s" % (r.cmd.cmdrID, self.ID))
             if r.finishesCommand():
                 er = self.encoder.encode(r, self, noKeys=True)
                 self.queueForOutput(er)
@@ -127,7 +127,7 @@ class CommanderNub(CoreNub.CoreNub):
         
     def tasteReply(self, r):
         if self.debug > 3:
-            CPL.log('ActorNub.tasteReply', "%s tasting %s" % (self, r))
+            Misc.log('ActorNub.tasteReply', "%s tasting %s" % (self, r))
 
         if self.taster.taste(r):
             self.reply(r)

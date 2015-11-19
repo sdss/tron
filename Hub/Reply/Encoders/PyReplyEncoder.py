@@ -2,7 +2,7 @@ __all__ = ['PyReplyEncoder']
            
 import cPickle
 
-import CPL
+import Misc
 from Hub.Reply.FullReply import FullReply
 from ReplyEncoder import ReplyEncoder
 
@@ -29,8 +29,8 @@ class PyReplyEncoder(ReplyEncoder):
         fullPickle = cPickle.dumps(fullReply)
 
         if self.debug > 6:
-            CPL.log('PyEncode.encode', 'encoding FullReply %s as %r' % (fullReply, fullPickle))
+            Misc.log('PyEncode.encode', 'encoding FullReply %s as %r' % (fullReply, fullPickle))
         elif self.debug > 3:
-            CPL.log('PyEncode.encode', 'encoding FullReply %s' % (fullReply,))
+            Misc.log('PyEncode.encode', 'encoding FullReply %s' % (fullReply,))
         
         return "%s%s" % (fullPickle, self.EOL)

@@ -1,6 +1,6 @@
 __all__ = ['SocketListener']
 
-import CPL
+import Misc
 
 import IO
 import hub
@@ -30,7 +30,7 @@ class SocketListener(object):
         If called from the hub, close all IO resources.
         """
         
-        CPL.log("Hub.shutdown", "notify=%s why=%s" % (notifyHub, why))
+        Misc.log("Hub.shutdown", "notify=%s why=%s" % (notifyHub, why))
         
         if notifyHub:
             hub.dropNub(self)

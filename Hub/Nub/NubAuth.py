@@ -4,7 +4,7 @@ import sha
 
 import g
 import hub
-import CPL
+import Misc
 import Parsing
 
 import keyring
@@ -37,12 +37,12 @@ class NubAuth(object):
 
         """
 
-        CPL.log('NubAut', 'parsing version %s' % (s))
+        Misc.log('NubAut', 'parsing version %s' % (s))
 
         parts = s.split(',')
         dqparts = map(Parsing.dequote, parts)
 
-        CPL.log('NubAut', 'parsed %s' % (dqparts))
+        Misc.log('NubAut', 'parsed %s' % (dqparts))
         return dqparts
         
     def checkLogin(self, cmd):
@@ -104,7 +104,7 @@ class NubAuth(object):
         self.clientType = matched.get('type', 'unknown')
         self.clientPlatform = matched.get('platform', 'unknown')
         self.clientVersion = matched.get('version', 'unknown')
-        CPL.log('NubAuth', 'checkLogin version %s, platform %s' % \
+        Misc.log('NubAuth', 'checkLogin version %s, platform %s' % \
             (self.clientVersion, self.clientPlatform))
 
         # Check whether we don't like the version
@@ -122,7 +122,7 @@ class NubAuth(object):
         except maybe to name a TUINub.
         """
         
-        CPL.log('reportAuth', 'reporting on %s' % (self))
+        Misc.log('reportAuth', 'reporting on %s' % (self))
 
         try:
             otherIP = self.otherIP
@@ -132,10 +132,10 @@ class NubAuth(object):
             
         # And tell others all about us. Well, have the 'hub' tell them.
         self.userInfo = 'user=%s,%s,%s,%s,%s,%s' % \
-                        (CPL.qstr(self.name), CPL.qstr(self.clientType),
-                         CPL.qstr(self.clientVersion),
-                         CPL.qstr(self.clientPlatform),
-                         CPL.qstr(otherIP), CPL.qstr(otherFQDN))
+                        (Misc.qstr(self.name), Misc.qstr(self.clientType),
+                         Misc.qstr(self.clientVersion),
+                         Misc.qstr(self.clientPlatform),
+                         Misc.qstr(otherIP), Misc.qstr(otherFQDN))
         
     def makeMyNonce(self):
         """ Generate an ASCIIfied large random number. Put it in .nonce """
@@ -183,7 +183,7 @@ class NubAuth(object):
             if self.state == self.CONNECTED:
                 return False
             else:
-                cmd.fail('why=%s' % (CPL.qstr("please log in.")),
+                cmd.fail('why=%s' % (Misc.qstr("please log in.")),
                          src='auth')
                 return True
         
@@ -199,17 +199,17 @@ class NubAuth(object):
                 cmd.finish('bye', src='auth')
             else:
                 return False
-                #cmd.fail('unknownCommand=%s' % (CPL.qstr(cmdWord)),
+                #cmd.fail('unknownCommand=%s' % (Misc.qstr(cmdWord)),
                 #         src='auth')
             return self.state != self.CONNECTED
         elif self.state == self.NOT_CONNECTED:
             if cmdWord == 'knockKnock':
                 self.state = self.CONNECTING
                 self.makeMyNonce()
-                cmd.finish('nonce=%s' % (CPL.qstr(self.nonce)),
+                cmd.finish('nonce=%s' % (Misc.qstr(self.nonce)),
                            src='auth')
             else:
-                cmd.fail('why=%s' % (CPL.qstr("please log in.")),
+                cmd.fail('why=%s' % (Misc.qstr("please log in.")),
                          src='auth')
                 
             return True
@@ -219,18 +219,18 @@ class NubAuth(object):
                 if ret == True:
                     self.state = self.CONNECTED
                     cmd.finish(('loggedIn',
-                                'cmdrID=%s' % CPL.qstr(self.name)),
+                                'cmdrID=%s' % Misc.qstr(self.name)),
                                src='auth')
-                    CPL.log('auth', 'logged in %s' % (self))
+                    Misc.log('auth', 'logged in %s' % (self))
                     self.setUserInfo()
                     g.hubcmd.inform(self.userInfo)
                 else:
                     self.state = self.NOT_CONNECTED
-                    cmd.fail('why=%s' % CPL.qstr(ret),
+                    cmd.fail('why=%s' % Misc.qstr(ret),
                              src='auth')
             else:
                 self.state = self.NOT_CONNECTED
-                cmd.fail('why=%s' % (CPL.qstr("please play by the rules.")),
+                cmd.fail('why=%s' % (Misc.qstr("please play by the rules.")),
                          src='auth')
             return True
         

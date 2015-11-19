@@ -3,10 +3,10 @@
 
 __all__ = ['Auth']
 
-import CPL
+import Misc
 import g
 
-class Auth(CPL.Object):
+class Auth(Misc.Object):
     """
     Maintain an authorization table between commanders and actors.
     
@@ -15,7 +15,7 @@ class Auth(CPL.Object):
     """
     
     def __init__(self, defaultCmd, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
 
         self.defaultCmd = defaultCmd
         self.programs = {}
@@ -46,7 +46,7 @@ class Auth(CPL.Object):
 
         program = cmdr.split('.', 1)[0]
         if self.debug > 5:
-            CPL.log("Auth.checkAccess", "checking %s (%s) -> %s" % (cmdr, program, actor))
+            Misc.log("Auth.checkAccess", "checking %s (%s) -> %s" % (cmdr, program, actor))
             
         if not cmd:
             cmd = self.defaultCmd
@@ -63,19 +63,19 @@ class Auth(CPL.Object):
             if access:
                 return True
             else:
-                cmd.warn("text=%s" % (CPL.qstr("%s is locked by APO" % (actorName))))
+                cmd.warn("text=%s" % (Misc.qstr("%s is locked by APO" % (actorName))))
                 return False
 
         # If we don't know about an actor, let the command go through
         if authName not in self.actors:
             if self.hackOn and self.debug > 1:
-                CPL.log("Auth.checkAccess", "unregistered actor %s" % (actorName))
+                Misc.log("Auth.checkAccess", "unregistered actor %s" % (actorName))
             return True
 
         # If the command is declared safe by the actor, let it go though.
         safeCmds = actor.safeCmds
         if self.debug > 1:
-            CPL.log("auth.checkAccess", "checking '%s' against %s" % (cmd.cmd, safeCmds))
+            Misc.log("auth.checkAccess", "checking '%s' against %s" % (cmd.cmd, safeCmds))
         if safeCmds != None and cmd.cmd != None:
             if safeCmds.search(cmd.cmd):
                 return True
@@ -89,12 +89,12 @@ class Auth(CPL.Object):
         try:
             accessList = self.programs[program]
             if self.debug > 5:
-                CPL.log("Auth.checkAccess", "cmdr %s accessList = %s" % (cmdr, accessList))
+                Misc.log("Auth.checkAccess", "cmdr %s accessList = %s" % (cmdr, accessList))
 
             ok = authName in accessList
 
             if self.hackOn:
-                CPL.log("Auth.checkAccess", "actor hacked on, in accessList = %s" % (ok))
+                Misc.log("Auth.checkAccess", "actor hacked on, in accessList = %s" % (ok))
                 return True
             else:
                 return ok
@@ -104,11 +104,11 @@ class Auth(CPL.Object):
                 return True
 
             # In this case, send a warning to our .defaultCmd as well as to the affected cmd
-            cmd.warn("permsTxt=%s" % (CPL.qstr("Authorization table has no entry for program: %s" % (program))))
+            cmd.warn("permsTxt=%s" % (Misc.qstr("Authorization table has no entry for program: %s" % (program))))
             if cmd != self.defaultCmd:
-                self.defaultCmd.warn("permsTxt=%s" % (CPL.qstr("Authorization table has no entry for program: %s" % (program))))
+                self.defaultCmd.warn("permsTxt=%s" % (Misc.qstr("Authorization table has no entry for program: %s" % (program))))
             if self.hackOn:
-                CPL.log("Auth.checkAccess", "unknown program %s" % (program))
+                Misc.log("Auth.checkAccess", "unknown program %s" % (program))
                 return True
             else:
                 return False
@@ -142,7 +142,7 @@ class Auth(CPL.Object):
         actors = self.actors.keys()
         actors.remove('perms')
         actors.sort()
-        actors = [CPL.qstr(x) for x in actors]
+        actors = [Misc.qstr(x) for x in actors]
 
         # HACK - older TUIs do not like empty variables ("name=")
         if actors:
@@ -166,7 +166,7 @@ class Auth(CPL.Object):
 
         programs = self.programs.keys()
         programs.sort()
-        programs = [CPL.qstr(x) for x in programs]
+        programs = [Misc.qstr(x) for x in programs]
 
         # HACK - older TUIs do not like empty variables ("name=")
         if programs:
@@ -190,7 +190,7 @@ class Auth(CPL.Object):
 
         actors = self.lockedActors.keys()
         actors.sort()
-        actors = [CPL.qstr(x) for x in actors]
+        actors = [Misc.qstr(x) for x in actors]
 
         # HACK - older TUIs do not like empty variables ("name=")
         if actors:
@@ -207,11 +207,11 @@ class Auth(CPL.Object):
             cmd = self.defaultCmd
             
         if self.debug > 3:
-            CPL.log("auth.addActors", "adding actors %s" % (actors))
+            Misc.log("auth.addActors", "adding actors %s" % (actors))
 
         for a in actors:
             if a in self.actors:
-                cmd.warn("permsTxt=%s" % (CPL.qstr("Actor %s is already registered for access control." % (a))))
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is already registered for access control." % (a))))
             else:
                 self.actors[a] = True
 
@@ -239,12 +239,12 @@ class Auth(CPL.Object):
             actors = self.actors
                 
         if self.debug > 3:
-            CPL.log("auth.lockActor", "locking actors %s" % (actors))
+            Misc.log("auth.lockActor", "locking actors %s" % (actors))
 
         self.lockedActors = {}
         for a in actors:
             if a not in self.actors:
-                cmd.warn("permsTxt=%s" % (CPL.qstr("Actor %s is not subject to permissions and will not be locked" % (a))))
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not subject to permissions and will not be locked" % (a))))
             else:
                 self.lockedActors[a] = True
 
@@ -264,13 +264,13 @@ class Auth(CPL.Object):
             actors = self.actors
                 
         if self.debug > 3:
-            CPL.log("auth.lockActor", "locking actors %s" % (actors))
+            Misc.log("auth.lockActor", "locking actors %s" % (actors))
 
         for a in actors:
             if a in self.lockedActors:
-                cmd.warn("permsTxt=%s" % (CPL.qstr("Actor %s is already locked" % (a))))
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is already locked" % (a))))
             elif a not in self.actors:
-                cmd.warn("permsTxt=%s" % (CPL.qstr("Actor %s is not subject to permissions and will not be locked" % (a))))
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not subject to permissions and will not be locked" % (a))))
             else:
                 self.lockedActors[a] = True
 
@@ -287,13 +287,13 @@ class Auth(CPL.Object):
             actors = self.lockedActors
 
         if self.debug > 3:
-            CPL.log("auth.unlockActor", "unlocking actors %s" % (actors))
+            Misc.log("auth.unlockActor", "unlocking actors %s" % (actors))
 
         for a in actors:
             try:
                 del self.lockedActors[a]
             except KeyError:
-                cmd.warn("permsTxt=%s" % (CPL.qstr("Actor %s was not locked" % (a))))
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s was not locked" % (a))))
 
         self.genLockedKey(cmd=cmd)
         
@@ -314,7 +314,7 @@ class Auth(CPL.Object):
             programs = self.programs.keys()
 
         programs.sort()
-        CPL.log("auth.genAuthKeys", "listing programs: %s" % (programs))
+        Misc.log("auth.genAuthKeys", "listing programs: %s" % (programs))
 
         for prog in programs:
             try:
@@ -323,8 +323,8 @@ class Auth(CPL.Object):
                 raise Exception("No authorization entry found for program %s" % (prog))
             
             pAuth.sort()
-            actors = [CPL.qstr(x) for x in pAuth]
-            cmd.inform("authList=%s,%s" % (CPL.qstr(prog), ','.join(actors)))
+            actors = [Misc.qstr(x) for x in pAuth]
+            cmd.inform("authList=%s,%s" % (Misc.qstr(prog), ','.join(actors)))
         
     def addPrograms(self, programs=[], actors=[], cmd=None):
         """ Add a list program to the control list.
@@ -344,13 +344,13 @@ class Auth(CPL.Object):
                     programs.append(name)
 
         if self.debug > 3:
-            CPL.log("auth.addPrograms",
+            Misc.log("auth.addPrograms",
                     "adding programs %s with actors=%s" % (programs, actors))
 
         for prog in programs:
             if prog in self.programs:
                 cmd.warn("permsTxt=%s" % \
-                         (CPL.qstr("Program %s already has an authorization entry, which will not be modified." % (prog))))
+                         (Misc.qstr("Program %s already has an authorization entry, which will not be modified." % (prog))))
                 continue
             self.programs[prog] = {}
             self.setActorsForProgram(prog, actors, cmd=cmd)
@@ -369,7 +369,7 @@ class Auth(CPL.Object):
             programs = self.programs.keys()
 
         if self.debug > 3:
-            CPL.log("auth.dropProgram", "dropping programs %s" % (programs))
+            Misc.log("auth.dropProgram", "dropping programs %s" % (programs))
 
         if not cmd:
             cmd = self.defaultCmd
@@ -377,14 +377,14 @@ class Auth(CPL.Object):
         for program in programs:
             if program in self.gods:
                 cmd.warn("permsTxt=%s" % \
-                         (CPL.qstr("Super-%s cannot be removed from the list of authorized programs" % (program))))
+                         (Misc.qstr("Super-%s cannot be removed from the list of authorized programs" % (program))))
                 self.genAuthKeys([program], cmd)
                 continue
             try:
                 del self.programs[program]
             except:
                 cmd.warn("permsTxt=%s" % \
-                         (CPL.qstr("Program %s did not have an authorization entry, so could not be deleted" % (program))))
+                         (Misc.qstr("Program %s did not have an authorization entry, so could not be deleted" % (program))))
             
         self.genProgramsKey(cmd=cmd)
     
@@ -393,19 +393,19 @@ class Auth(CPL.Object):
         """
 
         if self.debug > 3:
-            CPL.log("auth.setActors", "setting actors for commander %s: %s" % (program, actors))
+            Misc.log("auth.setActors", "setting actors for commander %s: %s" % (program, actors))
             
         if not cmd:
             cmd = self.defaultCmd
 
         if program not in self.programs:
-            cmd.fail("permsTxt=%s" % (CPL.qstr("Program %s did not have an authorization entry, so could not be set" % (program))))
+            cmd.fail("permsTxt=%s" % (Misc.qstr("Program %s did not have an authorization entry, so could not be set" % (program))))
             return
         
         d = {}
         for a in actors:
             if a not in self.actors:
-                cmd.warn("permsTxt=%s" % (CPL.qstr("Actor %s is not subject to permissions." % (a))))
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not subject to permissions." % (a))))
             else:
                 d[a] = True
             
@@ -425,17 +425,17 @@ class Auth(CPL.Object):
             cmd = self.defaultCmd
 
         if self.debug > 3:
-            CPL.log("auth.addActors", "adding actors for program %s: %s" % (program, actors))
+            Misc.log("auth.addActors", "adding actors for program %s: %s" % (program, actors))
             
         try:
             d = self.programs[program]
         except KeyError:
-            cmd.fail("permsTxt=%s" % (CPL.qstr("Program %s did not have an authorization entry, so could not be added to" % (program))))
+            cmd.fail("permsTxt=%s" % (Misc.qstr("Program %s did not have an authorization entry, so could not be added to" % (program))))
             return
 
         for a in actors:
             if a not in self.actors:
-                cmd.warn("permsTxt=%s" % (CPL.qstr("Actor %s is not subject to permissions." % (a))))
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not subject to permissions." % (a))))
             else:
                 d[a] = True
 
@@ -446,19 +446,19 @@ class Auth(CPL.Object):
         """
 
         if self.debug > 3:
-            CPL.log("auth.dropActors", "dropping actors for program %s: %s" % (program, actors))
+            Misc.log("auth.dropActors", "dropping actors for program %s: %s" % (program, actors))
             
         try:
             d = self.programs[program]
         except KeyError:
-            cmd.fail("permsTxt=%s" % (CPL.qstr("Program %s did not have an authorization entry, so could not be modified" % (program))))
+            cmd.fail("permsTxt=%s" % (Misc.qstr("Program %s did not have an authorization entry, so could not be modified" % (program))))
             return
 
         for a in actors:
             try:
                 del d[a]
             except KeyError:
-                cmd.warn("permsTxt=%s" % (CPL.qstr("Actor %s was not in program %s's athorized list" % (a, program))))
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s was not in program %s's athorized list" % (a, program))))
 
         self.genAuthKeys(programs=[program], cmd=cmd)
 
@@ -473,7 +473,7 @@ if __name__ == "__main__":
         print "%s %s\t-> %s\t = %s" % (ok, cmdr, actor, access)
         
     g.actors = ('tcc', 'them')
-    a = Auth(CPL.tcmd(name='auth'), debug=9)
+    a = Auth(Misc.tcmd(name='auth'), debug=9)
 
     a.status()
 

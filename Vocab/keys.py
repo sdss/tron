@@ -1,6 +1,6 @@
 __all__ = ['keys']
 
-import CPL
+import Misc
 from Vocab.InternalCmd import InternalCmd
 from Hub.KV.KVDict import kvAsASCII
 import g
@@ -42,11 +42,11 @@ class keys(InternalCmd):
             return
 
         keys = leftovers.keys()
-        CPL.log("keys.getFor", "matched=%s; unmatched=%s; leftovers=%s" % (matched, unmatched, leftovers))
+        Misc.log("keys.getFor", "matched=%s; unmatched=%s; leftovers=%s" % (matched, unmatched, leftovers))
         
         matchedKeys, unmatchedKeys = g.KVs.getValues(actor, keys)
         if unmatchedKeys:
-            failed = [CPL.qstr(x) for x in unmatchedKeys]
+            failed = [Misc.qstr(x) for x in unmatchedKeys]
             cmd.warn('unmatchedKeys=%s' % (','.join(failed)), bcast=False)
 
         values = []

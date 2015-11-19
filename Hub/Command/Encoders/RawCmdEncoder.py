@@ -1,6 +1,6 @@
 __all__ = ['RawCmdEncoder']
            
-import CPL
+import Misc
 from CommandEncoder import CommandEncoder
 
 class RawCmdEncoder(CommandEncoder):
@@ -19,7 +19,7 @@ class RawCmdEncoder(CommandEncoder):
 
         e = "%s%s" % (cmd.cmd, self.EOL)
         if self.debug > 5:
-            CPL.log("RawEncoder", "encoded: %s" % (e))
+            Misc.log("RawEncoder", "encoded: %s" % (e))
 
         return e
     
