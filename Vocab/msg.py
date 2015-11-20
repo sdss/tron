@@ -2,7 +2,7 @@ __all__ = ['msg']
 
 import time
 
-import CPL
+import Misc
 import Vocab.InternalCmd as InternalCmd
 
 """ A simple instant messaging system.
@@ -23,5 +23,5 @@ class msg(InternalCmd.InternalCmd):
         """
         
         ts = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(cmd.ctime))
-        cmd.finish('msg=%s, %s' % (CPL.qstr(ts), CPL.qstr(cmd.cmd)))
+        cmd.finish('msg=%s, %s' % (Misc.qstr(ts), Misc.qstr(cmd.cmd)))
 

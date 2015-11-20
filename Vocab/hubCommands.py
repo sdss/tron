@@ -4,7 +4,7 @@ import sys
 import time
 import os
 
-import CPL
+import Misc
 from Hub.KV.KVDict import *
 import Vocab.InternalCmd as InternalCmd
 import g
@@ -61,27 +61,27 @@ class hubCommands(InternalCmd.InternalCmd):
 
         cmdr = cmd.cmdr()
         if not cmdr:
-            cmd.fail('debug=%s' % (CPL.qstr("cmdr=%s; cmd=%s" % (cmdr, cmd))))
+            cmd.fail('debug=%s' % (Misc.qstr("cmdr=%s; cmd=%s" % (cmdr, cmd))))
             return
-        CPL.log("doListen", "start: %s" % (cmdr.taster))
-        CPL.log("doListen", "leftovers: %s" % (leftovers))
+        Misc.log("doListen", "start: %s" % (cmdr.taster))
+        Misc.log("doListen", "leftovers: %s" % (leftovers))
         
         if 'addActors' in matched:
             actors = leftovers.keys()
-            CPL.log("doListen", "addActors: %s" % (actors))
-            #cmd.inform('text="%s"' % (CPL.qstr("adding actors: %s" % (actors))))
+            Misc.log("doListen", "addActors: %s" % (actors))
+            #cmd.inform('text="%s"' % (Misc.qstr("adding actors: %s" % (actors))))
             cmdr.taster.addToFilter(actors, [], actors)
             cmd.finish()
         elif 'delActors' in matched:
             actors = leftovers.keys()
-            CPL.log("doListen", "delActors: %s" % (actors))
-            #cmd.inform('text="%s"' % (CPL.qstr("removing actors: %s" % (actors))))
+            Misc.log("doListen", "delActors: %s" % (actors))
+            #cmd.inform('text="%s"' % (Misc.qstr("removing actors: %s" % (actors))))
             cmdr.taster.removeFromFilter(actors, [], actors)
             cmd.finish()
         else:
             cmd.fail('text="unknown listen command"')
             
-        CPL.log("doListen", "finish: %s" % (cmdr.taster))
+        Misc.log("doListen", "finish: %s" % (cmdr.taster))
 
     def actors(self, cmd, finish=True):
         """ Return a list of the currently connected actors. """
@@ -98,7 +98,7 @@ class hubCommands(InternalCmd.InternalCmd):
             cmd.finish('')
         
     def status(self, cmd, finish=True):
-        CPL.cfg.flush()
+        Misc.cfg.flush()
 
         self.version(cmd, finish=False)
         self.actors(cmd, finish=False)
@@ -133,10 +133,10 @@ class hubCommands(InternalCmd.InternalCmd):
         ok = True
         for nub in nubs:
             try:
-                cmd.inform('text=%s' % (CPL.qstr("stopping nub %s" % (nub))))
+                cmd.inform('text=%s' % (Misc.qstr("stopping nub %s" % (nub))))
                 hub.stopNub(nub)
             except Exception, e:
-                cmd.warn('text=%s' % (CPL.qstr("failed to stop nub %s: %s" % (nub, e))))
+                cmd.warn('text=%s' % (Misc.qstr("failed to stop nub %s: %s" % (nub, e))))
 
         cmd.finish('')
 
@@ -151,10 +151,10 @@ class hubCommands(InternalCmd.InternalCmd):
         ok = True
         for nub in nubs:
             try:
-                cmd.inform('text=%s' % (CPL.qstr("(re-)starting nub %s" % (nub))))
+                cmd.inform('text=%s' % (Misc.qstr("(re-)starting nub %s" % (nub))))
                 hub.startNub(nub)
             except Exception, e:
-                cmd.warn('text=%s' % (CPL.qstr("failed to start nub %s: %s" % (nub, e))))
+                cmd.warn('text=%s' % (Misc.qstr("failed to start nub %s: %s" % (nub, e))))
 
         cmd.finish('')
 
@@ -171,7 +171,7 @@ class hubCommands(InternalCmd.InternalCmd):
                 nub = g.actors[n]
                 nub.statusCmd(cmd, doFinish=False)
             except Exception, e:
-                cmd.warn('text=%s' % (CPL.qstr("failed to query actor %s: %s" % (n, e))))
+                cmd.warn('text=%s' % (Misc.qstr("failed to query actor %s: %s" % (n, e))))
 
         cmd.finish('')
 
@@ -188,7 +188,7 @@ class hubCommands(InternalCmd.InternalCmd):
                 nub = g.actors[n]
                 nub.listCommandsCmd(cmd, doFinish=False)
             except Exception, e:
-                cmd.warn('text=%s' % (CPL.qstr("failed to query actor %s: %s" % (n, e))))
+                cmd.warn('text=%s' % (Misc.qstr("failed to query actor %s: %s" % (n, e))))
 
         cmd.finish('')
 
@@ -200,12 +200,12 @@ class hubCommands(InternalCmd.InternalCmd):
         if len(words) == 0:
             words = None
 
-        CPL.log("hubCmd", "loadWords loading %s" % (words))
+        Misc.log("hubCmd", "loadWords loading %s" % (words))
         try:
             hub.loadWords(words)
         except Exception, e:
-            CPL.tback('hub.loadWords', e)
-            cmd.fail('text=%s' % (CPL.qstr(e)))
+            Misc.tback('hub.loadWords', e)
+            cmd.fail('text=%s' % (Misc.qstr(e)))
             return
         
         if finish:
@@ -228,19 +228,19 @@ class hubCommands(InternalCmd.InternalCmd):
         keys = words[2:]
         
         matched, unmatched = g.KVs.getValues(src, keys)
-        CPL.log("hub.getKeys", "matched=%s unmatched=%s" % (matched, unmatched))
+        Misc.log("hub.getKeys", "matched=%s unmatched=%s" % (matched, unmatched))
         for k, v in matched.iteritems():
             kvString = kvAsASCII(k, v)
             cmd.inform(kvString, src="hub.%s" % (src))
         if unmatched:
-            cmd.warn("text=%s" % (CPL.qstr("unmatched %s keys: %s" % (src, ', '.join(unmatched)))))
+            cmd.warn("text=%s" % (Misc.qstr("unmatched %s keys: %s" % (src, ', '.join(unmatched)))))
         cmd.finish('')
 
     def reallyReallyRestart(self, cmd):
         """ Restart the entire MC. Which among other things kills us now. """
 
         cmd.warn('text=%s' % \
-                 (CPL.qstr('Restarting the hub now... bye, bye, and please call back soon!')))
+                 (Misc.qstr('Restarting the hub now... bye, bye, and please call back soon!')))
 
         # Give the poller a chance to flush out the warning.
         g.poller.callMeIn(hub.restart, 1.0)

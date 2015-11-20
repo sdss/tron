@@ -2,7 +2,7 @@ __all__ = ['InternalCmd']
 
 import re
 
-import CPL
+import Misc
 
 class InternalCmd(object):
 
@@ -42,7 +42,7 @@ class InternalCmd(object):
         """ 
         """
 
-        CPL.log("%s.cmd" % (self.name), "running cmd=%s" % (CPL.qstr(cmd.cmd)))
+        Misc.log("%s.cmd" % (self.name), "running cmd=%s" % (Misc.qstr(cmd.cmd)))
         self.totalCommands += 1
         
         cmd.parseArgs()
@@ -55,21 +55,21 @@ class InternalCmd(object):
         cmdHandler = self.commands.get(cmdWord, None)
         if cmdHandler == None:
             cmd.fail('%sTxt=%s' % \
-                     (self.name, CPL.qstr("No command named %s" % (cmdWord))))
+                     (self.name, Misc.qstr("No command named %s" % (cmdWord))))
             return
 
         cmd.reportQueued()
         try:
             cmdHandler(cmd)
         except Exception, e:
-            CPL.tback('Vocab.sendCommand', e)
-            cmd.fail('%sTxt=%s' % (self.name, CPL.qstr(e, tquote='"')))
+            Misc.tback('Vocab.sendCommand', e)
+            cmd.fail('%sTxt=%s' % (self.name, Misc.qstr(e, tquote='"')))
             return
 
     def statusCmd(self, cmd, doFinish=True):
         """ """
 
-        cmd.inform("vocabStats=%s,%d" % (CPL.qstr(self.name), self.totalCommands))
+        cmd.inform("vocabStats=%s,%d" % (Misc.qstr(self.name), self.totalCommands))
         
         if doFinish:
             cmd.finish()

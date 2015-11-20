@@ -1,11 +1,11 @@
 __all__ = ['ReplyEncoder']
            
-import CPL
+import Misc
 
-class ReplyEncoder(CPL.Object):
+class ReplyEncoder(Misc.Object):
 
     def __init__(self, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
 
         self.name = argv.get('name', '.unnamed')
         self.nubID = None

@@ -5,7 +5,7 @@ import resource
 import signal
 import sys
 
-import CPL
+import Misc
 from ActorNub import ActorNub
 
 class ShellNub(ActorNub):
@@ -24,16 +24,16 @@ class ShellNub(ActorNub):
         try:
             os.kill(self.pid, self.sig)
         except Exception, e:
-            CPL.log("Shell.shutdown",
+            Misc.log("Shell.shutdown",
                     "os.kill(pid=%s, sig=%s) failed with %s" % \
                     (self.pid, self.sig, e))
 
         pid, status = os.waitpid(self.pid, 0)
-        CPL.log("Shell.shutdown", "waitpid returned pid=%s and status=%s" % (pid, status))
+        Misc.log("Shell.shutdown", "waitpid returned pid=%s and status=%s" % (pid, status))
 
     def shell(self, cmd):
 
-        CPL.log('Shell.shell', "%s launching %r" % (self.name, cmd))
+        Misc.log('Shell.shell', "%s launching %r" % (self.name, cmd))
 
         self.cmd = cmd
         p1_i, p1_o = os.pipe()
@@ -76,6 +76,6 @@ class ShellNub(ActorNub):
             self.setInputFile(os.fdopen(p2_i, "r"))
             self.setOutputFile(os.fdopen(p1_o, "w"))
             
-            CPL.log('Shell.shell', "launched '%s' %r as pid %d" % (cmd[0], cmd[1:], pid))
+            Misc.log('Shell.shell', "launched '%s' %r as pid %d" % (cmd[0], cmd[1:], pid))
             
 

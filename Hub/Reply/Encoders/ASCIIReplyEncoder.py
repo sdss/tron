@@ -2,7 +2,7 @@ __all__ = ['ASCIIReplyEncoder']
            
 import re
 
-import CPL
+import Misc
 from Hub.KV.KVDict import kvAsASCII
 from ReplyEncoder import ReplyEncoder
 
@@ -53,7 +53,7 @@ class ASCIIReplyEncoder(ReplyEncoder):
             id_s = "%s %s" % (mid, cid)
 
         if self.debug > 5:
-            CPL.log('ASCIIReplyEncoder.encode', 'CIDfirst=%s, cid=%s, mid=%s, id_s=%s' % (self.CIDfirst, cid, mid, id_s))
+            Misc.log('ASCIIReplyEncoder.encode', 'CIDfirst=%s, cid=%s, mid=%s, id_s=%s' % (self.CIDfirst, cid, mid, id_s))
         
         if noKeys:
             keys = ''
@@ -96,14 +96,14 @@ class ASCIIReplyEncoder(ReplyEncoder):
         """
         
         if self.debug > 5:
-            CPL.log("ASCIIReplyEnc.encode", "encoding %r" % (KVs,))
+            Misc.log("ASCIIReplyEnc.encode", "encoding %r" % (KVs,))
         if KVs == None:
             return ""
         
         keylist = []
         for k, v in KVs.iteritems():
             if self.debug > 5:
-                CPL.log("ASCIIReplyEnc.encode", "encoding %r=%r" % (k, v))
+                Misc.log("ASCIIReplyEnc.encode", "encoding %r=%r" % (k, v))
 
             keylist.append(kvAsASCII(k, v, escape=self.EOL))
             

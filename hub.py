@@ -26,11 +26,10 @@ import re
 import signal
 import sys
 import time
-from RO.Alg import OrderedDict
-#import collections
+from collections import OrderedDict
 
 import svnVersion
-import CPL
+import Misc
 from Misc.cdict import cdict
 
 import IO
@@ -49,18 +48,18 @@ def init():
     # Bootstrap the whole configuration system
     configPath = os.environ.get('CONFIG_DIR',
                                 os.path.join(os.environ['TRON_DIR'], 'config'))
-    CPL.cfg.init(path=configPath)
+    Misc.cfg.init(path=configPath)
     os.environ['CONFIG_DIR'] = configPath
     
-    g.logDir = CPL.cfg.get('hub', 'logDir')
-    CPL.setLogdir(g.logDir)
-    CPL.setID('hub')
-    CPL.log('hub.init', 'logger started...')
+    g.logDir = Misc.cfg.get('hub', 'logDir')
+    Misc.setLogdir(g.logDir)
+    Misc.setID('hub')
+    Misc.log('hub.init', 'logger started...')
 
     #   - a globally unique ID generator for Commands.
-    g.xids = CPL.ID()
-    g.nubIDs = CPL.ID()
-    g.hubMIDs = CPL.ID()
+    g.xids = Misc.ID()
+    g.nubIDs = Misc.ID()
+    g.hubMIDs = Misc.ID()
     
     # The Hub is basically:
     #   All of these are in the global namespace "g".
@@ -95,10 +94,10 @@ def init():
     #   - A PollHandler
     g.poller = IO.PollHandler(debug=1)
 
-    CPL.log('hub.init', 'loading internal vocabulary...')
+    Misc.log('hub.init', 'loading internal vocabulary...')
     loadWords(None)
     
-    CPL.log('hub.init', 'loading keys...')
+    Misc.log('hub.init', 'loading keys...')
     loadKeys()
 
     # atexit.register(shutdown)
@@ -116,12 +115,12 @@ def handleSIGTERM(signal, frame):
 def getSetHubVersion():
     """ Put the uncached svn version info into the hub.version keyword. """
 
-    version = CPL.qstr(svnVersion.svnTagOrRevision())
+    version = Misc.qstr(svnVersion.svnTagOrRevision())
     g.KVs.setKV('hub', 'version', version, None)
 
 def loadKeys():
-    rootDir = CPL.cfg.get(g.location, 'httpRoot')
-    host = CPL.cfg.get(g.location, 'httpHost')
+    rootDir = Misc.cfg.get(g.location, 'httpRoot')
+    host = Misc.cfg.get(g.location, 'httpHost')
 
     g.KVs.setKV('hub', 'httpRoot', [host, rootDir], None)
 
@@ -129,7 +128,7 @@ def loadKeys():
     
 def loadWords(words=None):
     if words == None:
-        words = CPL.cfg.get('hub', 'vocabulary')
+        words = Misc.cfg.get('hub', 'vocabulary')
 
     for w in words:
         _loadWords([w])
@@ -141,12 +140,12 @@ def _loadWords(wordlist):
     # First, (re-)load the entire Vocabulary module. Let that fail to the top
     # level.
     #
-    CPL.log('hub.loadVocab', 'trying to (re-)load Vocab module')
+    Misc.log('hub.loadVocab', 'trying to (re-)load Vocab module')
     fp, pathname, description = imp.find_module('Vocab')
     vocab_mod = imp.load_module('Vocab', fp, pathname, description)
     if fp:
         fp.close()
-    CPL.log('hub.loadVocab', 'Vocab module: %s' % (dir(vocab_mod)))
+    Misc.log('hub.loadVocab', 'Vocab module: %s' % (dir(vocab_mod)))
      
     for w in wordlist:
         # Now try to load the module itself.
@@ -155,7 +154,7 @@ def _loadWords(wordlist):
         if w == 'hub':
             modName = 'hubCommands'
         try:
-            CPL.log('hub.loadVocab', 'trying to (re-)load vocabulary word %s' % (w,))
+            Misc.log('hub.loadVocab', 'trying to (re-)load vocabulary word %s' % (w,))
             fp, pathname, description = imp.find_module(modName, vocab_mod.__path__)
             mod = imp.load_module(modName, fp, pathname, description)
         except ImportError, e:
@@ -164,7 +163,7 @@ def _loadWords(wordlist):
         if fp:
             fp.close()
 
-        CPL.log('hub.loadWords', 'loading vocabulary word %s from %s...' % (w, modName))
+        Misc.log('hub.loadWords', 'loading vocabulary word %s from %s...' % (w, modName))
 
         try:
             cmdSet = getattr(mod,modName)()
@@ -178,10 +177,10 @@ def _loadWords(wordlist):
 
         addActor(cmdSet)
         
-        CPL.log('hub.loadWords', 'vocabulary: %s' % (g.vocabulary))
+        Misc.log('hub.loadWords', 'vocabulary: %s' % (g.vocabulary))
         
 def shutdown():
-    CPL.log('hub.shutdown', 'shutting down......................................')
+    Misc.log('hub.shutdown', 'shutting down......................................')
     try:
         _shutdown()
     except:
@@ -189,13 +188,13 @@ def shutdown():
     sys.exit(0)
 
 def restart():
-    CPL.log('hub.restart', 'restarting......................................')
+    Misc.log('hub.restart', 'restarting......................................')
     try:
         _shutdown()
     except:
         pass
 
-    CPL.log('hub.restart', 'for real......................................')
+    Misc.log('hub.restart', 'for real......................................')
     time.sleep(1)
     os.execlp("tron", "tron", "restart")
     
@@ -228,14 +227,14 @@ def run():
     """
     while 1:
         try:
-            CPL.log("hub.run", "actors id=%r" % (id(g.actors)))
+            Misc.log("hub.run", "actors id=%r" % (id(g.actors)))
             g.poller.run()
         except (SystemExit, KeyboardInterrupt):
-            CPL.log('Hub.run', 'Normal exit."')
+            Misc.log('Hub.run', 'Normal exit."')
             raise
         
         except Exception, e:
-            CPL.tback('Hub.run', e)
+            Misc.tback('Hub.run', e)
 
 class NubDict(OrderedDict):
     """ Arrange for access to a dictionary to be annotated. """
@@ -258,7 +257,7 @@ class NubDict(OrderedDict):
     def listSelf(self, cmd=None):
         names = []
         for n in self.itervalues():
-            names.append(CPL.qstr(n.name))
+            names.append(Misc.qstr(n.name))
 
         if not cmd:
             cmd = g.hubcmd
@@ -276,10 +275,10 @@ class CmdrDict(NubDict):
         names = []
         userNames = []
         for n in self.itervalues():
-            names.append(CPL.qstr(n.name))
+            names.append(Misc.qstr(n.name))
             if n.isUser:
-                userNames.append(CPL.qstr(n.name))
-            CPL.log('listCommanders', 'n=%s has info=%s' % (n, n.userInfo))
+                userNames.append(Misc.qstr(n.name))
+            Misc.log('listCommanders', 'n=%s has info=%s' % (n, n.userInfo))
             if n.userInfo:
                 cmd.inform(n.userInfo)
 
@@ -292,23 +291,23 @@ def addNubToDict(nub, nubDict):
 
     existingNub = findNubInDict(nub.ID, nubDict)
     if existingNub != None:
-        CPL.log("Hub.nubs", "nub %s already exists; not overwriting" % (nub.ID))
+        Misc.log("Hub.nubs", "nub %s already exists; not overwriting" % (nub.ID))
         return
     
     nubDict[nub.ID] = nub
-    CPL.log('Hub.nubs', 'added nub %s to %s' % (nub, nubDict))
+    Misc.log('Hub.nubs', 'added nub %s to %s' % (nub, nubDict))
         
     
 def dropNubFromDict(nub, nubDict, doShutdown=True):
     """ Close an existing nub. The nub must, of course, be in the given nub dict. """
 
-    CPL.log('Hub.nubs', 'dropping nub=%s shutdown=%s' % (nub, doShutdown))
+    Misc.log('Hub.nubs', 'dropping nub=%s shutdown=%s' % (nub, doShutdown))
     if doShutdown:
         nub.shutdown(notifyHub=False)
 
     nub = findNubInDict(nub.ID, nubDict)
     if nub == None:
-        CPL.log('Hub.nubs', 'nub %s is not registered; not dropping it' % (nub.ID))
+        Misc.log('Hub.nubs', 'nub %s is not registered; not dropping it' % (nub.ID))
         return
     
     del nubDict[nub.ID]
@@ -333,11 +332,11 @@ def dropActor(nub):
 def findActor(id): return findNubInDict(id, g.actors)
 
 def addCommander(nub):
-    CPL.log("hub.addCommander", "adding %s" % (nub.name))
+    Misc.log("hub.addCommander", "adding %s" % (nub.name))
     addNubToDict(nub, g.commanders)
     
 def dropCommander(nub, doShutdown=True):
-    CPL.log("hub.dropCommander", "dropping %s" % (nub.name))
+    Misc.log("hub.dropCommander", "dropping %s" % (nub.name))
     dropNubFromDict(nub, g.commanders, doShutdown=doShutdown)
     
 def findCommander(id): return findNubInDict(id, g.commanders)
@@ -364,7 +363,7 @@ def dropNub(nub):
     elif nub.ID in g.acceptors:
         dropAcceptor(nub)
     else:
-        CPL.log("hub.dropNub",
+        Misc.log("hub.dropNub",
                 "nub %s (%s) is neither in g.actors (%s) or g.commanders (%s)" % \
                 (nub.ID, nub, g.actors, g.commanders))
 
@@ -416,14 +415,14 @@ def getActor(cmd):
 
     actorName = cmd.actorName
 
-    #CPL.log("hub.getActor", "looking for actor %s" % (actorName))
+    #Misc.log("hub.getActor", "looking for actor %s" % (actorName))
     tgt = g.actors.get(actorName, None)
 
     if tgt == None:
-        #CPL.log("hub.getActor", "looking for vocabulary word %s" % (actorName))
+        #Misc.log("hub.getActor", "looking for vocabulary word %s" % (actorName))
         tgt = g.vocabulary.get(actorName, None)
         
-    CPL.log("hub.getActor", "actornName %s target = %s" % (actorName, tgt))
+    Misc.log("hub.getActor", "actornName %s target = %s" % (actorName, tgt))
     return tgt
 
 def addCommand(cmd):
@@ -438,7 +437,7 @@ def addCommand(cmd):
           - Provide some throttling to avoid idiocy when, say, the tcc password is changed.
     """
     
-    CPL.log("hub.addCommand", "new cmd=%s" % (cmd))
+    Misc.log("hub.addCommand", "new cmd=%s" % (cmd))
     
     if cmd.actorName == 'dbg':
         runCmd(cmd)
@@ -448,7 +447,7 @@ def addCommand(cmd):
 
     if actor == None:
         cmd.fail('NoTarget=%s' % \
-                 CPL.qstr("the target named %s is not connected" % (cmd.actorName)),
+                 Misc.qstr("the target named %s is not connected" % (cmd.actorName)),
                  src='hub')
         return
 
@@ -456,7 +455,7 @@ def addCommand(cmd):
     ok = g.perms.checkAccess(cmd.cmdrCid, actor, cmd)
     if not ok:
         cmd.fail('NoPermission=%s' % \
-                 CPL.qstr("you do not have permission to command %s" % \
+                 Misc.qstr("you do not have permission to command %s" % \
                           (actor.needsAuth)),
                  src='hub')
         return
@@ -465,65 +464,21 @@ def addCommand(cmd):
 
 def runCmd(c):
     cmd = c.cmd.strip()
-    CPL.log("hub.runCmd", "cmd = %r" % (cmd))
+    Misc.log("hub.runCmd", "cmd = %r" % (cmd))
     if cmd == "":
-        c.finish("Eval=%s" % (CPL.qstr("")),
+        c.finish("Eval=%s" % (Misc.qstr("")),
                  src='hub')
         return
     
     try:
         ret = eval(cmd)
     except Exception, e:
-        c.fail('EvalError=%s' % CPL.qstr(e),
+        c.fail('EvalError=%s' % Misc.qstr(e),
                src='hub')
         raise
     
-    c.finish("Eval=%s" % (CPL.qstr(ret)), src='hub')
-    CPL.log("hub.runCmd", "ret = %r" % (ret))
-
-
-def listenTo(**argv):
-    """ Arrange for the given events to be accepted. """
-    pass
-
-def loadVocab(**argv):
-    """ Load the entire Vocabulary, overwriting any existing info. """
-
-    # First, (re-)load the entire Nubs module. Let that fail to the top
-    # level.
-    #
-    fp, pathname, description = imp.find_module('Vocab')
-    vocab_mod = imp.load_module('Vocab', fp, pathname, description)
-    if fp:
-        fp.close()
-     
-    # Now try to load the module itself.
-    #
-    try:
-        CPL.log('hub.loadVocab', 'trying to (re-)load vocabulary')
-        fp, pathname, description = imp.find_module(name, vocab_mod.__path__)
-    except:
-        raise
-
-    try:
-        mod = imp.load_module(name, fp, pathname, description)
-    finally:
-        # Since we may exit via an exception, close fp explicitly.
-        if fp:
-            fp.close()
-
-    # And call the start() function.
-    #
-    CPL.log('hub.startAConnection', 'starting Nub %s...' % (name))
-    mod.start(g.poller)
-
-def stopNub(id):
-    """  """
-
-    n = findNub(id)
-    if n:
-        n.shutdown(notifyHub=False)
-        dropNub(n)
+    c.finish("Eval=%s" % (Misc.qstr(ret)), src='hub')
+    Misc.log("hub.runCmd", "ret = %r" % (ret))
 
 def forceReload(name, all=True):
     """ Do whatever we can to force a given module/package to be reloaded.
@@ -545,7 +500,7 @@ def forceReload(name, all=True):
             partName = name[start:end]
             start = end+1
 
-            CPL.log('hub.forceReload', 'trying to (re-)load module %s in %s' % (partName, mod))
+            Misc.log('hub.forceReload', 'trying to (re-)load module %s in %s' % (partName, mod))
             if mod == None:
                 fp, pathname, description = imp.find_module(partName)
             else:
@@ -560,7 +515,7 @@ def forceReload(name, all=True):
     # Now try to load the module itself.
     #
     try:
-        CPL.log('hub.forceReload', 'trying to (re-)load final %s in %s' % (partName, mod))
+        Misc.log('hub.forceReload', 'trying to (re-)load final %s in %s' % (partName, mod))
         if mod == None:
             fp, pathname, description = imp.find_module(partName)
         else:
@@ -588,7 +543,7 @@ def startNub(name):
     (Re-)Loads a module named 'name' from the Nubs folder and calls the start function.
     """
 
-    CPL.log('hub.startNub', 'trying to start %s' % (name))
+    Misc.log('hub.startNub', 'trying to start %s' % (name))
 
     # First, (re-)load the entire Nubs module. Let that fail to the top
     # level.
@@ -601,7 +556,7 @@ def startNub(name):
     # Now try to load the module itself.
     #
     try:
-        CPL.log('hub.startNub', 'trying to (re-)load Nub %s' % (name))
+        Misc.log('hub.startNub', 'trying to (re-)load Nub %s' % (name))
         fp, pathname, description = imp.find_module(name, nubs_mod.__path__)
     except:
         raise
@@ -615,5 +570,5 @@ def startNub(name):
 
     # And call the start() function.
     #
-    CPL.log('hub.startNub', 'starting Nub %s...' % (name))
+    Misc.log('hub.startNub', 'starting Nub %s...' % (name))
     mod.start(g.poller)

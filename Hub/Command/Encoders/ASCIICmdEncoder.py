@@ -1,6 +1,6 @@
 __all__ = ['ASCIICmdEncoder']
            
-import CPL
+import Misc
 from CommandEncoder import CommandEncoder
 
 class ASCIICmdEncoder(CommandEncoder):
@@ -44,7 +44,7 @@ class ASCIICmdEncoder(CommandEncoder):
             e = "%s%s%s%s" % (cmdrInfo, ids, cmd.cmd, self.EOL)
 
         if self.debug > 5:
-            CPL.log("ASCIIEncoder", "encoded: %s" % (e))
+            Misc.log("ASCIIEncoder", "encoded: %s" % (e))
 
         return e
     

@@ -3,7 +3,7 @@ import os
 from Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 from Hub.Nub.SocketActorNub import SocketActorNub
-import CPL.cfg
+import Misc.cfg
 import hub
 import g
 
@@ -12,7 +12,8 @@ import g
 name = 'apogeecal'
 
 def start(poller):
-    cfg = CPL.cfg.get(g.location, 'actors', doFlush=True)[name]
+    cfg = Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
+
     stop()
 
     initCmds = ('ping',

@@ -1,14 +1,14 @@
 __all__ = ['ReplyTaster']
 
-import CPL
+import Misc
 
-class ReplyTaster(CPL.Object):
+class ReplyTaster(Misc.Object):
     """ Control which Replys we should accept. So far, we can list match against a number
         of actors and commanders.
     """
   
     def __init__(self, **argv):
-        CPL.Object.__init__(self, **argv)
+        Misc.Object.__init__(self, **argv)
 
         self.actors = {}
         self.cmdrs = {}

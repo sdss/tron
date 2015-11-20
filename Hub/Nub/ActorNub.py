@@ -5,7 +5,7 @@ import re
 from Hub.Command.Command import Command
 from CoreNub import CoreNub
 
-import CPL
+import Misc
 import g
 
 class ActorNub(CoreNub):
@@ -48,7 +48,7 @@ class ActorNub(CoreNub):
         else:
             # Let this fail grotesquely.
             self.safeCmds = re.compile(safeCmds)
-            CPL.log("ActorNub.init", "added safeCmds %s from %s" % (self.safeCmds, safeCmds))
+            Misc.log("ActorNub.init", "added safeCmds %s from %s" % (self.safeCmds, safeCmds))
             
         # All active commands that we are aware of, either because
         # we sent them, or because the actor replied to it.
@@ -83,9 +83,9 @@ class ActorNub(CoreNub):
             initCmds = self.initCmds
             doRegister = True
         
-        CPL.log("ActorNub.connected", "sending initCmds to %s (cid=%s)" % (self.ID, self.cid))
+        Misc.log("ActorNub.connected", "sending initCmds to %s (cid=%s)" % (self.ID, self.cid))
         for c in initCmds:
-            CPL.log("ActorNub.connected", "sending initCmd %s" % (c))
+            Misc.log("ActorNub.connected", "sending initCmd %s" % (c))
             self.sendCommand(Command('.hub', '0',
                                      g.hubMIDs.gimme(),
                                      self.name, c),
@@ -120,7 +120,7 @@ class ActorNub(CoreNub):
         """
 
         if self.debug > 6:
-            CPL.log('Nub.copeWithInput', "ActorNub %s read: %s" % (self.name, s))
+            Misc.log('Nub.copeWithInput', "ActorNub %s read: %s" % (self.name, s))
 
         # Find and execute _every_ complete input.
         # The only time this function gets called is when new input comes in, so we
@@ -145,7 +145,7 @@ class ActorNub(CoreNub):
             # The actor had better reply to our connection...
             #
             if self.cid == None and self.grabCID != False:
-                CPL.log("Nub.copeWithInput", "setting %s cid=%s" % (self.name, reply['cid']))
+                Misc.log("Nub.copeWithInput", "setting %s cid=%s" % (self.name, reply['cid']))
                 self.cid = reply['cid']
                 self.connected()
                 
@@ -174,7 +174,7 @@ class ActorNub(CoreNub):
         key = self.keyForCommand(cmd)
         
         if self.debug > 0:
-            CPL.log("Nub", "registering key(ours=%s)=%s for %s" % (key, ours, cmd))
+            Misc.log("Nub", "registering key(ours=%s)=%s for %s" % (key, ours, cmd))
         if ours and self.liveCommands.has_key(key):
             raise RuntimeError("Duplicate command key for %s: %s" % (self, key))
 
@@ -247,10 +247,10 @@ class ActorNub(CoreNub):
         """
 
         cmd.inform('actorCmds=%s,%d,%d' % \
-                   (CPL.qstr(self.name), len(self.liveCommands), len(self.ourCommands)))
+                   (Misc.qstr(self.name), len(self.liveCommands), len(self.ourCommands)))
 
         for id, ourCmd in self.ourCommands.iteritems():
             cmd.inform('actorCmd=%s,%s,%s' % \
-                   (CPL.qstr(self.name), CPL.qstr(id), CPL.qstr(ourCmd)))
+                   (Misc.qstr(self.name), Misc.qstr(id), Misc.qstr(ourCmd)))
             
 
