@@ -80,7 +80,7 @@ class NubAuth(object):
 
         # Gets the password from the keyring. It assumes that the password for
         # each program has been input in the keyring under the service 'hub'
-        # (multiple programs—users—can be under the same service). If the
+        # (multiple programs-users-can be under the same service). If the
         # program or service are not found, returns None.
         ourPW = keyring.get_password('hub', program)
         if ourPW is None:
