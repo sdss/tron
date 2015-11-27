@@ -128,7 +128,6 @@ etc/config.ini -text
 etc/tron.module -text
 /g.py -text
 /hub.py -text
-/passwords -text
 /runhub.py -text
 /svnVersion.py -text
 ups/tron.table -text
