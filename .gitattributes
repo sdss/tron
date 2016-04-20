@@ -105,6 +105,7 @@ Nubs/sop.py -text
 Nubs/tcc-john.py -text
 Nubs/tcc.py -text
 Nubs/tcc25m-old.py -text
+Nubs/telemetry.py -text
 Nubs/toy.py -text
 Parsing/Exceptions.py -text
 Parsing/__init__.py -text
