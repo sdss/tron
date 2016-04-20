@@ -31,8 +31,8 @@ def start(poller):
                          debug=3)
     g.perms.addPrograms([name])
     hub.addActor(nub)
-    g.perms.addActorsToProgram(name, ['tcc'])
-    
+    g.perms.addActorsToProgram(name, [actor]) for actor in Misc.cfg.get('hub', 'actors').keys()
+
 def stop():
     n = hub.findActor(name)
     if n:
