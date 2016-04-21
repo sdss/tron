@@ -12,6 +12,8 @@ nubs = ('client',
         'tcc',
         'apo',
 
+        'telemetry',
+
         'sop',
         'platedb',
         'gcamera',
