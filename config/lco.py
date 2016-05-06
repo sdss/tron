@@ -25,7 +25,7 @@ actors = dict(alerts=    dict(host="sdss4-hub.lco.cl", port=9995, actorName='ale
               guider=    dict(host="sdss4-hub.lco.cl", port=9994, actorName='guiderActor'),
               toy=       dict(host="sdss4-hub.lco.cl", port=9000, actorName='toyActor'),
               sop=       dict(host="sdss4-hub.lco.cl", port=9989, actorName='sopActor'),
-
+              tcc=       dict(host="sdss4-hub.lco.cl", port=25000, actorName='sopActor'),
               platedb=   dict(host="sdss4-hub.lco.cl", port=9992, actorName='platedbActor'),
 
               # NOTE: eventually!
