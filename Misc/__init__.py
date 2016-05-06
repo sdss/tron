@@ -8,5 +8,6 @@ from tback import *
 from Logfile import *
 from LLock import *
 from dates import *
+from location import *
 import cfg
 import strcvt
