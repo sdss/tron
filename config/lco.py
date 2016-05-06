@@ -34,5 +34,7 @@ actors = dict(alerts=    dict(host="sdss4-hub.lco.cl", port=9995, actorName='ale
               # apogeeql=  dict(host="sdss4-apogee.lco.cl", port=18282, actorName='apogeeqlActor'),
               )
 
-httpHost = 'sdss-hub.lco.cl'
+# Eventually it will be this, but for now we are using the BPG URL.
+# httpHost = 'sdss-hub.lco.cl'
+httpHost = '139.229.101.71'
 httpRoot = '/'

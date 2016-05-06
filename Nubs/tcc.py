@@ -4,11 +4,16 @@ from Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 from Hub.Nub.SocketActorNub import SocketActorNub
 import g as hub_globals
+import Misc.cfg
+import g
 import hub
 
 name = 'tcc'
 
+
 def start(poller):
+
+    cfg = Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
 
     stop()
 
@@ -27,7 +32,7 @@ def start(poller):
 
     d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
     e = ASCIICmdEncoder(EOL='\r', useCID=False, CIDfirst=False, debug=1)
-    tcc = SocketActorNub(poller, 'localhost', 25000,
+    tcc = SocketActorNub(poller, cfg['host'], cfg['port'],
                          grabCID=True, # Send an empty command to just get a CID
                          initCmds=initCmds, safeCmds=safeCmds,
                          needsAuth=False,
@@ -41,4 +46,3 @@ def stop():
     if n:
         hub.dropActor(n)
         del n
-
