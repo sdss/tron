@@ -12,8 +12,6 @@ nubs = ('client',
         'tcc',
         'apo',
 
-        'telemetry',
-
         'sop',
         'platedb',
         'gcamera',
@@ -34,8 +32,6 @@ actors = dict(alerts=    dict(host="sdss4-hub.apo.nmsu.edu", port=9995, actorNam
               guider=    dict(host="sdss4-hub.apo.nmsu.edu", port=9994, actorName='guiderActor'),
               toy=       dict(host="sdss4-hub.apo.nmsu.edu", port=9000, actorName='toyActor'),
               sop=       dict(host="sdss4-hub.apo.nmsu.edu", port=9989, actorName='sopActor'),
-
-              telemetry= dict(host="sdss4-telemetry.apo.nmsu.edu", port=9986, actorName='telemetryActor'),
 
               platedb=   dict(host="sdss4-hub.apo.nmsu.edu", port=9992, actorName='platedbActor'),
 
