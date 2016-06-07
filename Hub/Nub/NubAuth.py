@@ -7,6 +7,9 @@ import hub
 import Misc
 import Parsing
 
+import keyring
+
+
 class NubAuth(object):
     """
     Intercepts and act on login and logout commands.
@@ -22,41 +25,6 @@ class NubAuth(object):
         self.state = self.NOT_CONNECTED
         self.nonce = None
         self.passwords = {}
-        
-    def readPasswordFile(self):
-        """ Read the password file into the .passwords dictionary. """
-        
-        try:
-            path = Misc.cfg.get('hub', 'passwordFile')
-            pw_f = open(path, "r")
-        except Exception, e:
-            g.hubcmd.inform('HubError=%s' % (Misc.qstr("Could not read the password file: %s" % e)),
-                            src="hub")
-
-            return "Could not read the password file."
-        
-        passwords = {}
-        for l in pw_f:
-            # Ignore blank lines and comment lines.
-            #
-            l = l.strip()
-            if len(l) == 0 or l[0] == '#':
-                continue
-                
-            try:
-                (program, password) = l.split()
-            except Exception, e:
-                g.hubcmd.inform('HubError=%s' % (Misc.qstr("password file line cannot be parsed: %s" % l)),
-                                src="hub")
-
-                continue
-            program = program.upper()
-            passwords[program] = password
-        
-        self.passwords = passwords
-        pw_f.close()
-        
-        return True
     
     def rejectClient(self, cmd, clientType, clientVersion, clientPlatform):
         return False
@@ -105,17 +73,17 @@ class NubAuth(object):
 
         if "program" not in matched or "password" not in matched:
             return "not all arguments to login were found."
-        
-        ret = self.readPasswordFile()
-        if ret != True:
-            return ret
-        
+                
         # OK. Look for the full program name:
         #
         program = matched["program"].upper()
 
-        ourPW = self.passwords.get(program, None)
-        if ourPW == None:
+        # Gets the password from the keyring. It assumes that the password for
+        # each program has been input in the keyring under the service 'hub'
+        # (multiple programs-users-can be under the same service). If the
+        # program or service are not found, returns None.
+        ourPW = keyring.get_password('hub', program)
+        if ourPW is None:
             return "unknown program"
         
         enc = sha.new(self.nonce + ourPW)

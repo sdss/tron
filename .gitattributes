@@ -106,6 +106,7 @@ Nubs/sop.py -text
 Nubs/tcc-john.py -text
 Nubs/tcc.py -text
 Nubs/tcc25m-old.py -text
+Nubs/telemetry.py -text
 Nubs/toy.py -text
 Parsing/Exceptions.py -text
 Parsing/__init__.py -text
@@ -132,7 +133,6 @@ etc/config.ini -text
 etc/tron.module -text
 /g.py -text
 /hub.py -text
-/passwords -text
 /runhub.py -text
 /svnVersion.py -text
 ups/tron.table -text
