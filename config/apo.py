@@ -38,6 +38,8 @@ actors = dict(alerts=    dict(host="sdss4-hub.apo.nmsu.edu", port=9995, actorNam
               benchboss= dict(host="sdss4-boss-icc.apo.nmsu.edu", port=9991, actorName='bossICC'),
 
               hartmann=   dict(host="sdss4-eboss.apo.nmsu.edu", port=9988, actorName='hartmannActor'),
+
+              sop=       dict(host="sdss4-tcc.apo.nmsu.edu", port=2500, actorName='tcc')
               )
 
 httpHost = 'sdss-hub.apo.nmsu.edu'
