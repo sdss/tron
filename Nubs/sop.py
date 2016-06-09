@@ -16,7 +16,9 @@ def start(poller):
 
     initCmds = ('ping',
                 'status')
-    # safeCmds = r'^\s*info\s*$'
+
+    safeCmdsList = ['info', 'ping', 'version', 'status']
+    safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
     d = ASCIIReplyDecoder(debug=1)
     e = ASCIICmdEncoder(sendCommander=True, useCID=False, debug=1)
