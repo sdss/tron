@@ -18,8 +18,15 @@ def start(poller):
     stop()
 
     initCmds = ('show version',
+                'show users',
+                'show time',
                 'show status',
-                )
+                'show inst/full',
+                'show object/full',
+                'show axisconfig',
+                'show focus',
+                'axis status',
+                'mir status')
 
     safeCmds = r"(^show )|(status$)"
 
