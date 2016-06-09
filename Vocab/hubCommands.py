@@ -19,9 +19,10 @@ class hubCommands(InternalCmd.InternalCmd):
     hub status
     etc.
     """
-    
+
     def __init__(self, **argv):
         argv['safeCmds'] = '^\s*(actors|commanders|actorInfo|version|status)\s*$'
+        argv['needsAuth'] = True
         InternalCmd.InternalCmd.__init__(self, 'hub', **argv)
 
         self.commands = { 'actors' : self.actors,
@@ -65,7 +66,7 @@ class hubCommands(InternalCmd.InternalCmd):
             return
         Misc.log("doListen", "start: %s" % (cmdr.taster))
         Misc.log("doListen", "leftovers: %s" % (leftovers))
-        
+
         if 'addActors' in matched:
             actors = leftovers.keys()
             Misc.log("doListen", "addActors: %s" % (actors))
@@ -80,7 +81,7 @@ class hubCommands(InternalCmd.InternalCmd):
             cmd.finish()
         else:
             cmd.fail('text="unknown listen command"')
-            
+
         Misc.log("doListen", "finish: %s" % (cmdr.taster))
 
     def actors(self, cmd, finish=True):
@@ -89,14 +90,14 @@ class hubCommands(InternalCmd.InternalCmd):
         g.actors.listSelf(cmd=cmd)
         if finish:
             cmd.finish('')
-        
+
     def commanders(self, cmd, finish=True):
         """ Return a list of the currently connected commanders. """
 
         g.commanders.listSelf(cmd=cmd)
         if finish:
             cmd.finish('')
-        
+
     def status(self, cmd, finish=True):
         Misc.cfg.flush()
 
@@ -106,10 +107,10 @@ class hubCommands(InternalCmd.InternalCmd):
 
         if finish:
             cmd.finish('')
-            
+
     def setUsername(self, cmd):
         """ Change the username for the cmd's commander. """
-        
+
         args = cmd.cmd.split()
         args = args[1:]
 
@@ -165,7 +166,7 @@ class hubCommands(InternalCmd.InternalCmd):
         names = cmd.argDict.keys()[1:]
         if len(names) == 0:
             names = g.actors.keys()
-            
+
         for n in names:
             try:
                 nub = g.actors[n]
@@ -182,7 +183,7 @@ class hubCommands(InternalCmd.InternalCmd):
         names = cmd.argDict.keys()[1:]
         if len(names) == 0:
             names = g.actors.keys()
-            
+
         for n in names:
             try:
                 nub = g.actors[n]
@@ -194,7 +195,7 @@ class hubCommands(InternalCmd.InternalCmd):
 
     def loadWords(self, cmd, finish=True):
         """ (re-)load an internal vocabulary word. """
-        
+
         words = cmd.argDict.keys()[1:]
 
         if len(words) == 0:
@@ -207,26 +208,26 @@ class hubCommands(InternalCmd.InternalCmd):
             Misc.tback('hub.loadWords', e)
             cmd.fail('text=%s' % (Misc.qstr(e)))
             return
-        
+
         if finish:
             cmd.finish()
 
     def getKeys(self, cmd):
-        """ Return a bunch of keys for a given source. 
+        """ Return a bunch of keys for a given source.
 
         Cmd args:
             src  - a key source name.
             keys - 1 or more key names.
         """
-        
+
         words = cmd.cmd.split()
         if len(words) < 3:
             cmd.fail('text="usage: getKeys srcName key1 [key2 ... keyN]"')
             return
-        
+
         src = words[1]
         keys = words[2:]
-        
+
         matched, unmatched = g.KVs.getValues(src, keys)
         Misc.log("hub.getKeys", "matched=%s unmatched=%s" % (matched, unmatched))
         for k, v in matched.iteritems():
@@ -247,7 +248,7 @@ class hubCommands(InternalCmd.InternalCmd):
 
     def relog(self, cmd):
         """ Change where stderr goes to. """
-        
+
         args = cmd.cmd.split()
         args = args[1:]
 
@@ -266,4 +267,3 @@ class hubCommands(InternalCmd.InternalCmd):
         f.close()
 
         cmd.finish('text="Jeebus, you done it now, whatever it was"')
-

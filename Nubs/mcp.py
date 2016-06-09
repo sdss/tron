@@ -21,11 +21,11 @@ def start(poller):
                          name=name, encoder=e, decoder=d,
                          grabCID=True, # the MCP spontaneously generates a line we can eat.
                          initCmds=initCmds, safeCmds=safeCmds,
-                         needsAuth=False,
+                         needsAuth=True,
                          logDir=os.path.join(g.logDir, name),
                          debug=1)
     hub.addActor(nub)
-    
+
 def stop():
     n = hub.findActor(name)
     if n:

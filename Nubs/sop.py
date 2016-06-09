@@ -23,12 +23,12 @@ def start(poller):
     nub = SocketActorNub(poller, cfg['host'], cfg['port'],
                          name=name, encoder=e, decoder=d,
                          grabCID=True, # BOSS spontaneously generates a line we can eat.
-                         initCmds=initCmds, # safeCmds=safeCmds,
-                         needsAuth=False,
+                         initCmds=initCmds, safeCmds=safeCmds,
+                         needsAuth=True,
                          logDir=os.path.join(g.logDir, name),
                          debug=1)
     hub.addActor(nub)
-    
+
 def stop():
     n = hub.findActor(name)
     if n:

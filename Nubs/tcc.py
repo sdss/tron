@@ -28,7 +28,7 @@ def start(poller):
     tcc = SocketActorNub(poller, cfg['host'], cfg['port'],
                          grabCID=True, # Send an empty command to just get a CID
                          initCmds=initCmds, safeCmds=safeCmds,
-                         needsAuth=False,
+                         needsAuth=True,
                          name=name, encoder=e, decoder=d,
                          logDir=os.path.join(hub_globals.logDir, name),
                          debug=1)

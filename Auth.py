@@ -9,11 +9,11 @@ import g
 class Auth(Misc.Object):
     """
     Maintain an authorization table between commanders and actors.
-    
+
     Basics:
        - A certain number of actors are registered with this package.
     """
-    
+
     def __init__(self, defaultCmd, **argv):
         Misc.Object.__init__(self, **argv)
 
@@ -23,18 +23,18 @@ class Auth(Misc.Object):
         self.lockedActors = {}
 
         self.hackOn = False
-        self.gods = ("APO")
+        self.gods = ("APO", 'OBSERVER')
 
         for a in ['perms']:
             self.actors[a] = True
-            
+
         # Gods are special: They:
         #  - can _always_ command "perms"
         #  - can command newly added actors.
         #
         self.addPrograms(self.gods, ["perms"])
         self.status()
-        
+
     def checkAccess(self, cmdr, actor, cmd=None):
         """Return whether the given cmdr may command the given actor.
 
@@ -44,21 +44,23 @@ class Auth(Misc.Object):
            - Otherwise check the program's access list.
         """
 
-        program = cmdr.split('.', 1)[0]
+        program = cmdr.split('.', 1)[0].upper()
+
         if self.debug > 5:
             Misc.log("Auth.checkAccess", "checking %s (%s) -> %s" % (cmdr, program, actor))
-            
+
         if not cmd:
             cmd = self.defaultCmd
 
-        # Do we enforce authorization at all? If so, which actor do we use, only for authorization?
-        authName = actor.needsAuth
-        if not authName:
+        needsAuth = actor.needsAuth
+
+        if not needsAuth:
             return True
+
         actorName = actor.name
 
         # We can lock actors that we ordinarily don't know about, so check .lockedActors first
-        if authName in self.lockedActors:
+        if actorName in self.lockedActors:
             access = program in self.gods
             if access:
                 return True
@@ -67,7 +69,7 @@ class Auth(Misc.Object):
                 return False
 
         # If we don't know about an actor, let the command go through
-        if authName not in self.actors:
+        if actorName not in self.actors:
             if self.hackOn and self.debug > 1:
                 Misc.log("Auth.checkAccess", "unregistered actor %s" % (actorName))
             return True
@@ -76,22 +78,21 @@ class Auth(Misc.Object):
         safeCmds = actor.safeCmds
         if self.debug > 1:
             Misc.log("auth.checkAccess", "checking '%s' against %s" % (cmd.cmd, safeCmds))
-        if safeCmds != None and cmd.cmd != None:
+        if safeCmds is not None and cmd.cmd is not None:
             if safeCmds.search(cmd.cmd):
                 return True
 
         # Let the hub command anything. This is for initialization commands, etc.
-        if program == 'hub':
-            return True
-        
+        # if program == 'hub':
+        #     return True
+
         # But if we don't know about a _program_, block the command.
-        #
         try:
             accessList = self.programs[program]
             if self.debug > 5:
                 Misc.log("Auth.checkAccess", "cmdr %s accessList = %s" % (cmdr, accessList))
 
-            ok = authName in accessList
+            ok = actorName in accessList
 
             if self.hackOn:
                 Misc.log("Auth.checkAccess", "actor hacked on, in accessList = %s" % (ok))
@@ -118,14 +119,14 @@ class Auth(Misc.Object):
 
         Args:
           cmd       - if set, the command to reply to. Otherwise use our .defaultCmd
-          
+
         """
-        
+
         self.genActorsKey(cmd=cmd)
         self.genProgramsKey(cmd=cmd)
         self.genLockedKey(cmd=cmd)
         self.genAuthKeys(cmd=cmd)
-        
+
     def genActorsKey(self, cmd=None):
         """ Generate key describing the actors we control access to.
 
@@ -149,8 +150,8 @@ class Auth(Misc.Object):
             cmd.inform("actors=%s" % (','.join(actors)))
         else:
             cmd.inform("actors")
-            
-        
+
+
     def genProgramsKey(self, cmd=None):
         """ Generate key describing the programs we control access to.
 
@@ -173,8 +174,8 @@ class Auth(Misc.Object):
             cmd.inform("programs=%s" % (','.join(programs)))
         else:
             cmd.inform("programs")
-            
-        
+
+
     def genLockedKey(self, cmd=None):
         """ Generate key describing the locked actors.
 
@@ -205,7 +206,7 @@ class Auth(Misc.Object):
 
         if not cmd:
             cmd = self.defaultCmd
-            
+
         if self.debug > 3:
             Misc.log("auth.addActors", "adding actors %s" % (actors))
 
@@ -219,9 +220,9 @@ class Auth(Misc.Object):
         #
         for god in self.gods:
             self.addActorsToProgram(god, actors)
-            
+
         self.genActorsKey(cmd=cmd)
-        
+
     def setLockedActors(self, actors, cmd=None):
         """ Block non-APO users form commanding a list of actors.
 
@@ -234,10 +235,10 @@ class Auth(Misc.Object):
 
         if not cmd:
             cmd = self.defaultCmd
-            
+
         if actors == None:
             actors = self.actors
-                
+
         if self.debug > 3:
             Misc.log("auth.lockActor", "locking actors %s" % (actors))
 
@@ -249,7 +250,7 @@ class Auth(Misc.Object):
                 self.lockedActors[a] = True
 
         self.genLockedKey(cmd=cmd)
-        
+
     def lockActors(self, actors, cmd=None):
         """ Block non-APO users form commanding a list of actors.
 
@@ -259,10 +260,10 @@ class Auth(Misc.Object):
 
         if not cmd:
             cmd = self.defaultCmd
-            
+
         if not actors:
             actors = self.actors
-                
+
         if self.debug > 3:
             Misc.log("auth.lockActor", "locking actors %s" % (actors))
 
@@ -275,14 +276,14 @@ class Auth(Misc.Object):
                 self.lockedActors[a] = True
 
         self.genLockedKey(cmd=cmd)
-        
+
     def unlockActors(self, actors, cmd=None):
         """ unblock non-APO users from commanding a list of actors.
         """
 
         if not cmd:
             cmd = self.defaultCmd
-            
+
         if not actors:
             actors = self.lockedActors
 
@@ -296,7 +297,7 @@ class Auth(Misc.Object):
                 cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s was not locked" % (a))))
 
         self.genLockedKey(cmd=cmd)
-        
+
     def genAuthKeys(self, programs=None, cmd=None):
         """ Generate keys describing some or all programs.
 
@@ -321,11 +322,11 @@ class Auth(Misc.Object):
                 pAuth = self.programs[prog].keys()
             except KeyError:
                 raise Exception("No authorization entry found for program %s" % (prog))
-            
+
             pAuth.sort()
             actors = [Misc.qstr(x) for x in pAuth]
             cmd.inform("authList=%s,%s" % (Misc.qstr(prog), ','.join(actors)))
-        
+
     def addPrograms(self, programs=[], actors=[], cmd=None):
         """ Add a list program to the control list.
 
@@ -355,7 +356,7 @@ class Auth(Misc.Object):
             self.programs[prog] = {}
             self.setActorsForProgram(prog, actors, cmd=cmd)
         self.genProgramsKey(cmd=cmd)
-        
+
     def dropPrograms(self, programs=[], cmd=None):
         """ Remove a list of programs from the control list.
 
@@ -385,38 +386,37 @@ class Auth(Misc.Object):
             except:
                 cmd.warn("permsTxt=%s" % \
                          (Misc.qstr("Program %s did not have an authorization entry, so could not be deleted" % (program))))
-            
+
         self.genProgramsKey(cmd=cmd)
-    
+
     def setActorsForProgram(self, program, actors, cmd=None):
         """ Define the list of actors that a program can command.
         """
 
         if self.debug > 3:
             Misc.log("auth.setActors", "setting actors for commander %s: %s" % (program, actors))
-            
+
         if not cmd:
             cmd = self.defaultCmd
 
         if program not in self.programs:
             cmd.fail("permsTxt=%s" % (Misc.qstr("Program %s did not have an authorization entry, so could not be set" % (program))))
             return
-        
+
         d = {}
         for a in actors:
+            d[a] = True
             if a not in self.actors:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not subject to permissions." % (a))))
-            else:
-                d[a] = True
-            
+                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not currentlu in the list of actors." % (a))))
+
         # Make sure God-like commanders can always command us...
-        #
         if program in self.gods:
             d['perms'] = True
+
         self.programs[program] = d
 
         self.genAuthKeys(programs=[program], cmd=cmd)
-        
+
     def addActorsToProgram(self, program, actors, cmd=None):
         """ Add a list of actors to a actor's authorized list
         """
@@ -426,7 +426,7 @@ class Auth(Misc.Object):
 
         if self.debug > 3:
             Misc.log("auth.addActors", "adding actors for program %s: %s" % (program, actors))
-            
+
         try:
             d = self.programs[program]
         except KeyError:
@@ -440,14 +440,14 @@ class Auth(Misc.Object):
                 d[a] = True
 
         self.genAuthKeys(programs=[program], cmd=cmd)
-        
+
     def dropActorsFromProgram(self, program, actors, cmd=None):
         """ Remove a list of actors to a commander's authorized list.
         """
 
         if self.debug > 3:
             Misc.log("auth.dropActors", "dropping actors for program %s: %s" % (program, actors))
-            
+
         try:
             d = self.programs[program]
         except KeyError:
@@ -469,9 +469,9 @@ if __name__ == "__main__":
             ok = "    "
         else:
             ok = "BAD "
-            
+
         print "%s %s\t-> %s\t = %s" % (ok, cmdr, actor, access)
-        
+
     g.actors = ('tcc', 'them')
     a = Auth(Misc.tcmd(name='auth'), debug=9)
 
@@ -493,7 +493,7 @@ if __name__ == "__main__":
     checkAndPrint("me.me", "them", True)
 
     a.status()
-    
+
     a.lockActors(['vvv', 'them'])
     checkAndPrint("me.me", "them", False)
 
@@ -520,4 +520,3 @@ if __name__ == "__main__":
     checkAndPrint("me.me", "theOthers", False)
 
     a.status()
-

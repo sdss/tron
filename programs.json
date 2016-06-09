@@ -1,0 +1,9 @@
+{
+    "guest": {
+        "actors": []
+    },
+
+    "toy_program": {
+        "actors": ["toy"]
+    }
+}
