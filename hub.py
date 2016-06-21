@@ -570,8 +570,6 @@ def startNub(name):
         if fp:
             fp.close()
 
-    addActor(name)
-
     # And call the start() function.
     #
     Misc.log('hub.startNub', 'starting Nub %s...' % (name))
