@@ -353,6 +353,7 @@ class Auth(Misc.Object):
                 cmd.warn("permsTxt=%s" % \
                          (Misc.qstr("Program %s already has an authorization entry, which will not be modified." % (prog))))
                 continue
+            prog = prog.upper()
             self.programs[prog] = {}
             self.setActorsForProgram(prog, actors, cmd=cmd)
         self.genProgramsKey(cmd=cmd)
