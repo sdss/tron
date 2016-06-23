@@ -459,7 +459,7 @@ def addCommand(cmd):
         ok = g.perms.checkAccess(cmd.cmdrCid, actor, cmd)
         if not ok:
             cmd.fail('NoPermission=%s' %
-                     Misc.qstr("you do not have permission to command %s %s"
+                     Misc.qstr("you do not have permission to command %s %s" %
                                (actor.name, cmd.cmd)),
                      src='hub')
             return
