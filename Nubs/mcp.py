@@ -13,7 +13,9 @@ def start(poller):
     stop()
 
     initCmds = ('info',)
-    safeCmds = r'^\s*info\s*$'
+
+    safeCmdsList = ['info', 'ping', 'version', 'status']
+    safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
     d = ASCIIReplyDecoder(debug=1)
     e = ASCIICmdEncoder(debug=1)

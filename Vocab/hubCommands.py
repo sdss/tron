@@ -21,7 +21,7 @@ class hubCommands(InternalCmd.InternalCmd):
     """
 
     def __init__(self, **argv):
-        argv['safeCmds'] = '^\s*(actors|commanders|actorInfo|version|status)\s*$'
+        argv['safeCmds'] = '^\s*(actors|commanders|actorInfo|version|status|ping)\s*$'
         argv['needsAuth'] = True
         InternalCmd.InternalCmd.__init__(self, 'hub', **argv)
 
