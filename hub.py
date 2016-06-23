@@ -453,16 +453,19 @@ def addCommand(cmd):
                  src='hub')
         return
 
-    # Enforce permissions if the actor requires them.
-    ok = g.perms.checkAccess(cmd.cmdrCid, actor, cmd)
-    if not ok:
-        cmd.fail('NoPermission=%s' % \
-                 Misc.qstr("you do not have permission to command %s %s" % \
-                          (actor.name, cmd.cmd)),
-                 src='hub')
-        return
+    # Checks whether the commander requires authentication
+    if cmd.cmdr().needsAuth:
+        # Enforce permissions if the actor requires them.
+        ok = g.perms.checkAccess(cmd.cmdrCid, actor, cmd)
+        if not ok:
+            cmd.fail('NoPermission=%s' %
+                     Misc.qstr("you do not have permission to command %s %s"
+                               (actor.name, cmd.cmd)),
+                     src='hub')
+            return
 
     actor.sendCommand(cmd)
+
 
 def runCmd(c):
     cmd = c.cmd.strip()

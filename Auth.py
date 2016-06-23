@@ -43,9 +43,9 @@ class Auth(Misc.Object):
            - If the program is unknown, deny access.
            - Otherwise check the program's access list.
         """
-        
+
         program = cmdr.split('.', 1)[0].upper()
-        
+
         if self.debug > 5:
             Misc.log("Auth.checkAccess", "checking %s (%s) -> %s" % (cmdr, program, actor))
 
@@ -97,14 +97,9 @@ class Auth(Misc.Object):
             if self.hackOn:
                 Misc.log("Auth.checkAccess", "actor hacked on, in accessList = %s" % (ok))
                 return True
-            elif program in self.gods:
-                return True
             else:
                 return ok
         except KeyError:
-            # There are a number of actors that issue commands (e.g., HARTMANN)
-            # We need to let them thorugh.
-            return True
 
             # For SDSS, if permissions are disabled do not generate annoying warnings.
             if self.hackOn:
