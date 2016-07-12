@@ -14,18 +14,18 @@ class NubAuth(object):
     """
     Intercepts and act on login and logout commands.
     """
-    
+
     CONNECTED = 'connected'
     NOT_CONNECTED = 'not connected'
     CONNECTING = 'connecting'
-    
+
     def __init__(self, **argv):
         object.__init__(self)
-        
+
         self.state = self.NOT_CONNECTED
         self.nonce = None
         self.passwords = {}
-    
+
     def rejectClient(self, cmd, clientType, clientVersion, clientPlatform):
         return False
 
@@ -44,23 +44,23 @@ class NubAuth(object):
 
         Misc.log('NubAut', 'parsed %s' % (dqparts))
         return dqparts
-        
+
     def checkLogin(self, cmd):
-        """ Try to match a name and password to an entry in the password file. 
+        """ Try to match a name and password to an entry in the password file.
 
         The passwords are encrypt-only, so we need to match against the encrypted form
-        of one of the password file entries. The scheme I originally chose is to allow 
+        of one of the password file entries. The scheme I originally chose is to allow
         left-prefix matches for the _parts_ of the program names, with '*' as a default match.
         For example, if the program given is 'PU04', we would try to find an entry in the password
         file for 'PU04', 'PU', and '*'. Basically, remove trailing digits, then try '*'.
 
-        But that leaves holes -- enter no program, or 'XX', and you will drop through to the 
+        But that leaves holes -- enter no program, or 'XX', and you will drop through to the
         default. So always match.
 
         Returns True, or a string describing the problem.
-        
+
         """
-        
+
         if self.state != self.CONNECTING or self.nonce == None:
             return "unexpected login ignored."
 
@@ -73,7 +73,7 @@ class NubAuth(object):
 
         if "program" not in matched or "password" not in matched:
             return "not all arguments to login were found."
-                
+
         # OK. Look for the full program name:
         #
         program = matched["program"].upper()
@@ -82,15 +82,18 @@ class NubAuth(object):
         # each program has been input in the keyring under the service 'hub'
         # (multiple programs-users-can be under the same service). If the
         # program or service are not found, returns None.
-        ourPW = keyring.get_password('hub', program)
-        if ourPW is None:
-            return "unknown program"
-        
-        enc = sha.new(self.nonce + ourPW)
-        if enc.hexdigest() != matched['password']:
-            return "incorrect password"
-        
-        # Register our IDs. 
+
+        # LCOHACK: disabling authentication for now
+
+        # ourPW = keyring.get_password('hub', program)
+        # if ourPW is None:
+        #     return "unknown program"
+        #
+        # enc = sha.new(self.nonce + ourPW)
+        # if enc.hexdigest() != matched['password']:
+        #     return "incorrect password"
+
+        # Register our IDs.
         #
         username = matched.get("username", None)
         if not username:
@@ -112,7 +115,7 @@ class NubAuth(object):
         reject = self.rejectClient(cmd, self.clientType, self.clientVersion, self.clientPlatform)
         if reject:
             return reject
-        
+
         return True
 
     def setUserInfo(self):
@@ -121,7 +124,7 @@ class NubAuth(object):
         Kinda gross for it to be here. But there is no obvious good place for it,
         except maybe to name a TUINub.
         """
-        
+
         Misc.log('reportAuth', 'reporting on %s' % (self))
 
         try:
@@ -129,31 +132,31 @@ class NubAuth(object):
             otherFQDN = self.otherFQDN
         except:
             otherIP = otherFQDN = 'unknown'
-            
+
         # And tell others all about us. Well, have the 'hub' tell them.
         self.userInfo = 'user=%s,%s,%s,%s,%s,%s' % \
                         (Misc.qstr(self.name), Misc.qstr(self.clientType),
                          Misc.qstr(self.clientVersion),
                          Misc.qstr(self.clientPlatform),
                          Misc.qstr(otherIP), Misc.qstr(otherFQDN))
-        
+
     def makeMyNonce(self):
         """ Generate an ASCIIfied large random number. Put it in .nonce """
-        
+
         import base64
-        
+
         f = open('/dev/urandom', 'r')
         bits = f.read(64)
         s = base64.encodestring(bits)
-        
+
         # base64 encoding inserts and appends NLs. Strip these.
         #
         self.nonce = s.replace('\n', '')
 
         f.close()
-        
+
     def interceptReply(self, reply):
-        """ Trap and handle the login/logout commands here. 
+        """ Trap and handle the login/logout commands here.
 
         Args:
             cmd   - the command to inspect.
@@ -167,9 +170,9 @@ class NubAuth(object):
         if reply.cmd.cmdrName == self.name:
             return False
         return True
-    
+
     def interceptCmd(self, cmd):
-        """ Trap and handle the login/logout commands here. 
+        """ Trap and handle the login/logout commands here.
 
         Args:
             cmd   - the command to inspect.
@@ -186,7 +189,7 @@ class NubAuth(object):
                 cmd.fail('why=%s' % (Misc.qstr("please log in.")),
                          src='auth')
                 return True
-        
+
         cmdWords = cmd.cmd.split()
         if len(cmdWords) < 1:
             return self.state != self.CONNECTED
@@ -211,7 +214,7 @@ class NubAuth(object):
             else:
                 cmd.fail('why=%s' % (Misc.qstr("please log in.")),
                          src='auth')
-                
+
             return True
         else:
             if cmdWord == 'login':
@@ -233,4 +236,3 @@ class NubAuth(object):
                 cmd.fail('why=%s' % (Misc.qstr("please play by the rules.")),
                          src='auth')
             return True
-        
