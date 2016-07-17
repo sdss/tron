@@ -6,6 +6,7 @@ import g
 import hub
 import Misc
 import Parsing
+import ConfigParser
 
 import keyring
 
@@ -83,15 +84,20 @@ class NubAuth(object):
         # (multiple programs-users-can be under the same service). If the
         # program or service are not found, returns None.
 
-        # LCOHACK: disabling authentication for now
+        # LCOHACK: using .tronpass (set to chmod 600) to store the password
+        if g.location.lower() == 'lco':
+            config = ConfigParser.ConfigParser()
+            config.readfp(open('.tronpass'))
+            ourPW = config.get('hub', program)
+        else:
+            ourPW = keyring.get_password('hub', program)
 
-        # ourPW = keyring.get_password('hub', program)
-        # if ourPW is None:
-        #     return "unknown program"
-        #
-        # enc = sha.new(self.nonce + ourPW)
-        # if enc.hexdigest() != matched['password']:
-        #     return "incorrect password"
+        if ourPW is None:
+            return "unknown program"
+
+        enc = sha.new(self.nonce + ourPW)
+        if enc.hexdigest() != matched['password']:
+            return "incorrect password"
 
         # Register our IDs.
         #
