@@ -17,18 +17,11 @@ def start(poller):
 
     stop()
 
-    initCmds = ('show version',
-                'show users',
-                'show time',
-                'show status',
-                'show inst/full',
-                'show object/full',
-                'show axisconfig',
-                'show focus',
-                'axis status',
-                'mir status')
+    initCmds = ('device status',
+                'show version',
+                )
 
-    safeCmds = r"(^show )|(status$)"
+    safeCmds = r"(^device )|(status$)"
 
     d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
     e = ASCIICmdEncoder(EOL='\r', useCID=False, CIDfirst=False, debug=1)
