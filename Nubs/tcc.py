@@ -17,9 +17,26 @@ def start(poller):
 
     stop()
 
-    initCmds = ('device status',
-                'show version',
-                )
+    isLCO = False
+    try:
+        isLCO = g.location == "LCO"
+    except:
+        pass
+    if isLCO:
+        initCmds = ('device status',
+                    'show version',
+                    )
+    else:
+        initCmds = ('show version',
+                    'show users',
+                    'show time',
+                    'show status',
+                    'show inst/full',
+                    'show object/full',
+                    'show axisconfig',
+                    'show focus',
+                    'axis status',
+                    'mir status')
 
     safeCmds = r"(^device )|(status$)"
 
