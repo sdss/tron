@@ -85,13 +85,13 @@ class NubAuth(object):
         # program or service are not found, returns None.
 
         # LCOHACK: using .tronpass (set to chmod 600) to store the password
-#        if g.location.lower() == 'lco':
-#            config = ConfigParser.ConfigParser()
-#            config.readfp(open('/home/sdss4/.tronpass'))
-#            ourPW = config.get('hub', program, None)
-#        else:
-#            ourPW = keyring.get_password('hub', program)
-        ourPW='lco'
+        if g.location.lower() == 'lco':
+            config = ConfigParser.ConfigParser()
+            config.readfp(open('/home/sdss4/.tronpass'))
+            ourPW = config.get('hub', program, None)
+        else:
+            ourPW = keyring.get_password('hub', program)
+        
         if ourPW is None:
             return "unknown program"
 
