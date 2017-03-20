@@ -11,6 +11,7 @@ nubs = ('client',
         'platedb',
         'gcamera',
         'guider',
+        'bmo',
 
         'apogeecal',
         'apogee',
@@ -27,11 +28,12 @@ actors = dict(alerts=    dict(host="sdss4-hub.lco.cl", port=9995, actorName='ale
               sop=       dict(host="sdss4-hub.lco.cl", port=9989, actorName='sopActor'),
               tcc=       dict(host="sdss4-hub.lco.cl", port=25000, actorName='tcc'),
               platedb=   dict(host="sdss4-hub.lco.cl", port=9992, actorName='platedbActor'),
+              bmo=   dict(host="sdss4-hub.lco.cl", port=9999, actorName='bmo'),
 
               # NOTE: eventually!
-              # apogee=    dict(host="apogee-ics.lco.cl", port=33221, actorName='apogeeICC'),
-              # apogeecal= dict(host="apogee-ics.lco.cl", port=33222, actorName='apogeecalICC'),
-              # apogeeql=  dict(host="sdss4-apogee.lco.cl", port=18282, actorName='apogeeqlActor'),
+             apogee=    dict(host="apogee-ics.lco.cl", port=33221, actorName='apogeeICC'),
+              apogeecal= dict(host="apogee-ics.lco.cl", port=33222, actorName='apogeecalICC'),
+              apogeeql=  dict(host="sdss4-apogee.lco.cl", port=18282, actorName='apogeeqlActor'),
               )
 
 # Eventually it will be this, but for now we are using the BPG URL.
