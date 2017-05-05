@@ -89,6 +89,7 @@ Nubs/apogeecal.py -text
 Nubs/apogeeql.py -text
 Nubs/apogeetest.py -text
 Nubs/benchboss.py -text
+Nubs/bmo.py -text
 Nubs/boss.py -text
 Nubs/client.py -text
 Nubs/cmdin.py -text

@@ -23,7 +23,7 @@ class Auth(Misc.Object):
         self.lockedActors = {}
 
         self.hackOn = False
-        self.gods = ("APO", 'OBSERVER')
+        self.gods = ("APO", 'OBSERVER', 'LCO')
 
         for a in ['perms']:
             self.actors[a] = True

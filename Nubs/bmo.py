@@ -8,7 +8,7 @@ import Misc.cfg
 import g
 import hub
 
-name = 'tcc'
+name = 'bmo'
 
 
 def start(poller):
@@ -17,26 +17,8 @@ def start(poller):
 
     stop()
 
-    isLCO = False
-    try:
-        isLCO = g.location == "LCO"
-    except:
-        pass
-    if isLCO:
-        initCmds = ('device status',
-                    'show version',
-                    )
-    else:
-        initCmds = ('show version',
-                    'show users',
-                    'show time',
-                    'show status',
-                    'show inst/full',
-                    'show object/full',
-                    'show axisconfig',
-                    'show focus',
-                    'axis status',
-                    'mir status')
+    initCmds = ('status',
+                'version')
 
     safeCmds = r"(^device )|(status$)"
 
