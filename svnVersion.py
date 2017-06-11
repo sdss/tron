@@ -8,12 +8,12 @@ import sys
 
 # A dictionary with all known keywords. We only use the HeadURL keyword, but it could be
 # useful to have them all. Note that the Date/Revision values are rarely accurate, since
-# they apply only to this file. 
-svnInfo = { 'Date' : '$Date: 2007-07-25 18:58:52 +0000 (Wed, 25 Jul 2007) $',
-            'Revision' : '$Revision: -1 $',
-            'Author' : '$Author: parejkoj $',
-            'HeadURL' : '$HeadURL: svn://svn.apo.nmsu.edu/tron/tron/tags/sdss4_v3_0/svnVersion.py $',
-            'Id' : '$Id: svnVersion.py 300 2007-07-25 18:58:52Z cloomis $'
+# they apply only to this file.
+svnInfo = { 'Date' : '$Date$',
+            'Revision' : '$Revision$',
+            'Author' : '$Author$',
+            'HeadURL' : '$HeadURL$',
+            'Id' : '$Id$'
             }
 
 def stripKeyword(s):
@@ -31,7 +31,7 @@ def stripKeyword(s):
         return None
 
     return m.group(1)
-    
+
 
 def svnRevision(dir=None):
     """ Return the revision number as a string. Or an empty string.
@@ -45,9 +45,9 @@ def svnRevision(dir=None):
     if status != 0:
         return "unknown"
     return version
-    
+
 def svnLabels(dir=None):
-    """ Return what we can figure out about the identity of the 
+    """ Return what we can figure out about the identity of the
 
     The directory passed in _MUST_ be the top level directory of the project.
 
@@ -72,7 +72,7 @@ def svnLabels(dir=None):
     fullURL = stripKeyword(svnInfo['HeadURL'])
     if not fullURL:
         return 'unknown','unknown', revision, 'unknown'
-    
+
     # Try to pull the tag apart a bit.
     #
     dummy, url = urllib.splittype(fullURL)
@@ -123,7 +123,7 @@ def main():
         dir = sys.argv[1]
     else:
         dir = None
-        
+
     print "svnName: \n", svnName(dir=dir)
     print "svnTagOrRevision: \n", svnTagOrRevision(dir=dir)
 
