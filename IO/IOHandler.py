@@ -9,11 +9,11 @@ import time
 import Misc
 
 class IOHandler(Misc.Object):
-    """ Stub class for IO connections that can be managed by a PollHandler. 
-    
+    """ Stub class for IO connections that can be managed by a PollHandler.
+
     This is the class that is called when input is available to be read and
     when output is known to be possible.
-    
+
     Options:
         readSize: maximum size we read before returning to the poller.
         writeSize: max. size we write before returning to the poller.
@@ -21,10 +21,10 @@ class IOHandler(Misc.Object):
                    if false, only ever send a single queued item.
         in_f: the input file descriptor
         out_f: the output file descriptor.
-        
+
     Bugs:
         in and out should probably not be in the same object.
-        
+
     """
 
     def __init__(self, poller, **argv):
@@ -33,14 +33,14 @@ class IOHandler(Misc.Object):
         self.poller = poller
 
         Misc.log("IOHandler.init", "IOHandler(argv=%s)" % (argv))
-        
+
         # The IO size tweaks would mean something for slow network links.
         #
         self.tryToRead = argv.get('readSize', 4096)
         self.tryToWrite = argv.get('writeSize', 4096)
         self.tryToWriteMany = argv.get('writeMany', False)
         self.oneAtATime = argv.get('oneAtATime', False)
-        
+
         self.in_f = self.out_f = None
         self.in_fd = self.out_fd = None
         self.outQueue = []
@@ -53,7 +53,7 @@ class IOHandler(Misc.Object):
         self.totalReads = 0
         self.totalBytesRead = 0
         self.largestRead = 0
-        
+
         self.totalQueued = 0
         self.maxQueue = 0
 
@@ -61,17 +61,17 @@ class IOHandler(Misc.Object):
         self.totalWrites = 0
         self.totalBytesWritten = 0
         self.largestWrite = 0
-        
+
     def ioshutdown(self, **argv):
         """ Unregister ourselves """
 
         why = argv.get('why', "just cuz")
         Misc.log("IOhandler.ioshutdown", "what=%s why=%s" % (self, why))
-                
+
         self.setOutputFile(None)
         self.setInputFile(None)
-        
-        
+
+
     def shutdown(self, **argv):
         """ Unregister ourselves.
 
@@ -79,10 +79,10 @@ class IOHandler(Misc.Object):
         """
 
         self.ioshutdown()
-        
+
     def setInputFile(self, f):
         """ Change the input file. Close and unregister any old file. Register the new one for input. """
-        
+
         if self.debug > 2:
             Misc.log("IOHandler.setInput", "%s changing input %s to %s" % (self, self.in_f, f))
 
@@ -104,13 +104,13 @@ class IOHandler(Misc.Object):
         else:
             self.in_fd = f.fileno()
             self.poller.addInput(self)
-        
+
     def setOutputFile(self, f):
         """ Change the output file. Close and unregister any old file. Clear the output queue.
 
         This should be the only method which adjusts output registration.
         """
-        
+
         if self.debug > 2:
             Misc.log("IOHandler.setOutput", "%s changing output %s to %s. queue=%s" % \
                     (self, self.out_f, f, self.outQueue))
@@ -122,7 +122,7 @@ class IOHandler(Misc.Object):
                     self.out_f.close()
                 except:
                     Misc.error("IOHandler.setOutput", "failed to close output for %s", self)
-            
+
         # Establish new .out_f
         #
         self.out_f = f
@@ -135,7 +135,7 @@ class IOHandler(Misc.Object):
     def getInputFd(self):
         """ Return the file descriptor for our input file. Called by the poller. """
         return self.in_fd
-        
+
     def getOutputFd(self):
         """ Return the file descriptor for our output file. Called by the poller. """
 
@@ -145,7 +145,7 @@ class IOHandler(Misc.Object):
         """ Create a timer to fire in interval seconds. """
 
         return self.makeTimerForTime(time.time() + interval, callback, token)
-        
+
     def makeTimerForTime(self, when, callback, token):
         """ Create a timer.
 
@@ -164,10 +164,10 @@ class IOHandler(Misc.Object):
         timer['token'] = token
 
         return timer
-    
+
     def addTimer(self, timer):
         self.poller.addTimer(timer)
-        
+
     def queueForOutput(self, s, timer=None):
         """ Append s to the output queue. """
 
@@ -184,7 +184,7 @@ class IOHandler(Misc.Object):
             # Add any timer.
             if timer != None:
                 self.addTimer(timer)
-                    
+
             # Bump the stats.
             self.totalQueued += 1
             if len(self.outQueue) > self.maxQueue:
@@ -205,14 +205,14 @@ class IOHandler(Misc.Object):
 
         if self.outQueue != []:
             self.poller.addOutput(self)
-            
-        
+
+
     def readInput(self):
         """ Read what is available to read, buffer that, and consume complete input.
 
-        
+
         """
-        
+
         error = ""
         readIn = ""
         try:
@@ -225,7 +225,7 @@ class IOHandler(Misc.Object):
             error = "os exception %s" % (e,)
             Misc.log("IOHandler.readInput", error)
             readIn = ""
-        except:
+        except Exception, e:
             error = "unknown exception %s" % (e,)
             Misc.log("IOHandler.readInput", error)
             readIn = ""
@@ -237,10 +237,10 @@ class IOHandler(Misc.Object):
         # showed no available input.
         # So close ourselves.
         #
-        
+
         if readIn == "" and error == "":
             error = "read returned nothing."
-            
+
         if error != "":
             self.shutdown(why=error)
         else:
@@ -248,11 +248,11 @@ class IOHandler(Misc.Object):
             self.totalReads += 1
             if len(readIn) > self.largestRead:
                 self.largestRead = len(readIn)
-                
+
             self.copeWithInput(readIn)
 
     def mayOutput(self):
-        """ Try to write as much as we should from the queue. 
+        """ Try to write as much as we should from the queue.
 
         We are controlled by two object variables:
             .tryToWrite: the maximum number of bytes we can send before returning control to the poller.
@@ -260,12 +260,12 @@ class IOHandler(Misc.Object):
 
         We send queued items individually, regardless. It might be worth having a .coalesce variable to
         control that. I worry about the system limits being lower than our limits.
-        
+
         """
-        
+
         # Add up what we have written so far.
         totalSent = 0
-        
+
         while True:
 
             # Try to send a single complete queued item. But truncate if we have to.
@@ -280,7 +280,7 @@ class IOHandler(Misc.Object):
             if self.debug > 5:
                 Misc.log("IOHandler.mayOutput", "writing len=%d wlen=%d %r" % \
                         (len(qtop), wlen, qtop[:min(wlen, 50)]))
-                
+
             try:
                 wrote = os.write(self.out_fd, qtop[:wlen])
             except socket.error, e:
@@ -321,7 +321,7 @@ class IOHandler(Misc.Object):
                 # Quit if we don't want to write any more.
                 if (self.oneAtATime and wroteFull):
                     break
-                
+
                 if self.debug > 5:
                     Misc.log("IOHandler.mayOutput", "queue len=%d" % (len(self.outQueue)))
 
@@ -336,7 +336,7 @@ class IOHandler(Misc.Object):
                 self.totalOutputs += 1
             finally:
                 self.queueLock.release(src='mayOutput')
-        
+
     def statusCmd(self, cmd, name, doFinish=True):
         """ Send sundry status information keywords.
         """
@@ -355,4 +355,3 @@ class IOHandler(Misc.Object):
                     self.totalOutputs, self.totalWrites, self.totalBytesWritten, self.largestWrite))
         if doFinish:
             cmd.finish()
-            
