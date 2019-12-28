@@ -4,12 +4,14 @@ __all__ = ['PollConnect']
 
 import socket
 
-import IOHandler
 import Misc
+
+from . import IOHandler
+
 
 class PollConnect(IOHandler.IOHandler):
     """ Provide asynchronous socket accept() handling. """
-    
+
     def __init__(self, poller, host, port, depth=5, callback=None):
         """ Set up to accept new connections on a given port.
 
@@ -28,23 +30,23 @@ class PollConnect(IOHandler.IOHandler):
         self.callback = callback
         if depth == 0:
             depth = 1
-            
+
         self.listenFd = None
         try:
             self.listenFd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.listenFd.bind((host, port))
             self.listenFd.listen(depth)
-        except:
+        except BaseException:
             if self.listenFd:
                 self.listenFd.close()
             raise
-        
+
         self.poller.addInput(self)
-        
+
     def __del__(self):
         self.poller.removeInput(self)
         self.listenFd.close()
-        
+
     def getInputFile(self):
         return self.listenFd.fileno()
 

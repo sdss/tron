@@ -1,29 +1,32 @@
 __all__ = ['parseArgs', 'match']
 
 import re
+from collections import OrderedDict
 
 import Misc
-from collections import OrderedDict
-from Exceptions import ParseException
-from dequote import dequote
 
-from keys import *
+from .dequote import dequote
+from .Exceptions import ParseException
+from .keys import *
+
 
 # Match "  key = STUFF"
-arg_re = re.compile(r"""
+arg_re = re.compile(
+    r"""
   ^\s*                          # Ignore leading space
   (?P<key>[a-z_][a-z0-9_-]*)    # Match keyword name
   \s*
   (?P<delimiter>=)
   \s*                           # Ignore spaces after keyname
   (?P<rest>.*)                  # Match eveything after the delimiter""",
-                    re.IGNORECASE|re.VERBOSE)
-noarg_re = re.compile(r"""
+    re.IGNORECASE | re.VERBOSE)
+noarg_re = re.compile(
+    r"""
   ^\s*                          # Ignore leading space
   (?P<key>\S+)                 # Match eveything up to the next WS
   \s*
-  (?P<rest>.*)                  # Match eveything after the WS""",
-                      re.IGNORECASE|re.VERBOSE)
+  (?P<rest>.*)                  # Match eveything after the WS""", re.IGNORECASE | re.VERBOSE)
+
 
 def eatAVee(s):
     """ Match a keyword value -- a possibly space-padded value ended by a whitespace, a comma, or a semicolon.
@@ -39,29 +42,29 @@ def eatAVee(s):
     s = s.lstrip()
     if len(s) == 0:
         return '', ""
-    
+
     # String parsing is trickier, let eatAString() handle that.
     if s[0] in "\"'":
         return eatAString(s)
-    
+
     vEnd = len(s)
     for i in range(len(s)):
         if s[i] in ' \t\r\n\x0b\x0c':
             vEnd = i
             break
-        
-    return s[:vEnd], s[vEnd+1:]
 
-                                                                                
+    return s[:vEnd], s[vEnd + 1:]
+
+
 def parseArg(s):
     """ Try to parse a single KV.
-    
+
     Return:
       { None, None, None } on end-of-input
       { K None rest-of-line } for a valueless keyword or
       { K V rest-of-line }
     """
-    
+
     s = s.lstrip()
     if s == "":
         return None, None, None
@@ -69,9 +72,9 @@ def parseArg(s):
     # Try to match for K=V. If we can't, gobble the next non-blank word.
     #
     match = arg_re.match(s)
-    if match == None:
+    if match is None:
         match = noarg_re.match(s)
-        if match == None:
+        if match is None:
             raise ParseException(leftoverText=s)
         d = match.groupdict()
         return d['key'], None, d['rest']
@@ -84,11 +87,12 @@ def parseArg(s):
     #
     try:
         val, rest = eatAVee(rest)
-    except ParseException, e:
+    except ParseException as e:
         e.prependText(rest)
         raise
 
     return K, val, rest
+
 
 def parseArgs(s):
     """ Parse a string of command arguments into an OrderedDict .
@@ -98,7 +102,7 @@ def parseArgs(s):
 
     If a keyword has no value, the value is None
     Otherwise the value is a list of parsed values. Note that each value can be None.
-    
+
     cmd a1 a2=1 a3= "2" a4=,
       ->
 
@@ -108,24 +112,25 @@ def parseArgs(s):
               'a4' : (None,None)
              }
     """
-    
+
     KVs = OrderedDict()
     rest = s
 
-    while 1:
+    while True:
         try:
             key, values, rest = parseArg(rest)
-        except ParseException, e:
+        except ParseException as e:
             e.setKVs(KVs)
             raise
-        
-        if key == None:
+
+        if key is None:
             break
 
         KVs[key] = values
 
     #Misc.log('parseArgs', 'KVs: %s' % (KVs))
     return KVs
+
 
 def match(argv, opts):
     """ Searches an OrderedDict for matches.
@@ -149,7 +154,7 @@ def match(argv, opts):
     for o in opts:
         try:
             a, b = o
-        except Exception, e:
+        except Exception as e:
             raise Exception("the argument to Command.matchDicts must be a list of duples")
 
         want[a] = b
@@ -159,18 +164,18 @@ def match(argv, opts):
     matches = OrderedDict()
     leftovers = OrderedDict()
 
-    for opt, arg in argv.iteritems():
+    for opt, arg in argv.items():
         # If we are looking for the option, match it and convert the argument.
         if opt in want:
             converter = want[opt]
-            if converter == None:
-                if arg != None:
+            if converter is None:
+                if arg is not None:
                     raise Exception("option %s takes no argument" % (Misc.qstr(opt, tquote="'")))
                 matches[opt] = None
             else:
                 try:
                     convArg = converter(arg)
-                except Exception, e:
+                except Exception as e:
                     raise Exception("error with option '%s': %s" % (opt, e))
 
                 matches[opt] = convArg
@@ -182,5 +187,4 @@ def match(argv, opts):
         else:
             leftovers[opt] = arg
 
-    return matches, want.keys(), leftovers
-
+    return matches, list(want.keys()), leftovers

@@ -1,8 +1,4 @@
-__all__ = ['eatAVee', 'eatAString',
-           'parseKV', 'parseKVs',
-           'parseASCIIReply',
-           'parseRawReply']
-
+__all__ = ['eatAVee', 'eatAString', 'parseKV', 'parseKVs', 'parseASCIIReply', 'parseRawReply']
 """ Parsing utilities.
 
 - Keywords can have zero or more comma-delimited values.
@@ -14,31 +10,33 @@ __all__ = ['eatAVee', 'eatAString',
 
 """
 
-import exceptions
 import re
+from collections import OrderedDict
 
 import Misc
-from collections import OrderedDict
-from Exceptions import ParseException
+
+from . import exceptions
+from .Exceptions import ParseException
+
 
 def eatAVee(s):
     """ Match a keyword value -- a possibly space-padded value ended by a whitespace, a comma, or a semicolon.
 
     Args:
        s - a string
-       
+
     Returns:
       - the matched value. None if s is just whitespace.
       - any unmatched input, including the terminating character.
     """
-    
+
     # Misc.log('eatAVee', 'called with %s' % (s))
 
     s = s.lstrip()
     if len(s) == 0:
         return '', ""
 
-    # BEWARE - accept an empty value. 
+    # BEWARE - accept an empty value.
     if s[0] == ';':
         return '', s
 
@@ -54,12 +52,12 @@ def eatAVee(s):
 
     if vEnd == 0:
         return '', s[vEnd:]
-    
+
     return s[:vEnd], s[vEnd:]
 
 
 def eatAString(s):
-    """ Match a quote-escaped string. 
+    """ Match a quote-escaped string.
 
     Args:
       s - a string, which must begin with a singor- or double- quote.
@@ -71,9 +69,9 @@ def eatAString(s):
     NOTE:
       If the end of the input string is hit before the leading quote is closed, a closing quote
       is (fairly) silently appended.
-      
+
     """
-    
+
     # Misc.log('eatAString', 'called with %s' % (s))
 
     if len(s) == 0:
@@ -91,9 +89,9 @@ def eatAString(s):
             continue
 
         c = s[i]
-        
+
         if c == startQuote:
-            return s[:i+1], s[i+1:]
+            return s[:i + 1], s[i + 1:]
         if c == "\\":
             escaping = True
 
@@ -109,25 +107,28 @@ def eatAString(s):
 
     return s, ''
 
+
 # Match "  key = STUFF"
-kv_re = re.compile(r"""
+kv_re = re.compile(
+    r"""
   ^\s*                          # Ignore leading space
   (?P<key>[a-z_][a-z0-9_-]*)    # Match keyword name
   \s*                           # Ignore spaces after keyname
   (?P<delimiter>[=;]|$)
   \s*
   (?P<rest>.*)                  # Match eveything after the delimiter""",
-                  re.IGNORECASE|re.VERBOSE)
+    re.IGNORECASE | re.VERBOSE)
+
 
 def parseKV(s):
     """ Try to parse a single KV.
-    
+
     Return:
       { None, None, None } on end-of-input
       { K None rest-of-line } for a valueless keyword or
       { K V rest-of-line }
     """
-    
+
     s = s.lstrip()
     if s == "":
         return None, None, None
@@ -135,7 +136,7 @@ def parseKV(s):
     # Try to match for K=V. If we can't, try parsing as a valueless keyword.
     #
     match = kv_re.match(s)
-    if match == None:
+    if match is None:
         raise ParseException(leftoverText=s)
 
     d = match.groupdict()
@@ -156,7 +157,7 @@ def parseKV(s):
         #
         try:
             V, rest = eatAVee(rest)
-        except ParseException, e:
+        except ParseException as e:
             e.prependText(rest)
             raise
 
@@ -169,7 +170,7 @@ def parseKV(s):
         rest = rest.lstrip()
         if len(rest) == 0:
             break
-        
+
         # Keep gathering subvalues while we find commas.
         #
         if rest[0] == ',':
@@ -179,12 +180,13 @@ def parseKV(s):
             break
         else:
             break
-        
+
     # Flatten singleton lists.
     if len(values) == 1:
         values = values[0]
 
     return K, values, rest
+
 
 def parseKVs(s):
     """ Parse a string of key-value pairs into an OrderedDict .
@@ -194,20 +196,20 @@ def parseKVs(s):
 
     If a keyword has no value, the value is None
     Otherwise the value is a list of parsed values. Note that each value can be None.
-    
+
     """
-    
+
     KVs = OrderedDict()
     rest = s
 
-    while 1:
+    while True:
         try:
             key, values, rest = parseKV(rest)
-        except ParseException, e:
+        except ParseException as e:
             e.setKVs(KVs)
             raise
-        
-        if key == None:
+
+        if key is None:
             break
 
         # Misc.log('parseKVs', 'key=%r val=%r rest=%r' % (key, values, rest))
@@ -215,25 +217,27 @@ def parseKVs(s):
 
     return KVs
 
-line_midcid_re = re.compile(r"""
+
+line_midcid_re = re.compile(
+    r"""
   \s*                          # Skip leading whitespace
   (?P<mid>\d+)                 # integer MID
   \s+
   (?P<cid>[a-z0-9_][a-z0-9_.]*)                 # Integer CID. Should be more forgiving.
   \s+
   (?P<flag>[diwe:f>!])           # The flag. Should allow more characters, and check them elsewhere.
-  (?P<rest>.*)""",
-                     re.VERBOSE | re.IGNORECASE)
+  (?P<rest>.*)""", re.VERBOSE | re.IGNORECASE)
 
-line_cidmid_re = re.compile(r"""
+line_cidmid_re = re.compile(
+    r"""
   \s*                          # Skip leading whitespace
   (?P<cid>[a-z0-9_][a-z0-9_.]*)  # Integer CID. Should be more forgiving.
   \s+
   (?P<mid>\d+)                 # integer MID
   \s+
   (?P<flag>[diwe:f>!])           # The flag. Should allow more characters, and check them elsewhere.
-  (?P<rest>.*)""",
-                     re.VERBOSE | re.IGNORECASE)
+  (?P<rest>.*)""", re.VERBOSE | re.IGNORECASE)
+
 
 def parseASCIIReply(s, cidFirst=False):
     """ Try to parse a string into a dictionary containing:
@@ -241,7 +245,7 @@ def parseASCIIReply(s, cidFirst=False):
          - cid   - the ICC's CID
          - flag  - the reply's flag character
          - KVs   - an OrderedDict of (key, value)s
-    
+
         Returns that dictionary, or raises RuntimeError.
 
         If a reply line cannot be parsed at all, insert the entire line into the key 'RawLine'.
@@ -252,11 +256,11 @@ def parseASCIIReply(s, cidFirst=False):
         match = line_cidmid_re.match(s)
     else:
         match = line_midcid_re.match(s)
-        
-    if match == None:
+
+    if match is None:
         d = {}
         d['mid'] = 0
-        d['cid'] = 0                    # or 'hub' or '.hub'?
+        d['cid'] = 0  # or 'hub' or '.hub'?
         d['flag'] = 'w'
         d['RawText'] = s
 
@@ -269,22 +273,23 @@ def parseASCIIReply(s, cidFirst=False):
 
     try:
         KVs = parseKVs(d['rest'])
-    except ParseException, e:
+    except ParseException as e:
         KVs = e.KVs
         leftoverText = e.leftoverText
 
         # In this case, quote the offending text.
         KVs['UNPARSEDTEXT'] = [Misc.qstr(leftoverText)]
-    except Exception, e:
+    except Exception as e:
         Misc.log("parseASCIIReply", "unexpected Exception: %s" % (e))
         KVs = OrderedDict()
         KVs['UNPARSEDTEXT'] = [Misc.qstr(d['rest'])]
-        
+
     d['KVs'] = KVs
     d['RawText'] = s
     del d['rest']
-    
+
     return d
+
 
 def parseRawReply(s, keyName="RawText"):
     """ Return a Reply with the entire input string saved in the given keyName keyword.
@@ -294,53 +299,45 @@ def parseRawReply(s, keyName="RawText"):
 
     d = {}
     d['mid'] = 0
-    d['cid'] = 0 
+    d['cid'] = 0
     d['flag'] = 'i'
 
     Misc.log('parseRawReply', 'consumed :%r:' % (s))
-    
+
     kvs = OrderedDict()
     kvs[keyName] = [Misc.qstr(s)]
     d['KVs'] = kvs
     d['RawText'] = s
     return d
 
-def testParsing():
-    OKtests = ("",
-               "o",
-               "expose",
-               "expose boo",
-               "expose boo=",
-               "expose boo='bar'",
-               "expose a b c=def h",
-               "e 1 2 3",
-               "msg let me 'abc def' xx=123 yy='oh let me be'")
 
-    NGtests = ("'",
-               "abc'=1",
-               "shortString='abcd",
-               "eol=2,3,")
-    
+def testParsing():
+    OKtests = ("", "o", "expose", "expose boo", "expose boo=", "expose boo='bar'",
+               "expose a b c=def h", "e 1 2 3", "msg let me 'abc def' xx=123 yy='oh let me be'")
+
+    NGtests = ("'", "abc'=1", "shortString='abcd", "eol=2,3,")
+
     for t in OKtests:
         r = parseKVs(t)
-        print "OKtest = %s" % (t)
-        print "output = %s" % (r)
-        print
-        
+        print("OKtest = %s" % (t))
+        print("output = %s" % (r))
+        print()
+
     for t in NGtests:
-        print "NGtest = %s" % (t)
+        print("NGtest = %s" % (t))
         try:
             r = parseKVs(t)
-            print "output = %s" % (r)
-        except Exception, e:
-            print "exception = %s" % (e)
-            
-        print
+            print("output = %s" % (r))
+        except Exception as e:
+            print("exception = %s" % (e))
+
+        print()
+
 
 def testMatching():
     pass
 
+
 if __name__ == "__main__":
     testParsing()
     testMatching()
-             

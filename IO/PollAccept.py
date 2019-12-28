@@ -5,11 +5,13 @@ __all__ = ['PollAccept']
 import socket
 
 import Misc
-import IOHandler
+
+from . import IOHandler
+
 
 class PollAccept(IOHandler.IOHandler):
     """ Provide asynchronous socket accept() handling. """
-    
+
     def __init__(self, poller, host, port, depth=5, callback=None, **argv):
         """ Set up to accept new connections on a given port.
 
@@ -25,36 +27,36 @@ class PollAccept(IOHandler.IOHandler):
         self.depth = depth
         self.host = host
         self.port = port
-        
+
         IOHandler.IOHandler.__init__(self, poller, **argv)
-        
+
         self.acceptMany = depth
         self.callback = callback
         if depth == 0:
             depth = 1
-            
+
         self.listenFd = None
         try:
             self.listenFd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.listenFd.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.listenFd.bind((host, port))
             self.listenFd.listen(depth)
-        except:
+        except BaseException:
             if self.listenFd:
                 self.listenFd.close()
             raise
-        
+
         self.poller.addInput(self)
-        
+
     def __str__(self):
         return "PollAccept(host=%s port=%s depth=%s)" % (self.host, self.port, self.depth)
-    
+
     def shutdown(self, **argv):
         Misc.log("PollAccept.shutdown", "shutting down %s" % (self))
 
         self.poller.removeInput(self)
         self.listenFd.close()
-        
+
     def getInputFd(self):
         return self.listenFd.fileno()
 

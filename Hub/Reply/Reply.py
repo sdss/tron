@@ -1,10 +1,11 @@
 __all__ = ['Reply']
 
 import time
-
 from collections import OrderedDict
+
 import Misc
 import Parsing
+
 
 """
    Reply is a slight misnomer --
@@ -15,8 +16,9 @@ import Parsing
        - flag, actorCid, actorMid, src, KVs
 """
 
+
 class Reply(Misc.Object):
-    
+
     def __init__(self, cmd, flag, KVs, bcast=True, **argv):
         """ Create a parsed Reply.
 
@@ -28,17 +30,17 @@ class Reply(Misc.Object):
         """
 
         Misc.Object.__init__(self, **argv)
-        
+
         self.ctime = time.time()
         self.cmd = cmd
         self.flag = flag
         self.bcast = bcast
-        
+
         if isinstance(KVs, OrderedDict):
             self.KVs = KVs
         else:
             self.KVs = self.parseKVs(KVs)
-                
+
         self.src = argv.get('src', cmd.actorName)
 
     def finishesCommand(self):
@@ -48,7 +50,7 @@ class Reply(Misc.Object):
 
     def __str__(self):
         return "Reply(cmd=%s flag=%s KVs=%s)" % (self.cmd, self.flag, self.KVs)
-    
+
     def parseKVs(self, kvl):
         """ Convert some form of keys to an OrderedDict.
 
@@ -57,14 +59,14 @@ class Reply(Misc.Object):
          - a string, which we parse as it came from an ICC.
          - a list, which we parse either as a list of key=value strings or of (key, value) duples.
         """
-        
-        if type(kvl) == str:
+
+        if isinstance(kvl, str):
             return Parsing.parseKVs(kvl)
 
         od = OrderedDict()
-        if kvl != None:
+        if kvl is not None:
             for i in kvl:
-                if type(i) == str:
+                if isinstance(i, str):
                     k, v, junk = Parsing.parseKV(i)
                     od[k] = v
                 elif type(i) in (list, tuple) and len(i) == 2:

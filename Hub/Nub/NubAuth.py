@@ -1,14 +1,13 @@
 __all__ = ['NubAuth']
 
+import configparser
 import sha
 
 import g
 import hub
+import keyring
 import Misc
 import Parsing
-import ConfigParser
-
-import keyring
 
 
 class NubAuth(object):
@@ -41,7 +40,7 @@ class NubAuth(object):
         Misc.log('NubAut', 'parsing version %s' % (s))
 
         parts = s.split(',')
-        dqparts = map(Parsing.dequote, parts)
+        dqparts = list(map(Parsing.dequote, parts))
 
         Misc.log('NubAut', 'parsed %s' % (dqparts))
         return dqparts
@@ -62,7 +61,7 @@ class NubAuth(object):
 
         """
 
-        if self.state != self.CONNECTING or self.nonce == None:
+        if self.state != self.CONNECTING or self.nonce is None:
             return "unexpected login ignored."
 
         matched, unmatched, leftovers = cmd.match([('program', Parsing.dequote),
@@ -86,12 +85,12 @@ class NubAuth(object):
 
         # LCOHACK: using .tronpass (set to chmod 600) to store the password
         if g.location.lower() == 'lco':
-            config = ConfigParser.ConfigParser()
+            config = configparser.ConfigParser()
             config.readfp(open('/home/sdss4/.tronpass'))
             ourPW = config.get('hub', program, None)
         else:
             ourPW = keyring.get_password('hub', program)
-        
+
         if ourPW is None:
             return "unknown program"
 
@@ -113,8 +112,8 @@ class NubAuth(object):
         self.clientType = matched.get('type', 'unknown')
         self.clientPlatform = matched.get('platform', 'unknown')
         self.clientVersion = matched.get('version', 'unknown')
-        Misc.log('NubAuth', 'checkLogin version %s, platform %s' % \
-            (self.clientVersion, self.clientPlatform))
+        Misc.log('NubAuth', 'checkLogin version %s, platform %s' %
+                 (self.clientVersion, self.clientPlatform))
 
         # Check whether we don't like the version
         #
@@ -136,7 +135,7 @@ class NubAuth(object):
         try:
             otherIP = self.otherIP
             otherFQDN = self.otherFQDN
-        except:
+        except BaseException:
             otherIP = otherFQDN = 'unknown'
 
         # And tell others all about us. Well, have the 'hub' tell them.
@@ -192,8 +191,7 @@ class NubAuth(object):
             if self.state == self.CONNECTED:
                 return False
             else:
-                cmd.fail('why=%s' % (Misc.qstr("please log in.")),
-                         src='auth')
+                cmd.fail('why=%s' % (Misc.qstr("please log in.")), src='auth')
                 return True
 
         cmdWords = cmd.cmd.split()
@@ -208,37 +206,31 @@ class NubAuth(object):
                 cmd.finish('bye', src='auth')
             else:
                 return False
-                #cmd.fail('unknownCommand=%s' % (Misc.qstr(cmdWord)),
+                # cmd.fail('unknownCommand=%s' % (Misc.qstr(cmdWord)),
                 #         src='auth')
             return self.state != self.CONNECTED
         elif self.state == self.NOT_CONNECTED:
             if cmdWord == 'knockKnock':
                 self.state = self.CONNECTING
                 self.makeMyNonce()
-                cmd.finish('nonce=%s' % (Misc.qstr(self.nonce)),
-                           src='auth')
+                cmd.finish('nonce=%s' % (Misc.qstr(self.nonce)), src='auth')
             else:
-                cmd.fail('why=%s' % (Misc.qstr("please log in.")),
-                         src='auth')
+                cmd.fail('why=%s' % (Misc.qstr("please log in.")), src='auth')
 
             return True
         else:
             if cmdWord == 'login':
                 ret = self.checkLogin(cmd)
-                if ret == True:
+                if ret:
                     self.state = self.CONNECTED
-                    cmd.finish(('loggedIn',
-                                'cmdrID=%s' % Misc.qstr(self.name)),
-                               src='auth')
+                    cmd.finish(('loggedIn', 'cmdrID=%s' % Misc.qstr(self.name)), src='auth')
                     Misc.log('auth', 'logged in %s' % (self))
                     self.setUserInfo()
                     g.hubcmd.inform(self.userInfo)
                 else:
                     self.state = self.NOT_CONNECTED
-                    cmd.fail('why=%s' % Misc.qstr(ret),
-                             src='auth')
+                    cmd.fail('why=%s' % Misc.qstr(ret), src='auth')
             else:
                 self.state = self.NOT_CONNECTED
-                cmd.fail('why=%s' % (Misc.qstr("please play by the rules.")),
-                         src='auth')
+                cmd.fail('why=%s' % (Misc.qstr("please play by the rules.")), src='auth')
             return True

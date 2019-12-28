@@ -2,12 +2,13 @@ __all__ = ['Command']
 
 import re
 import time
-
 from collections import OrderedDict
-import Misc
-from Hub.Reply.Reply import Reply
-import Parsing
+
 import g
+import Misc
+import Parsing
+from Hub.Reply.Reply import Reply
+
 
 class Command(Misc.Object):
     """ Maintain everything required to shepherd a command through the hub.
@@ -49,13 +50,13 @@ class Command(Misc.Object):
         try:
             cmdr = g.commanders[cmdrID]
             self.cmdrName = cmdr.name
-        except:
+        except BaseException:
             self.cmdrName = cmdrID
             if len(cmdrID) > 0 and cmdrID[0] != '.':
                 Misc.log("Command", "no commander %s" % (cmdrID))
-                    
+
         # How the caller wants the command identified.
-        if cid == None:
+        if cid is None:
             cid = ".%s" % (self.cmdrID)
         self.cmdrCid = cid
         self.cmdrMid = mid
@@ -67,78 +68,74 @@ class Command(Misc.Object):
         # The identification the the hub gives to the actor.
         self.actorCid = argv.get('actorCid', None)
         self.actorMid = argv.get('actorMid', 0)
-        
+
         # Some Commands are essentially permanent.
         self.neverEnd = argv.get('neverEnd', False)
-        
+
         # Register ourselves in a convenient place.
         # g.pendingCommands[self.xid] = self
-        
-        if self.cmdrCid == None:
+
+        if self.cmdrCid is None:
             cid_s = "None"
         else:
             cid_s = self.cmdrCid
 
-        if self.cmd == None:
+        if self.cmd is None:
             cmd_s = ""
         else:
             cmd_s = self.cmd
 
         self.argDict = None
-        
+
         # We need to put this silly test here, 'cuz the hub creates g.hubcmd at startup,
         # and g.hubcmd does not yet exist when it is being created...
         #
         self.bcastCmdInfo = argv.get('bcastCmdInfo', True)
-        
-        if g.hubcmd != None and self.bcastCmdInfo:
-            g.hubcmd.diag("CmdIn=%s,%s,%s" %
-                          (Misc.qstr(self.cmdrCid), 
-                           Misc.qstr(self.actorName),
-                           Misc.qstr(self.cmd)),
-                          src='cmds')
-            
+
+        if g.hubcmd is not None and self.bcastCmdInfo:
+            g.hubcmd.diag(
+                "CmdIn=%s,%s,%s" %
+                (Misc.qstr(self.cmdrCid), Misc.qstr(self.actorName), Misc.qstr(self.cmd)),
+                src='cmds')
+
     def __str__(self):
         return "Command(xid=%s, cmdr=%s, cmdrCid=%s, cmdrMid=%s, actor=%s, cmd=%s)" % \
                (self.xid, self.cmdrName, self.cmdrCid, self.cmdrMid, self.actorName,
                 Misc.qstr(self.cmd))
 
-
     def _names(self):
         """ Return our program and username. """
 
         return self.cmdrName.split('.', 1)
-    
+
     def username(self):
         """ Return the username that invoked us. """
 
         return self._names()[1]
-    
+
     def program(self):
         """ Return the program that we belong to. """
 
         return self._names()[0]
 
     def reportQueued(self):
-        if g.hubcmd != None and self.bcastCmdInfo:
+        if g.hubcmd is not None and self.bcastCmdInfo:
             g.hubcmd.diag(("CmdQueued=%d,%0.2f,%s,%s,%s,%s,%s" %
-                           (self.xid, self.ctime,
-                            Misc.qstr(self.cmdrCid), self.cmdrMid,
-                            Misc.qstr(self.actorName), self.actorMid,
-                            Misc.qstr(self.cmd))),
+                           (self.xid, self.ctime, Misc.qstr(self.cmdrCid), self.cmdrMid,
+                            Misc.qstr(self.actorName), self.actorMid, Misc.qstr(self.cmd))),
                           src='cmds')
 
     def connectToActor(self, cid, mid):
         """ Note the parts of the command we can only figure out when connected to the target. """
-        
+
         self.actorCid = cid
         self.actorMid = mid
-        
+
     """
        The command syntax that we accept is:
            cmd        := cmdword args
            cmdWord    := [a-zA-Z_]\S*
-           args       := 
+           args       :=
                          | arg
                          | args arg
            arg        := key | keyval
@@ -149,27 +146,26 @@ class Command(Misc.Object):
            vpart      := string
                          | not-string
     """
-    
-    v_re = re.compile(r"""
-        ^\s*                # Ignore leading space 
-        (?P<val>[^ \t,]+)   # Match the (sub-)value 
-        \s*                 # Ignore spaces 
-        (?P<rest>.*)        # Match eveything after the delimiter""",
-                      re.IGNORECASE|re.VERBOSE)
+
+    v_re = re.compile(
+        r"""
+        ^\s*                # Ignore leading space
+        (?P<val>[^ \t,]+)   # Match the (sub-)value
+        \s*                 # Ignore spaces
+        (?P<rest>.*)        # Match eveything after the delimiter""", re.IGNORECASE | re.VERBOSE)
 
     def cmdr(self):
         """ Return our commander. """
 
-        for c in g.commanders.values():
-            Misc.log("Command.cmdr()" , "checking %s in %s" % (self.cmdrName, c))
+        for c in list(g.commanders.values()):
+            Misc.log("Command.cmdr()", "checking %s in %s" % (self.cmdrName, c))
             if self.cmdrName == c.name:
-                Misc.log("Command.cmdr()" , "matched %s in %s" % (self.cmdrName, c))
+                Misc.log("Command.cmdr()", "matched %s in %s" % (self.cmdrName, c))
                 return c
 
-        Misc.log("Command.cmdr()" , "no cmdr %s in %s" % (self.cmdrName, g.commanders))
+        Misc.log("Command.cmdr()", "no cmdr %s in %s" % (self.cmdrName, g.commanders))
         return None
-        
-        
+
     def eatAVee(self, s):
         # Match a non-string value -- a value ended by:
         #  - whitespace,
@@ -183,16 +179,17 @@ class Command(Misc.Object):
         # If by some misunderstanding there is no match, return the rest
         # of the line as the value. This avoids infinite loops.
         #
-        
+
         # Misc.log('eatAVee', 'called with %s' % (s))
-        
+
         matches = self.v_re.match(s)
         if matches:
             return matches.groupdict()
         else:
-            g.hubcmd.inform('ParseError=%s' % (Misc.qstr("Consuming all trailing text '%s'" % (s))),
+            g.hubcmd.inform('ParseError=%s' % (Misc.qstr("Consuming all trailing text '%s'" %
+                                                         (s))),
                             src='hub')
-        return {'val':Misc.qstr(s), 'rest':''}
+        return {'val': Misc.qstr(s), 'rest': ''}
 
     def eatAString(self, s):
         # Match a quoting-escaped string.
@@ -203,54 +200,56 @@ class Command(Misc.Object):
         #       the string, 1 if not.
         #  - the rest of the input, with leading spaces removed.
         #
-    
+
         # Basically, scan a string while counting backslashes. If we come to a
         # quote preceded by an even number of backslashes (trivially 0), consider
         # the string matched.
         #
-    
+
         # Misc.log('eatAString', 'called with %s' % (s))
-    
+
         level = 0
-    
+
         if len(s) == 0:
             raise SyntaxError("unexpected empty string while parsing")
-    
+
         startQuote = s[0]
         if startQuote != "\"" and startQuote != "\'":
             raise SyntaxError("string does not start with a quote: %r" % (s))
-    
+
         c = startQuote
         for i in range(1, len(s)):
             c = s[i]
-    
+
             if c == startQuote:
                 if level % 2 == 0:
-                    return {'val':s[1:i], 'level':0, 'rest':s[i+1:].lstrip()}
+                    return {'val': s[1:i], 'level': 0, 'rest': s[i + 1:].lstrip()}
             elif c == "\\":
                 level += 1
             else:
                 level = 0
-            
+
         # OK, we fell off the end of the string without matching the closing quote.
         # Force the string to look OK so that nobody else needs to deal with a mangled string.
         #
         add = ""
         if c == "\\" and level % 2 == 1:
             add += "\\"
-       
+
         g.hubcmd.inform([('ParseError', Misc.qstr('appended %s to string %s' % (add, s)))],
                         src='hub')
         s += add
-        return {'val':s, 'level':1, 'rest':''}
-        
-    kv_re = re.compile(r"""
+        return {'val': s, 'level': 1, 'rest': ''}
+
+    kv_re = re.compile(
+        r"""
       ^\s*                          # Ignore leading space
       (?P<key>[a-z_][a-z0-9_-]*)    # Match keyword name
       (?P<delim>$|\s*=|\s+)         # Match delimiter or equals sign
       \s*                           # Ignore spaces
       (?P<rest>.*)                  # Match eveything after the delimiter""",
-                      re.IGNORECASE|re.VERBOSE)
+        re.IGNORECASE | re.VERBOSE)
+
     def parseKV(self, s):
         """ Try to parse a single KV.
 
@@ -258,92 +257,92 @@ class Command(Misc.Object):
           {} on end-of-input
           { K {} rest-of-line } or
           { K V rest-of-line }
-        
+
         """
-        
+
         s = s.strip()
         if s == "":
             return None
-    
+
         match = self.kv_re.match(s)
-        if match == None:
+        if match is None:
             g.hubcmd.inform([('ParseError', Misc.qstr("No key-value found at '%s'" % (s)))],
                             src='hub')
             return None
-        
+
         d = match.groupdict()
         Misc.log("Command.parseKV", "kv_re=%s" % (d))
-        
+
         rest = d['rest']
-    
+
         if d['delim'] == "" or d['delim'][-1] != '=':
             # If the key is not delimited by and '=', we have a valueless keyword.
-            # 
-            return {'key':d['key'], 'val':[], 'rest':rest}
+            #
+            return {'key': d['key'], 'val': [], 'rest': rest}
         else:
             # Build up a list of comma-delimited values.
             #
             val = []
-    
+
             while len(rest) != 0:
                 next = rest[0]
-    
+
                 # Parse a (sub-)value
                 #
                 if next == "\"" or next == "\'":
                     dv = self.eatAString(rest)
-    
+
                     if dv['level'] != 0:
                         Misc.log('parseKV', 'warning: eatAString returned with %s' % (dv))
                 else:
                     dv = self.eatAVee(rest)
-    
-                if dv['val'] != None:
+
+                if dv['val'] is not None:
                     val.append(dv['val'])
                 rest = dv['rest']
-                
+
                 # Bail out if we:
                 #   - hit EOL
                 #   - have no more sub-values
                 #
                 if len(rest) == 0 or rest[0] != ',':
                     break
-                
+
                 # Keep gathering subvalues while we find commas.
                 #
                 rest = rest[1:].lstrip()
-                    
-            return {'key':d['key'], 'val':val, 'rest':rest}
+
+            return {'key': d['key'], 'val': val, 'rest': rest}
 
     def parse(self):
         """ Parse a raw command string into .argv """
-        
+
         argv = OrderedDict()
         rest = self.cmd
-        
-        while 1:
+
+        while True:
             d = self.parseKV(rest)
-            if d == None:
+            if d is None:
                 break
-            
+
             if len(d['val']) == 0:
                 val = None
             elif len(d['val']) == 1:
                 val = d['val'][0]
             else:
                 val = d['val']
-            
+
             argv[d['key']] = val
             rest = d['rest']
 
         self.argv = argv
-    
+
     def parseArgs(self):
         """ Parse a raw command string into an OrderedDict in .argDict. """
-        
+
         if not self.argDict:
             self.argDict = Parsing.parseArgs(self.cmd)
-            
+
     def match(self, opts):
         """ Searches an OrderedDict for matches.
 
@@ -363,7 +362,7 @@ class Command(Misc.Object):
 
         self.parseArgs()
         return Parsing.match(self.argDict, opts)
-    
+
     def coverArgs(self, requiredArgs, optionalArgs=None, ignoreFirst=None):
         """ getopt, sort of.
 
@@ -381,7 +380,7 @@ class Command(Misc.Object):
         Notes:
            Does not return list of unmatched optionalArgs.
            Pretty much ignores argument order, for better or worse.
-        
+
         command = 'jump height=14 over=cow before=6pm backwards 3 5 5'
         coverArgs(('height', 'backwards', 'withPole'), ('before', 'after')) ->
             {'height':14, 'backwards':None},
@@ -393,10 +392,10 @@ class Command(Misc.Object):
 
         if not hasattr(self, 'argv'):
             self.parse()
-            
+
         Misc.log("MCCommand.coverArgs",
-                "requiredArgs=%r optionalArgs=%r ignoreFirst=%r argv=%r" \
-                % (requiredArgs, optionalArgs, ignoreFirst, self.argv))
+                 "requiredArgs=%r optionalArgs=%r ignoreFirst=%r argv=%r"
+                 % (requiredArgs, optionalArgs, ignoreFirst, self.argv))
 
         # Start with a copy of the command args, which we consume as we copy to
         # the matched_args dict.
@@ -411,7 +410,7 @@ class Command(Misc.Object):
             optionalArgs = list(optionalArgs)
         else:
             optionalArgs = []
-        
+
         requiredMatches = {}
         optionalMatches = {}
         leftovers = []
@@ -427,18 +426,17 @@ class Command(Misc.Object):
                 optionalMatches[k] = v
                 optionalArgs.remove(k)
             else:
-                leftovers.append((k,v))
+                leftovers.append((k, v))
 
         Misc.log("MCCommand.coverArgs",
-                "raw=%r requiredMatches=%r optionalMatches=%r unmatched=%r leftovers=%r" \
-                % (self.argv, requiredMatches, optionalMatches, requiredArgs, leftovers))
-                
-        return requiredMatches, requiredArgs, optionalMatches, leftovers
+                 "raw=%r requiredMatches=%r optionalMatches=%r unmatched=%r leftovers=%r"
+                 % (self.argv, requiredMatches, optionalMatches, requiredArgs, leftovers))
 
+        return requiredMatches, requiredArgs, optionalMatches, leftovers
 
     def addReply(self, reply, **argv):
         self.respond(reply['flag'], KVs=reply['KVs'], **argv)
-        
+
     def inform(self, KVs='', **argv):
         self.makeAndSendReply('i', KVs, **argv)
 
@@ -462,21 +460,22 @@ class Command(Misc.Object):
 
     def respond(self, flag, KVs='', **argv):
         """ Respond with a specified flag. """
-        
+
         self.makeAndSendReply(flag, KVs, **argv)
 
     def makeAndSendReply(self, flag, KVs, **argv):
         """ Bundle a flag and some KVs into a proper Reply & ship it off. """
-        
+
         src = argv.get('src', self.actorName)
         bcast = argv.get('bcast', True)
-        
+
         if self.debug > 0:
-            Misc.log("Command.makeAndSendReply", "src = %r, flag = %s, KVs = %r" % (src, flag, KVs))
-        
+            Misc.log("Command.makeAndSendReply",
+                     "src = %r, flag = %s, KVs = %r" % (src, flag, KVs))
+
         r = Reply(self, flag, KVs, src=src, bcast=bcast)
         self.reply(r, **argv)
-        
+
     def reply(self, r, **argv):
         """ Finally register a Reply's KVs and offer it to any interested parties."""
 
@@ -486,12 +485,10 @@ class Command(Misc.Object):
         if not argv.get('noRegister', False):
             g.KVs.setKVsFromReply(r)
 
-        for c in g.commanders.values():
+        for c in list(g.commanders.values()):
             c.tasteReply(r)
-            
+
         if r.finishesCommand():
             # del g.pendingCommands[self.xid]
             if self.bcastCmdInfo:
-                g.hubcmd.diag("CmdDone=%s,%s" % (self.xid, Misc.qstr(r.flag.lower())),
-                              src="cmds")
-            
+                g.hubcmd.diag("CmdDone=%s,%s" % (self.xid, Misc.qstr(r.flag.lower())), src="cmds")

@@ -4,6 +4,7 @@ import re
 
 import Misc
 
+
 class InternalCmd(object):
 
     def __init__(self, name, isActor=True, **argv):
@@ -46,22 +47,22 @@ class InternalCmd(object):
         self.totalCommands += 1
 
         cmd.parseArgs()
-        words = cmd.argDict.keys()
+        words = list(cmd.argDict.keys())
         if len(words) == 0:
             cmd.finish('')
             return
 
         cmdWord = words[0]
         cmdHandler = self.commands.get(cmdWord, None)
-        if cmdHandler == None:
-            cmd.fail('%sTxt=%s' % \
+        if cmdHandler is None:
+            cmd.fail('%sTxt=%s' %
                      (self.name, Misc.qstr("No command named %s" % (cmdWord))))
             return
 
         cmd.reportQueued()
         try:
             cmdHandler(cmd)
-        except Exception, e:
+        except Exception as e:
             Misc.tback('Vocab.sendCommand', e)
             cmd.fail('%sTxt=%s' % (self.name, Misc.qstr(e, tquote='"')))
             return

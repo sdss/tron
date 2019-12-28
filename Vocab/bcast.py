@@ -2,26 +2,29 @@ __all__ = ['bcast']
 
 import time
 
-import Misc
 import Hub
+import Misc
 import Vocab.InternalCmd as InternalCmd
+
 
 """ A variant on instant messaging, where a Commander can inject keywords.
 
     The single command is:
         bcast BID name flag [keys]
-    
+
     which injects the keys as coming from the given name with the MID BID
 
     bcast.name BID cmdrID flag keys
-    
+
 """
+
+
 class bcast(InternalCmd.InternalCmd):
 
     def __init__(self, **argv):
         InternalCmd.InternalCmd.__init__(self, 'bcast', **argv)
         self.decoder = Hub.ASCIIReplyDecoder(CIDfirst=True, debug=9)
-        
+
     def sendCommand(self, cmd):
         """ Generate a Reply from the given pseudo-Command.
 
@@ -33,7 +36,7 @@ class bcast(InternalCmd.InternalCmd):
         and may have other arguments, which must parse as a protocol reply. i.e.
         a semicolon-delimited list of key variables.
 
-        Hmm, maybe the ID should be 
+        Hmm, maybe the ID should be
         """
 
         # One interesting thing about this command is that all its arguments are
@@ -51,7 +54,9 @@ class bcast(InternalCmd.InternalCmd):
             cmd.fail('bcastTxt="could not parse command line"')
             return
         if leftover:
-            cmd.fail('bcastTxt=%s' % (Misc.qstr("could not completely parse command line. Leftovers=%s" % (leftover))))
+            cmd.fail('bcastTxt=%s' %
+                     (Misc.qstr("could not completely parse command line. Leftovers=%s" %
+                                (leftover))))
             return
 
         #  2) Construct a pseudo-Command to go with it.
@@ -61,6 +66,3 @@ class bcast(InternalCmd.InternalCmd):
         c.addReply(r)
 
         cmd.finish('')
-
-        
-    

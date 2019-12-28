@@ -8,7 +8,9 @@ import sys
 
 from Misc.Exceptions import ICCError
 
+
 cfgCache = None
+
 
 def init(path=None, verbose=True):
     """ Initialize the cfg space.
@@ -19,10 +21,10 @@ def init(path=None, verbose=True):
 
     global cfgPath
 
-    if path == None:
+    if path is None:
         path = os.environ.get('CONFIG_DIR', None)
 
-    if path == None:
+    if path is None:
         raise RuntimeError("Cannot initialize configuration module: no path given")
 
     cfgPath = path
@@ -30,6 +32,7 @@ def init(path=None, verbose=True):
 
     if verbose:
         sys.stderr.write("initialized configuration under %s\n" % (cfgPath))
+
 
 def flush():
     """ Clear any existing configuration cache.
@@ -39,7 +42,10 @@ def flush():
 
     cfgCache = {}
 
+
 __nodef = 'no such variable HERE'
+
+
 def get(space, var, default=__nodef, doFlush=False):
     """ Fetch a configuration value.
 
@@ -52,18 +58,19 @@ def get(space, var, default=__nodef, doFlush=False):
 
     if doFlush:
         flush()
-    if cfgCache == None:
+    if cfgCache is None:
         init()
 
     try:
         s = cfgCache[space]
-    except:
+    except BaseException:
         s = _loadSpace(space)
 
     if id(default) == id(__nodef):
         return s[var]
     else:
         return s.get(var, default)
+
 
 def _loadSpace(space):
     """ Load a configuration file into the cache.
@@ -77,19 +84,22 @@ def _loadSpace(space):
 
     filename = os.path.join(cfgPath, "%s.py" % (space.lower()))
     try:
-        execfile(filename, gdict, ldict)
-    except SyntaxError, e:
-        raise ICCError("syntax error at or before line %d (%s) of the configuration file %s" % (e.lineno, e.text, filename))
-    except Exception, e:
+        exec(compile(open(filename, "rb").read(), filename, 'exec'), gdict, ldict)
+    except SyntaxError as e:
+        raise ICCError("syntax error at or before line %d (%s) of the configuration file %s" %
+                       (e.lineno, e.text, filename))
+    except Exception as e:
         raise ICCError("failed to read the configuration file %s: %s" % (filename, e))
 
     cfgCache[space] = ldict
     return ldict
 
+
 def _test():
     init('/tmp/cfg')
-    print get('t1', 'x')
-    print get('t1', 'x2')
+    print(get('t1', 'x'))
+    print(get('t1', 'x2'))
+
 
 if __name__ == '__main__':
     _test()

@@ -1,5 +1,6 @@
 """ Various string parsers. """
 
+
 def floatArgs(s, cnt=None, failWith=None):
     """ Parse a comma-delimited list of floats.
 
@@ -10,21 +11,21 @@ def floatArgs(s, cnt=None, failWith=None):
 
     Returns:
         a list of values.
-        
+
     Raises:
         RuntimeError
     """
 
     try:
         stringList = s.split(',')
-        floatList = map(float(stringList))
-    except Exception, e:
+        floatList = list(map(float(stringList)))
+    except Exception as e:
         if failWith:
             raise RuntimeError("%s: %s" % (failWith, s))
         else:
             raise
 
-    if cnt != None and len(floatList) != cnt:
+    if cnt is not None and len(floatList) != cnt:
         raise RuntimeError("%s. wrong number of arguments: %s" % (failWith, s))
 
     return floatList

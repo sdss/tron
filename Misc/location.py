@@ -1,11 +1,13 @@
 """Utilities for dealing with our location (APO vs. LCO)."""
 
+import os
 import socket
 import warnings
-import os
+
 
 def _warning(message, category=UserWarning, filename='', lineno=-1):
-    print('{0}: {1}'.format(category.__name__, message))
+    print(('{0}: {1}'.format(category.__name__, message)))
+
 
 warnings.showwarning = _warning
 

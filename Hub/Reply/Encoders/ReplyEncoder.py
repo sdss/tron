@@ -1,6 +1,7 @@
 __all__ = ['ReplyEncoder']
-           
+
 import Misc
+
 
 class ReplyEncoder(Misc.Object):
 
@@ -9,13 +10,12 @@ class ReplyEncoder(Misc.Object):
 
         self.name = argv.get('name', '.unnamed')
         self.nubID = None
-        
+
     def setNub(self, n):
         self.nubID = n
-        
+
     def setName(self, s):
         self.name = s
 
     def encode(self, s):
-         RuntimeError(".encode() must be defined in a ReplyEncoder subclass.")
-        
+        RuntimeError(".encode() must be defined in a ReplyEncoder subclass.")

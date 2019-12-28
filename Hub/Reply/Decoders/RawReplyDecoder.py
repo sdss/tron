@@ -1,19 +1,22 @@
 __all__ = ['RawReplyDecoder']
 
 import Misc
-from ReplyDecoder import ReplyDecoder
 from Parsing import parseRawReply
 
+from .ReplyDecoder import ReplyDecoder
+
+
 class RawReplyDecoder(ReplyDecoder):
+
     def __init__(self, **argv):
         ReplyDecoder.__init__(self, **argv)
-        
+
         self.EOL = argv.get('EOL', '\n')
         self.stripChars = argv.get('stripChars', '')
-        
+
     def decode(self, buf, newData):
         """ Find and extract a single complete reply in the buf. Uses .EOL to
-            recognize the end of a reply. 
+            recognize the end of a reply.
 
         Returns:
           - a Reply instance. None if .EOL no found in buf.
@@ -24,7 +27,7 @@ class RawReplyDecoder(ReplyDecoder):
 
         if newData:
             buf += newData
-        
+
         if self.debug > 5:
             Misc.log('Stdin.extractReply', "called with EOL=%r and buf=%r" % (self.EOL, buf))
 
@@ -39,7 +42,7 @@ class RawReplyDecoder(ReplyDecoder):
             return None, buf
 
         replyString = buf[:eol]
-        buf = buf[eol+len(self.EOL):]
+        buf = buf[eol + len(self.EOL):]
 
         if self.debug > 2:
             Misc.log('Stdin.extractReply', "hoping to parse %r" % (replyString))
@@ -48,9 +51,8 @@ class RawReplyDecoder(ReplyDecoder):
             replyString = replyString.replace(c, '')
 
         r = parseRawReply(replyString)
-        
+
         if self.debug > 3:
             Misc.log('RawReplyDecoder.extractReply', "extracted %r, returning %r" % (r, buf))
 
         return r, buf
-

@@ -21,27 +21,27 @@
 """
 
 import imp
+import json
 import os
 import re
 import signal
 import sys
 import time
-import json
 from collections import OrderedDict
 
-import svnVersion
-import Misc
-from Misc.cdict import cdict
-
-import IO
-import Hub.KV.KVDict
-import Hub.Command.Command
 import Auth
 import g
+import Hub.Command.Command
+import Hub.KV.KVDict
+import IO
+import Misc
+import svnVersion
+from Misc.cdict import cdict
+
 
 def init(programsFile=None):
     g.home = sys.path[0]
-    if g.home == None or g.home == '':
+    if g.home is None or g.home == '':
         g.home = os.getcwd()
 
     g.rootDir = os.getcwd()
@@ -72,10 +72,26 @@ def init(programsFile=None):
     g.actors = cdict()
 
     g.hubcmd = None
-    g.hubcmd = Hub.Command.Command('.hub', '0', 0, 'hub', None, actorCid=0, actorMid=0, neverEnd=True)
+    g.hubcmd = Hub.Command.Command(
+        '.hub',
+        '0',
+        0,
+        'hub',
+        None,
+        actorCid=0,
+        actorMid=0,
+        neverEnd=True)
 
     #   - An authorization manager
-    permsCmd = Hub.Command.Command('.perms', '0', 0, 'perms', None, actorCid=0, actorMid=0, neverEnd=True)
+    permsCmd = Hub.Command.Command(
+        '.perms',
+        '0',
+        0,
+        'perms',
+        None,
+        actorCid=0,
+        actorMid=0,
+        neverEnd=True)
     g.perms = Auth.Auth(permsCmd, debug=1)
 
     # Loads the programs with their custom permissions
@@ -109,17 +125,21 @@ def init(programsFile=None):
     signal.signal(signal.SIGHUP, handleSIGHUP)
     signal.signal(signal.SIGTERM, handleSIGTERM)
 
+
 def handleSIGHUP(signal, frame):
     restart()
 
+
 def handleSIGTERM(signal, frame):
     shutdown()
+
 
 def getSetHubVersion():
     """ Put the uncached svn version info into the hub.version keyword. """
 
     version = Misc.qstr(svnVersion.svnTagOrRevision())
     g.KVs.setKV('hub', 'version', version, None)
+
 
 def loadKeys():
     rootDir = Misc.cfg.get(g.location, 'httpRoot')
@@ -129,12 +149,14 @@ def loadKeys():
 
     getSetHubVersion()
 
+
 def loadWords(words=None):
-    if words == None:
+    if words is None:
         words = Misc.cfg.get('hub', 'vocabulary')
 
     for w in words:
         _loadWords([w])
+
 
 def _loadWords(wordlist):
     """ (Re-)load a list of Vocabulary words, overwriting any existing info.
@@ -160,7 +182,7 @@ def _loadWords(wordlist):
             Misc.log('hub.loadVocab', 'trying to (re-)load vocabulary word %s' % (w,))
             fp, pathname, description = imp.find_module(modName, vocab_mod.__path__)
             mod = imp.load_module(modName, fp, pathname, description)
-        except ImportError, e:
+        except ImportError as e:
             raise Exception('Import of %s failed: %s' % (modName, e))
 
         if fp:
@@ -169,78 +191,84 @@ def _loadWords(wordlist):
         Misc.log('hub.loadWords', 'loading vocabulary word %s from %s...' % (w, modName))
 
         try:
-            cmdSet = getattr(mod,modName)()
+            cmdSet = getattr(mod, modName)()
             try:
                 dropActor(cmdSet)
-            except:
+            except BaseException:
                 pass
             g.vocabulary[w] = cmdSet
-        except Exception, e:
-            raise Exception("Failed to load word %s: %s" % (w, e))
+        except Exception as e:
+            raise Exception('Failed to load word %s: %s' % (w, e))
 
         addActor(cmdSet)
 
         Misc.log('hub.loadWords', 'vocabulary: %s' % (g.vocabulary))
 
+
 def shutdown():
     Misc.log('hub.shutdown', 'shutting down......................................')
     try:
         _shutdown()
-    except:
+    except BaseException:
         pass
     sys.exit(0)
+
 
 def restart():
     Misc.log('hub.restart', 'restarting......................................')
     try:
         _shutdown()
-    except:
+    except BaseException:
         pass
 
     Misc.log('hub.restart', 'for real......................................')
     time.sleep(1)
-    os.execlp("tron", "tron", "restart")
+    os.execlp('tron', 'tron', 'restart')
+
 
 def _shutdown():
-    sys.stderr.write("final cleanup; deleting hub pieces...\n")
+    sys.stderr.write('final cleanup; deleting hub pieces...\n')
 
-    sys.stderr.write("       deleting acceptors...\n")
-    for aname, acceptor in g.acceptors.items():
+    sys.stderr.write('       deleting acceptors...\n')
+    for aname, acceptor in list(g.acceptors.items()):
         try:
             acceptor.shutdown(notifyHub=False)
-        except:
+        except BaseException:
             pass
 
-    sys.stderr.write("       deleting commanders...\n")
-    for cname, cmdr in g.commanders.items():
+    sys.stderr.write('       deleting commanders...\n')
+    for cname, cmdr in list(g.commanders.items()):
         try:
             cmdr.shutdown(notifyHub=False)
-        except:
+        except BaseException:
             pass
 
-    sys.stderr.write("       deleting actors...\n")
-    for aname, actor in g.actors.items():
+    sys.stderr.write('       deleting actors...\n')
+    for aname, actor in list(g.actors.items()):
         try:
             actor.shutdown(notifyHub=False)
-        except:
+        except BaseException:
             pass
+
 
 def run():
     """ Listens for and handles I/O on all devices.
     """
-    while 1:
+    while True:
         try:
-            Misc.log("hub.run", "actors id=%r" % (id(g.actors)))
+            Misc.log('hub.run', 'actors id=%r' % (id(g.actors)))
             g.poller.run()
         except (SystemExit, KeyboardInterrupt):
             Misc.log('Hub.run', 'Normal exit."')
             raise
 
-        except Exception, e:
+        except Exception as e:
             Misc.tback('Hub.run', e)
+
 
 class NubDict(OrderedDict):
     """ Arrange for access to a dictionary to be annotated. """
+
     def __init__(self, name):
         OrderedDict.__init__(self)
         self.name = name
@@ -259,13 +287,14 @@ class NubDict(OrderedDict):
 
     def listSelf(self, cmd=None):
         names = []
-        for n in self.itervalues():
+        for n in self.values():
             names.append(Misc.qstr(n.name))
 
         if not cmd:
             cmd = g.hubcmd
 
-        cmd.inform("%s=%s" % (self.name, ','.join(names)))
+        cmd.inform('%s=%s' % (self.name, ','.join(names)))
+
 
 class CmdrDict(NubDict):
     """ Like NubDict, but generate a 'users' keyword, depending on
@@ -277,7 +306,7 @@ class CmdrDict(NubDict):
             cmd = g.hubcmd
         names = []
         userNames = []
-        for n in self.itervalues():
+        for n in self.values():
             names.append(Misc.qstr(n.name))
             if n.isUser:
                 userNames.append(Misc.qstr(n.name))
@@ -285,16 +314,16 @@ class CmdrDict(NubDict):
             if n.userInfo:
                 cmd.inform(n.userInfo)
 
-        cmd.inform("%s=%s" % (self.name, ','.join(names)))
-        cmd.inform("users=%s" % (','.join(userNames)))
+        cmd.inform('%s=%s' % (self.name, ','.join(names)))
+        cmd.inform('users=%s' % (','.join(userNames)))
 
 
 def addNubToDict(nub, nubDict):
     """ Add a new nub to the given dict. The nub's ID must not be the same as for any existing nub. """
 
     existingNub = findNubInDict(nub.ID, nubDict)
-    if existingNub != None:
-        Misc.log("Hub.nubs", "nub %s already exists; not overwriting" % (nub.ID))
+    if existingNub is not None:
+        Misc.log('Hub.nubs', 'nub %s already exists; not overwriting' % (nub.ID))
         return
 
     nubDict[nub.ID] = nub
@@ -309,16 +338,18 @@ def dropNubFromDict(nub, nubDict, doShutdown=True):
         nub.shutdown(notifyHub=False)
 
     nub = findNubInDict(nub.ID, nubDict)
-    if nub == None:
+    if nub is None:
         Misc.log('Hub.nubs', 'nub %s is not registered; not dropping it' % (nub.ID))
         return
 
     del nubDict[nub.ID]
 
+
 def findNubInDict(id, nubDict):
     """ Return the named nub, or None if it does not exist. """
 
     return nubDict.get(id, None)
+
 
 def addActor(nub):
     addNubToDict(nub, g.actors)
@@ -326,26 +357,42 @@ def addActor(nub):
     if nub.needsAuth:
         g.perms.addActors([nub.name])
 
+
 def dropActor(nub):
     # g.perms.dropActors([nub.name])
     g.KVs.clearSource(nub.name)
     dropNubFromDict(nub, g.actors)
 
-def findActor(id): return findNubInDict(id, g.actors)
+
+def findActor(id):
+    return findNubInDict(id, g.actors)
+
 
 def addCommander(nub):
-    Misc.log("hub.addCommander", "adding %s" % (nub.name))
+    Misc.log('hub.addCommander', 'adding %s' % (nub.name))
     addNubToDict(nub, g.commanders)
 
+
 def dropCommander(nub, doShutdown=True):
-    Misc.log("hub.dropCommander", "dropping %s" % (nub.name))
+    Misc.log('hub.dropCommander', 'dropping %s' % (nub.name))
     dropNubFromDict(nub, g.commanders, doShutdown=doShutdown)
 
-def findCommander(id): return findNubInDict(id, g.commanders)
 
-def addAcceptor(nub): addNubToDict(nub, g.acceptors)
-def dropAcceptor(nub): dropNubFromDict(nub, g.acceptors)
-def findAcceptor(id): return findNubInDict(id, g.acceptors)
+def findCommander(id):
+    return findNubInDict(id, g.commanders)
+
+
+def addAcceptor(nub):
+    addNubToDict(nub, g.acceptors)
+
+
+def dropAcceptor(nub):
+    dropNubFromDict(nub, g.acceptors)
+
+
+def findAcceptor(id):
+    return findNubInDict(id, g.acceptors)
+
 
 def findNub(nub):
     """ Find whether a nub exists in any of the nub dictionaries. """
@@ -354,6 +401,7 @@ def findNub(nub):
         if nub in d:
             return d[nub]
     return None
+
 
 def dropNub(nub):
     """ Drop a Nub, regardless of its type. """
@@ -365,17 +413,18 @@ def dropNub(nub):
     elif nub.ID in g.acceptors:
         dropAcceptor(nub)
     else:
-        Misc.log("hub.dropNub",
-                "nub %s (%s) is neither in g.actors (%s) or g.commanders (%s)" % \
-                (nub.ID, nub, g.actors, g.commanders))
+        Misc.log('hub.dropNub',
+                 'nub %s (%s) is neither in g.actors (%s) or g.commanders (%s)' %
+                 (nub.ID, nub, g.actors, g.commanders))
+
 
 def listActors(match):
     """ """
 
-    actors = g.actors.keys()
-    actors.sort()
+    actors = sorted(g.actors.keys())
 
     return actors
+
 
 def validateCommanderNames(nub, programName, username):
     """ Transform a proposed CommanderNub name into a unique CommanderNub name.
@@ -389,27 +438,28 @@ def validateCommanderNames(nub, programName, username):
     programName = re.sub('[^a-zA-Z0-9_]+', '_', programName)
     username = re.sub('[^a-zA-Z0-9_]+', '_', username)
 
-    if re.match('[a-zA-Z_]', username) == None:
+    if re.match('[a-zA-Z_]', username) is None:
         username = '_' + username
-    if re.match('[a-zA-Z_]', programName) == None:
+    if re.match('[a-zA-Z_]', programName) is None:
         programName = '_' + programName
 
-    fullName = "%s.%s" % (programName, username)
+    fullName = '%s.%s' % (programName, username)
 
     n = 2
     proposedName = fullName
     ok = False
     while not ok:
         ok = True
-        for c in g.commanders.itervalues():
+        for c in g.commanders.values():
             if c.name == proposedName:
                 ok = False
                 break
         if not ok:
-            proposedName = "%s_%d" % (fullName, n)
+            proposedName = '%s_%d' % (fullName, n)
             n += 1
 
     return proposedName
+
 
 def getActor(cmd):
     """ Find either an actor or vocabulary word matching the given command.
@@ -420,12 +470,13 @@ def getActor(cmd):
     #Misc.log("hub.getActor", "looking for actor %s" % (actorName))
     tgt = g.actors.get(actorName, None)
 
-    if tgt == None:
+    if tgt is None:
         #Misc.log("hub.getActor", "looking for vocabulary word %s" % (actorName))
         tgt = g.vocabulary.get(actorName, None)
 
-    Misc.log("hub.getActor", "actornName %s target = %s" % (actorName, tgt))
+    Misc.log('hub.getActor', 'actornName %s target = %s' % (actorName, tgt))
     return tgt
+
 
 def addCommand(cmd):
     """ Add a new command, and arrange for it to be executed by the appropriate target.
@@ -439,7 +490,7 @@ def addCommand(cmd):
           - Provide some throttling to avoid idiocy when, say, the tcc password is changed.
     """
 
-    Misc.log("hub.addCommand", "new cmd=%s" % (cmd))
+    Misc.log('hub.addCommand', 'new cmd=%s' % (cmd))
 
     if cmd.actorName == 'dbg':
         runCmd(cmd)
@@ -447,9 +498,9 @@ def addCommand(cmd):
 
     actor = getActor(cmd)
 
-    if actor == None:
-        cmd.fail('NoTarget=%s' % \
-                 Misc.qstr("the target named %s is not connected" % (cmd.actorName)),
+    if actor is None:
+        cmd.fail('NoTarget=%s' %
+                 Misc.qstr('the target named %s is not connected' % (cmd.actorName)),
                  src='hub')
         return
 
@@ -459,7 +510,7 @@ def addCommand(cmd):
         ok = g.perms.checkAccess(cmd.cmdrCid, actor, cmd)
         if not ok:
             cmd.fail('NoPermission=%s' %
-                     Misc.qstr("you do not have permission to command %s %s" %
+                     Misc.qstr('you do not have permission to command %s %s' %
                                (actor.name, cmd.cmd)),
                      src='hub')
             return
@@ -469,21 +520,22 @@ def addCommand(cmd):
 
 def runCmd(c):
     cmd = c.cmd.strip()
-    Misc.log("hub.runCmd", "cmd = %r" % (cmd))
-    if cmd == "":
-        c.finish("Eval=%s" % (Misc.qstr("")),
+    Misc.log('hub.runCmd', 'cmd = %r' % (cmd))
+    if cmd == '':
+        c.finish('Eval=%s' % (Misc.qstr('')),
                  src='hub')
         return
 
     try:
         ret = eval(cmd)
-    except Exception, e:
+    except Exception as e:
         c.fail('EvalError=%s' % Misc.qstr(e),
                src='hub')
         raise
 
-    c.finish("Eval=%s" % (Misc.qstr(ret)), src='hub')
-    Misc.log("hub.runCmd", "ret = %r" % (ret))
+    c.finish('Eval=%s' % (Misc.qstr(ret)), src='hub')
+    Misc.log('hub.runCmd', 'ret = %r' % (ret))
+
 
 def forceReload(name, all=True):
     """ Do whatever we can to force a given module/package to be reloaded.
@@ -497,16 +549,16 @@ def forceReload(name, all=True):
         # level.
         #
         start = 0
-        while 1:
+        while True:
             end = name.find('.', start)
             if end == -1:
                 partName = name[start:]
                 break
             partName = name[start:end]
-            start = end+1
+            start = end + 1
 
             Misc.log('hub.forceReload', 'trying to (re-)load module %s in %s' % (partName, mod))
-            if mod == None:
+            if mod is None:
                 fp, pathname, description = imp.find_module(partName)
             else:
                 fp, pathname, description = imp.find_module(partName, mod.__path__)
@@ -521,11 +573,11 @@ def forceReload(name, all=True):
     #
     try:
         Misc.log('hub.forceReload', 'trying to (re-)load final %s in %s' % (partName, mod))
-        if mod == None:
+        if mod is None:
             fp, pathname, description = imp.find_module(partName)
         else:
             fp, pathname, description = imp.find_module(partName, mod.__path__)
-    except:
+    except BaseException:
         raise
 
     try:
@@ -537,10 +589,12 @@ def forceReload(name, all=True):
 
     return mod
 
+
 def stopNub(name):
     n = findActor(name)
     if n:
         dropActor(n)
+
 
 def startNub(name):
     """ Launch a single Nub.
@@ -563,7 +617,7 @@ def startNub(name):
     try:
         Misc.log('hub.startNub', 'trying to (re-)load Nub %s' % (name))
         fp, pathname, description = imp.find_module(name, nubs_mod.__path__)
-    except:
+    except BaseException:
         raise
 
     try:
@@ -591,7 +645,7 @@ def loadPrograms(programsFile=None):
 
     try:
         programs = json.load(open(programsFile))
-    except:
+    except BaseException:
         Misc.log('hub.loadPrograms', 'problem parsing JSON file.')
         return
 

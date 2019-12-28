@@ -2,6 +2,7 @@ __all__ = ['dequote']
 
 import Misc
 
+
 def dequote(s):
     """ Convert s as a possibly quoted string to an unquoted string.
 
@@ -10,11 +11,11 @@ def dequote(s):
 
     # Misc.log("DEQUOTE", "IN q=%r= s=%r=" % (q, s))
 
-    if s == None:
+    if s is None:
         return None
 
-    assert type(s) == str
-    
+    assert isinstance(s, str)
+
     if len(s) >= 2:
         c0 = s[0]
         if c0 not in ('"', "'") or s[-1] != c0:
@@ -30,7 +31,7 @@ def dequote(s):
             replaceQuote = "'"
 
         sNoQuotes = s[1:-1].replace(findQuote, replaceQuote)
-        
+
         # Then strip escapes.
         #
         sNoQuotes = sNoQuotes.replace('\\\\', '\\')
@@ -41,26 +42,17 @@ def dequote(s):
 
     return s
 
-if __name__ == "__main__":
-    pairs = (('', ''),
-             ('""', ''),
-             (' ', ' '),
-             ('"', '"'),
-             ("'", "'"),
-             ('\\', '\\'),
-             ('"\\\\"', '\\'),
-             ('"\""', '"'),
-             ("'\''", "'"),
-             ('"\a\b\c\d\e\f\g\""', '\a\b\c\d\e\f\g"'),
-             ('"abc\"def\\\\ghi"', 'abc"def\\ghi')
-             )
 
-    print "testing dequote..."
+if __name__ == "__main__":
+    pairs = (('', ''), ('""', ''), (' ', ' '), ('"', '"'), ("'", "'"), ('\\', '\\'),
+             ('"\\\\"', '\\'), ('"\""', '"'), ("'\''", "'"),
+             ('"\a\b\c\d\e\f\g\""', '\a\b\c\d\e\f\g"'), ('"abc\"def\\\\ghi"', 'abc"def\\ghi'))
+
+    print("testing dequote...")
     for test in pairs:
         s0, s1 = test
         sx = dequote(s0)
         if sx != s1:
-            print "mismatch: s0=%r s1=%r got=%r" % (s0, s1, sx)
+            print("mismatch: s0=%r s1=%r got=%r" % (s0, s1, sx))
         else:
-            print "ok: %r -> %r" % (s0, sx)
-            
+            print("ok: %r -> %r" % (s0, sx))

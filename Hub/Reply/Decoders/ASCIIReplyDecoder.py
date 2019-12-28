@@ -3,19 +3,22 @@ __all__ = ['ASCIIReplyDecoder']
 import g
 import Misc
 from Parsing import *
-from ReplyDecoder import ReplyDecoder
+
+from .ReplyDecoder import ReplyDecoder
+
 
 class ASCIIReplyDecoder(ReplyDecoder):
+
     def __init__(self, **argv):
         ReplyDecoder.__init__(self, **argv)
-        
+
         self.EOL = argv.get('EOL', '\n')
         self.cidFirst = argv.get('CIDfirst', True)
         self.stripChars = argv.get('stripChars', '')
-        
+
     def decode(self, buf, newData):
         """ Find and extract a single complete reply in the buf. Uses .EOL to
-            recognize the end of a reply. 
+            recognize the end of a reply.
 
         Returns:
           - a Reply instance. None if .EOL no found in buf.
@@ -34,7 +37,7 @@ class ASCIIReplyDecoder(ReplyDecoder):
 
         if newData:
             buf += newData
-        
+
         if self.debug > 5:
             Misc.log('Stdin.extractReply', "called with EOL=%r and buf=%r" % (self.EOL, buf))
 
@@ -49,24 +52,24 @@ class ASCIIReplyDecoder(ReplyDecoder):
             return None, buf
 
         replyString = buf[:eol]
-        buf = buf[eol+len(self.EOL):]
+        buf = buf[eol + len(self.EOL):]
 
         if self.debug > 2:
-            Misc.log('Stdin.extractReply', "hoping to parse (CIDfirst=%s) %r" % (self.cidFirst, replyString))
+            Misc.log('Stdin.extractReply',
+                     "hoping to parse (CIDfirst=%s) %r" % (self.cidFirst, replyString))
 
         for c in self.stripChars:
             replyString = replyString.replace(c, '')
-            
+
         # Make sure to consume unparseable junk up to the next EOL.
         #
         try:
             r = parseASCIIReply(replyString, cidFirst=self.cidFirst)
-        except SyntaxError, e:
+        except SyntaxError as e:
             Misc.log("ASCIIReplyDecoder", "Parsing error from %s: %r" % (self.name, e))
             return None, buf
-        
+
         if self.debug > 3:
             Misc.log('Stdin.extractReply', "extracted %r, returning %r" % (r, buf))
 
         return r, buf
-

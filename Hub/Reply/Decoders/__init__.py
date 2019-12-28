@@ -1,7 +1,7 @@
-from ReplyDecoder import ReplyDecoder
-from ASCIIReplyDecoder import ASCIIReplyDecoder
-from RawReplyDecoder import RawReplyDecoder
-from PyReplyDecoder import PyReplyDecoder
+from .ASCIIReplyDecoder import ASCIIReplyDecoder
+from .PyReplyDecoder import PyReplyDecoder
+from .RawReplyDecoder import RawReplyDecoder
+from .ReplyDecoder import ReplyDecoder
+
 
 #from BinaryReplyDecoder import *
-

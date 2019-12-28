@@ -1,10 +1,11 @@
 __all__ = ['RawActorNub']
 
-from ActorNub import ActorNub
-from SocketActorNub import SocketActorNub
-
-import Misc
 import g
+import Misc
+
+from .ActorNub import ActorNub
+from .SocketActorNub import SocketActorNub
+
 
 class RawActorNub(SocketActorNub, ActorNub):
 
@@ -13,7 +14,7 @@ class RawActorNub(SocketActorNub, ActorNub):
 
         try:
             activeMid = self.activeMid
-        except:
+        except BaseException:
             self.activeMid = activeMid = 1
 
         cmdDone = False
@@ -26,9 +27,9 @@ class RawActorNub(SocketActorNub, ActorNub):
                 self.activeMid += 1
             else:
                 Misc.log('rawReply', 'not converting reply flag :%s:' % (replyText))
-        except Exception, e:
+        except Exception as e:
             Misc.log('rawReply', 'ignoring exceptoin: %s' % (e))
-        
+
         r['cid'] = 0
         r['mid'] = activeMid
         cmd = ActorNub.getCmdForReply(self, r)

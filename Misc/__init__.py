@@ -1,13 +1,12 @@
-from Object import *
-from Exceptions import *
-from ID import *
-from log import *
-from qstr import *
-from tcmd import *
-from tback import *
-from Logfile import *
-from LLock import *
-from dates import *
-from location import *
-import cfg
-import strcvt
+from . import cfg, strcvt
+from .dates import *
+from .Exceptions import *
+from .ID import *
+from .LLock import *
+from .location import *
+from .log import *
+from .Logfile import *
+from .Object import *
+from .qstr import *
+from .tback import *
+from .tcmd import *

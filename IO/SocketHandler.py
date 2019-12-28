@@ -2,8 +2,10 @@
 
 __all__ = ['SocketHandler']
 
-import IOHandler
 import Misc
+
+from . import IOHandler
+
 
 class SocketHandler(IOHandler):
     """ Class for IO connections that are connected to a socket. """
@@ -12,18 +14,18 @@ class SocketHandler(IOHandler):
         IOHandler.__init__(self, poller, in_f, out_f)
 
         self.debug = 1
-        
+
     def readInput(self):
         # Misc.log("Cat.readInput", "reading...")
         try:
             readIn = self.in_f.recv(self.tryToRead)
-        except socket.error, e:
-            Misc.log("Cat.readInput", "exception %r" % (sys.exc_info,))
+        except socket.error as e:
+            Misc.log("Cat.readInput", "exception %r" % (sys.exc_info, ))
             self.poller.removeInput(self)
             if len(self.outBuffer) > 0:
                 self.poller.removeOutput(self)
             return
-        except:
+        except BaseException:
             self.poller.removeInput(self)
             if len(self.outBuffer) > 0:
                 self.poller.removeOutput(self)
@@ -35,21 +37,22 @@ class SocketHandler(IOHandler):
 
     def mayOutput(self):
         if self.debug:
-            Misc.log("Cat.mayOutput", "writing len=%d %r" % (len(self.outBuffer), self.outBuffer[:30]))
+            Misc.log("Cat.mayOutput",
+                     "writing len=%d %r" % (len(self.outBuffer), self.outBuffer[:30]))
 
         try:
             sent = self.out_f.send(self.outBuffer[:self.tryToWrite])
-        except socket.error, e:
-            Misc.log("Cat.mayOutput", "exception %r" % (e,))
+        except socket.error as e:
+            Misc.log("Cat.mayOutput", "exception %r" % (e, ))
             self.poller.removeOutput(self)
             try:
                 self.poller.removeInput(self)
-            except:
+            except BaseException:
                 pass
             return
-        except:
+        except BaseException:
             raise
-        
+
         self.outBuffer = self.outBuffer[sent:]
         if len(self.outBuffer) == 0:
             self.poller.removeOutput(self)

@@ -1,5 +1,4 @@
-from Error import *
-from ICCError import *
-from CmdError import *
-from CommError import *
-
+from .CmdError import *
+from .CommError import *
+from .Error import *
+from .ICCError import *

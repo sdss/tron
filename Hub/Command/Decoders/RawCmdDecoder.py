@@ -3,7 +3,8 @@ __all__ = ['RawCmdDecoder']
 import Misc
 from Hub.Command import Command
 
-import CommandDecoder
+from . import CommandDecoder
+
 
 class RawCmdDecoder(CommandDecoder.CommandDecoder):
     """ A Command decoder for accepting commands which have no target, MID, or CID. We
@@ -12,7 +13,7 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
        cmdTxt -> tgt mid cmdTxt
 
     """
-    
+
     def __init__(self, target, **argv):
         """ Create ourself.
 
@@ -24,7 +25,7 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
                         cmd as an argument.
         """
         CommandDecoder.CommandDecoder.__init__(self, **argv)
-        
+
         self.target = target
         self.EOL = argv.get('EOL', '\n')
         self.CID = argv.get('CID', '0')
@@ -33,10 +34,11 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
         self.mid = 1
 
         if self.debug > 1:
-            Misc.log('RawCmdDecoder.init', "target=%s cmdWrapper=%s" % (self.target, self.cmdWrapper))
+            Misc.log('RawCmdDecoder.init',
+                     "target=%s cmdWrapper=%s" % (self.target, self.cmdWrapper))
 
     def decode(self, buf, newData):
-        """ Find and extract a single complete command from the given buffer. 
+        """ Find and extract a single complete command from the given buffer.
 
         Returns:
            - a Command instance, or None if no complete command was found.
@@ -44,14 +46,14 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
 
            If a command-sized piece is found, but cannot be parsed,
            return None, leftovers.
-           
+
         """
-        
+
         if newData:
             buf += newData
-        
+
         eol = buf.find(self.EOL)
-        
+
         if self.debug > 3:
             Misc.log('RawCmdDecoder.extractCmd', "EOL at %d in buffer %r" % (eol, buf))
 
@@ -64,7 +66,7 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
         # We have a complete command. Strip it off from the rest of the input buffer.
         #
         cmdString = buf[:eol]
-        buf = buf[eol+len(self.EOL):]
+        buf = buf[eol + len(self.EOL):]
 
         for c in self.stripChars:
             cmdString = cmdString.replace(c, '')
@@ -73,10 +75,10 @@ class RawCmdDecoder(CommandDecoder.CommandDecoder):
 
         if self.cmdWrapper:
             cmdString = "%s raw=%s" % (self.cmdWrapper, cmdString)
-            
+
         # Assign a new MID
         #
         mid = self.mid
         self.mid += 1
-        
+
         return Command(self.nubID, self.CID, mid, self.target, cmdString), buf

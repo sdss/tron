@@ -1,15 +1,13 @@
-__all__ = ['CommanderNub',
-           'AuthCommanderNub',
-           'StdinNub',
-           'AuthStdinNub']
-
-from NubAuth import NubAuth
-import CoreNub
-from Hub.Reply.ReplyTaster import ReplyTaster
-import Misc
+__all__ = ['CommanderNub', 'AuthCommanderNub', 'StdinNub', 'AuthStdinNub']
 
 import g
 import hub
+import Misc
+from Hub.Reply.ReplyTaster import ReplyTaster
+
+from . import CoreNub
+from .NubAuth import NubAuth
+
 
 class CommanderNub(CoreNub.CoreNub):
     """ Base class for ICC connections, where we accept commands from and send replies to the remote end.  """
@@ -28,23 +26,24 @@ class CommanderNub(CoreNub.CoreNub):
         # is to accept only responses to our own commands.
         #
         self.taster = ReplyTaster()
-        self.taster.setFilter((), (self.name,), (self.name,))
+        self.taster.setFilter((), (self.name, ), (self.name, ))
 
         self.isUser = argv.get('isUser', False)
 
-        if argv.has_key('forceUser'):
+        if 'forceUser' in argv:
             program, user = argv.get('forceUser').split('.')
             self.setNames(program, user)
 
     def __str__(self):
-        return "%s(id=%s, name=%s, type=%s)" % (self.__class__.__name__,
-                                                self.ID, self.name, self.nubType)
-        
+        return "%s(id=%s, name=%s, type=%s)" % (self.__class__.__name__, self.ID, self.name,
+                                                self.nubType)
+
     def setNames(self, programName, username):
         """ Set our program and usernames. """
 
-        Misc.log('CommandeNub.setNames', 'setting name for %s to %s.%s' % (self, programName, username))
-        
+        Misc.log('CommandeNub.setNames',
+                 'setting name for %s to %s.%s' % (self, programName, username))
+
         newName = hub.validateCommanderNames(self, programName, username)
         self.setName(newName)
 
@@ -73,24 +72,24 @@ class CommanderNub(CoreNub.CoreNub):
         # The only time this function gets called is when new input comes in, so we
         # have no reliable mechanism for deferring input.
         #
-        while 1:
+        while True:
             cmd, leftover = self.decoder.decode(self.inputBuffer, s)
             s = None
             self.inputBuffer = leftover
-            if cmd == None:
+            if cmd is None:
                 break
 
             if self.log:
                 try:
                     txt = cmd['RawText']
-                except:
+                except BaseException:
                     txt = "UNKNOWN INPUT"
                 self.log.log(txt, note='<')
 
             intercepted = False
             if hasattr(self, 'interceptCmd'):
                 intercepted = self.interceptCmd(cmd)
-                
+
             if not intercepted:
                 hub.addCommand(cmd)
 
@@ -106,7 +105,7 @@ class CommanderNub(CoreNub.CoreNub):
             return
 
         # Most replies get sent to all interested commanders. But we allow
-        # the possibility of only sending to the commander; in that case, 
+        # the possibility of only sending to the commander; in that case,
         # the commander gets all replies and keys, but other commanders only get told
         # about command completion.
         # We do this by triaging out replies here, then optionally telling the encoder
@@ -124,7 +123,7 @@ class CommanderNub(CoreNub.CoreNub):
                 self.queueForOutput(er)
                 if self.log:
                     self.log.log(er, note='>')
-        
+
     def tasteReply(self, r):
         if self.debug > 3:
             Misc.log('ActorNub.tasteReply', "%s tasting %s" % (self, r))
@@ -137,29 +136,33 @@ class CommanderNub(CoreNub.CoreNub):
 
     def startOutput(self):
         self.noOutput = False
-        
+
+
 class AuthCommanderNub(CommanderNub, NubAuth):
     """ A CommanderNub which enforces logins. """
-    
+
     def __init__(self, poller, **argv):
         CommanderNub.__init__(self, poller, **argv)
         NubAuth.__init__(self, **argv)
-        
+
+
 class StdinNub(CommanderNub):
+
     def __init__(self, poller, in_f, out_f, **argv):
         CommanderNub.__init__(self, poller, **argv)
 
         self.mid = 1
-        
+
         self.setInputFile(in_f)
         self.setOutputFile(out_f)
-        
+
+
 class AuthStdinNub(AuthCommanderNub):
+
     def __init__(self, poller, in_f, out_f, **argv):
         AuthCommanderNub.__init__(self, poller, **argv)
 
         self.mid = 1
-        
+
         self.setInputFile(in_f)
         self.setOutputFile(out_f)
-        

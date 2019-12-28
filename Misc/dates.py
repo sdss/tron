@@ -1,9 +1,10 @@
-__all__ = ['getDayDirName',
-           'getQuarterName']
+__all__ = ['getDayDirName', 'getQuarterName']
 
 import time
 
+
 localTZ = 6 * 3600
+
 
 def getDayDirName(t=None):
     """ Return a per-day directory name.
@@ -13,10 +14,10 @@ def getDayDirName(t=None):
 
     The rule is a bit odd:
        - the night starts at local noon
-       - 
+       -
     """
 
-    if t == None:
+    if t is None:
         t = time.time()
     localNow = t - localTZ
 
@@ -25,6 +26,7 @@ def getDayDirName(t=None):
 
     return dateString
 
+
 def getQuarterName(t=None):
     """ Return the current quarter name.
 
@@ -32,7 +34,7 @@ def getQuarterName(t=None):
       - a string of the form 'Q3'
     """
 
-    if t == None:
+    if t is None:
         t = time.time()
     localNow = t - localTZ
 
@@ -43,12 +45,13 @@ def getQuarterName(t=None):
 
     return "Q%d" % ((month + 2) / 3)
 
+
 def _test():
     now = time.time()
     for h in range(24):
         testNow = now + h * 3600
-        print getDayDirName(t=testNow)
+        print(getDayDirName(t=testNow))
+
 
 if __name__ == "__main__":
     _test()
-    

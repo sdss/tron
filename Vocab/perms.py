@@ -1,13 +1,14 @@
 __all__ = ['perms']
 
-import time
 import os
+import time
 
+import g
+import hub
 import Misc
 from Hub.KV.KVDict import *
 from Vocab.InternalCmd import *
-import g
-import hub
+
 
 class perms(InternalCmd):
     """ All the commands that the "perms" package provides.
@@ -21,52 +22,52 @@ class perms(InternalCmd):
 
           perms register PROGRAM
           perms drop PROGRAM
-          
-          perms CMD program=P 
+
+          perms CMD program=P
 
           CMD:
             set a1 a2 a3
             add a1 a2
             drop a1 a2
-            
+
         Keywords returned:
           actors=a1,a2,a3
           authList=c,a1,a2,a3
           lockedActors=a1,a2
     """
-    
+
     def __init__(self, **argv):
         argv['needsAuth'] = True
-        argv['safeCmds'] = '^\s*status\s*$'
+        argv['safeCmds'] = r'^\s*status\s*$'
         InternalCmd.__init__(self, 'perms', **argv)
 
-        self.commands = {'status': self.status,
-                         'lock': self.lockCmd,
-                         'unlock': self.unlockCmd,
-                         'setLocked': self.setLockedCmd,
-                         'set': self.setCmd,
-                         'add': self.addCmd,
-                         'drop': self.dropCmd,
-                         'register' : self.registerCmd,
-                         'unregister' : self.unregisterCmd,
-                         'hackOn' : self.hackOn,
-                         'hackOff' : self.hackOff
+        self.commands = {
+            'status': self.status,
+            'lock': self.lockCmd,
+            'unlock': self.unlockCmd,
+            'setLocked': self.setLockedCmd,
+            'set': self.setCmd,
+            'add': self.addCmd,
+            'drop': self.dropCmd,
+            'register': self.registerCmd,
+            'unregister': self.unregisterCmd,
+            'hackOn': self.hackOn,
+            'hackOff': self.hackOff
+        }
 
-                         }
-        
     def help(self, cmd, finish=True):
         pass
-    
+
     def hackOn(self, cmd, finish=True):
         g.perms.hackOn = True
         cmd.warn('permsTxt="permissions are now disabled"')
         cmd.finish()
-        
+
     def hackOff(self, cmd, finish=True):
         g.perms.hackOn = False
         cmd.warn('permsTxt="permissions are now in effect"')
         cmd.finish()
-        
+
     def status(self, cmd, finish=True):
         """ Return the authentication keywords. """
 
@@ -76,9 +77,9 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-            
+
     # auth.statusCmd.help = ('status', 'Return the authorization status keywords.', None)
-                           
+
     def setLockedCmd(self, cmd, finish=True):
         """ Lock a list of actors from non-APO commanders.
 
@@ -87,7 +88,7 @@ class perms(InternalCmd):
            setLocked *
         """
 
-        args = cmd.argDict.keys()[1:]
+        args = list(cmd.argDict.keys())[1:]
         if len(args) == 1 and args[0] == '*':
             actors = None
         else:
@@ -97,7 +98,7 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-        
+
     def lockCmd(self, cmd, finish=True):
         """ Lock a list of actors from non-APO commanders.
 
@@ -106,7 +107,7 @@ class perms(InternalCmd):
            lock *
         """
 
-        args = cmd.argDict.keys()[1:]
+        args = list(cmd.argDict.keys())[1:]
         if len(args) == 1 and args[0] == '*':
             actors = []
         else:
@@ -116,7 +117,7 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-        
+
     def unlockCmd(self, cmd, finish=True):
         """ unlock a list of actors from non-APO commanders.
 
@@ -125,7 +126,7 @@ class perms(InternalCmd):
            unlock *
         """
 
-        args = cmd.argDict.keys()[1:]
+        args = list(cmd.argDict.keys())[1:]
 
         if len(args) == 1 and args[0] == '*':
             actors = []
@@ -136,7 +137,7 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-        
+
     def registerCmd(self, cmd, finish=True):
         """ Register a list of programs to control.
 
@@ -145,11 +146,11 @@ class perms(InternalCmd):
            register *
         """
 
-        args = cmd.argDict.keys()[1:]
+        args = list(cmd.argDict.keys())[1:]
         if len(args) == 0:
             cmd.fail('text="perms register requires one or more program names"')
             return
-        
+
         if len(args) == 1 and args[0] == '*':
             programs = []
         else:
@@ -159,7 +160,7 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-        
+
     def unregisterCmd(self, cmd, finish=True):
         """ Unregister a list of programs to control.
 
@@ -168,7 +169,7 @@ class perms(InternalCmd):
            unregister *
         """
 
-        args = cmd.argDict.keys()[1:]
+        args = list(cmd.argDict.keys())[1:]
         if len(args) == 0:
             cmd.fail('text="perms unregister requires one or more program names"')
             return
@@ -182,7 +183,7 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-        
+
     def setCmd(self, cmd, finish=True):
         """ Define the actors that a given program can command.
 
@@ -190,8 +191,7 @@ class perms(InternalCmd):
            set prog=p [a1 ...]
         """
 
-        matched, unmatched, leftovers = cmd.match([('set', None),
-                                                   ('program', str)])
+        matched, unmatched, leftovers = cmd.match([('set', None), ('program', str)])
 
         try:
             program = matched['program']
@@ -203,7 +203,6 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-        
 
     def addCmd(self, cmd, finish=True):
         """ Add to the actors that a given program can command.
@@ -212,8 +211,7 @@ class perms(InternalCmd):
            add program=p [a1 ...]
         """
 
-        matched, unmatched, leftovers = cmd.match([('add', None),
-                                                   ('program', str)])
+        matched, unmatched, leftovers = cmd.match([('add', None), ('program', str)])
 
         try:
             program = matched['program']
@@ -225,7 +223,7 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-        
+
     def dropCmd(self, cmd, finish=True):
         """ Block some actors that a given program can command.
 
@@ -233,8 +231,7 @@ class perms(InternalCmd):
            drop program=p [a1 ...]
         """
 
-        matched, unmatched, leftovers = cmd.match([('drop', None),
-                                                   ('program', str)])
+        matched, unmatched, leftovers = cmd.match([('drop', None), ('program', str)])
 
         try:
             program = matched['program']
@@ -246,13 +243,12 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-        
+
 
 def _test():
     a = auth()
     a.statusCmd
-    
+
+
 if __name__ == "__main__":
     _test()
-    
-    

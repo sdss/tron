@@ -1,20 +1,24 @@
 #!/usr/bin/env python
 
-import commands
 import os
 import re
-import urllib
+import subprocess
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
 
 # A dictionary with all known keywords. We only use the HeadURL keyword, but it could be
 # useful to have them all. Note that the Date/Revision values are rarely accurate, since
 # they apply only to this file.
-svnInfo = { 'Date' : '$Date$',
-            'Revision' : '$Revision$',
-            'Author' : '$Author$',
-            'HeadURL' : '$HeadURL$',
-            'Id' : '$Id$'
-            }
+svnInfo = {'Date': '$Date$',
+           'Revision': '$Revision$',
+           'Author': '$Author$',
+           'HeadURL': '$HeadURL$',
+           'Id': '$Id$'
+           }
+
 
 def stripKeyword(s):
     """ Remove the svn keyword goo from a string.
@@ -26,7 +30,7 @@ def stripKeyword(s):
         - the content of the keyword (e.g. '124')
     """
 
-    m = re.match('^\$[^:]+: (.*) \$$', s)
+    m = re.match(r'^\$[^:]+: (.*) \$$', s)
     if not m:
         return None
 
@@ -39,12 +43,14 @@ def svnRevision(dir=None):
     need to use the svnversion program output. The annoying thing there is
     deciding which file/path to examine. """
 
-    if dir == None: dir = '.'
+    if dir is None:
+        dir = '.'
 
-    status, version = commands.getstatusoutput('svnversion %s' % (dir))
+    status, version = subprocess.getstatusoutput('svnversion %s' % (dir))
     if status != 0:
-        return "unknown"
+        return 'unknown'
     return version
+
 
 def svnLabels(dir=None):
     """ Return what we can figure out about the identity of the
@@ -71,12 +77,12 @@ def svnLabels(dir=None):
 
     fullURL = stripKeyword(svnInfo['HeadURL'])
     if not fullURL:
-        return 'unknown','unknown', revision, 'unknown'
+        return 'unknown', 'unknown', revision, 'unknown'
 
     # Try to pull the tag apart a bit.
     #
-    dummy, url = urllib.splittype(fullURL)
-    host, fullPath = urllib.splithost(url)
+    dummy, url = urllib.parse.splittype(fullURL)
+    host, fullPath = urllib.parse.splithost(url)
 
     # This is ambiguous and stupid.
     # Assume we are in the top directory.
@@ -102,6 +108,7 @@ def svnLabels(dir=None):
     else:
         return 'unknown', 'unknown', revision, fullURL
 
+
 def svnName(dir='.'):
     variant, name, revision, url = svnLabels(dir=dir)
 
@@ -109,6 +116,7 @@ def svnName(dir='.'):
         return 'Tag: %s' % (name)
     else:
         return 'BadTag: %r %r %r %r' % (variant, name, revision, url)
+
 
 def svnTagOrRevision(dir='.'):
     variant, name, revision, url = svnLabels(dir=dir)
@@ -118,14 +126,16 @@ def svnTagOrRevision(dir='.'):
     else:
         return 'Tag: UNTAGGED_REVISION %s' % (revision)
 
+
 def main():
     if len(sys.argv) > 1:
         dir = sys.argv[1]
     else:
         dir = None
 
-    print "svnName: \n", svnName(dir=dir)
-    print "svnTagOrRevision: \n", svnTagOrRevision(dir=dir)
+    print('svnName: \n', svnName(dir=dir))
+    print('svnTagOrRevision: \n', svnTagOrRevision(dir=dir))
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     main()

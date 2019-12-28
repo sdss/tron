@@ -1,9 +1,10 @@
 __all__ = ['keys']
 
-import Misc
-from Vocab.InternalCmd import InternalCmd
-from Hub.KV.KVDict import kvAsASCII
 import g
+import Misc
+from Hub.KV.KVDict import kvAsASCII
+from Vocab.InternalCmd import InternalCmd
+
 
 class keys(InternalCmd):
     """ All the commands that the "keys" package provides.
@@ -14,7 +15,7 @@ class keys(InternalCmd):
         Keywords returned:
            The requested keywords. But the src of the keywords is keys_actor instead of the actual actor.
     """
-    
+
     def __init__(self, **argv):
         InternalCmd.__init__(self, 'keys', **argv)
 
@@ -28,7 +29,7 @@ class keys(InternalCmd):
         """
 
         matched, unmatched, leftovers = cmd.match([('getFor', str)])
-        
+
         try:
             actor = matched['getFor']
         except KeyError:
@@ -41,28 +42,33 @@ class keys(InternalCmd):
             cmd.fail('keysTxt="actor %s is not connected"' % (actor))
             return
 
-        keys = leftovers.keys()
-        Misc.log("keys.getFor", "matched=%s; unmatched=%s; leftovers=%s" % (matched, unmatched, leftovers))
-        
+        keys = list(leftovers.keys())
+        Misc.log("keys.getFor",
+                 "matched=%s; unmatched=%s; leftovers=%s" % (matched, unmatched, leftovers))
+
         matchedKeys, unmatchedKeys = g.KVs.getValues(actor, keys)
         if unmatchedKeys:
             failed = [Misc.qstr(x) for x in unmatchedKeys]
             cmd.warn('unmatchedKeys=%s' % (','.join(failed)), bcast=False)
 
         values = []
-        for k, v in matchedKeys.iteritems():
+        for k, v in matchedKeys.items():
             values.append(kvAsASCII(k, v))
 
         if values:
-            cmd.inform("; ".join(values), noRegister=True, src="keys_%s" % (actor), bcast=False, debug=9)
+            cmd.inform("; ".join(values),
+                       noRegister=True,
+                       src="keys_%s" % (actor),
+                       bcast=False,
+                       debug=9)
         if finish:
             cmd.finish(bcast=False)
-        
+
+
 def _test():
     a = auth()
     a.statusCmd
-    
+
+
 if __name__ == "__main__":
     _test()
-    
-    

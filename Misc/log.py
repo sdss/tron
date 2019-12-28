@@ -1,12 +1,9 @@
-__all__ = ['setID',
-           'setLogdir',
-           'enableLoggingFor', 'disableLoggingFor',
-           'isoTS',
-           'log', 'error']
+__all__ = ['setID', 'setLogdir', 'enableLoggingFor', 'disableLoggingFor', 'isoTS', 'log', 'error']
 
 import os
-from time import time, gmtime, strftime
 from math import modf
+from time import gmtime, strftime, time
+
 
 systems = {}
 
@@ -20,25 +17,30 @@ logfileDir = "/data/logs/tron"
 logfileName = None
 logID = "log"
 logfile = None
-rolloverOffset = -0.3*(24*3600)          # Fermi MJD offset.
-rolloverChunk = 24*3600
+rolloverOffset = -0.3 * (24 * 3600)  # Fermi MJD offset.
+rolloverChunk = 24 * 3600
 rolloverTime = 0
+
 
 def setID(newID):
     global logID
 
     logID = newID
 
+
 def setLogdir(dirname):
     global logfileDir
 
     logfileDir = dirname
 
+
 def enableLoggingFor(system):
     systems[system] = ENABLED
 
+
 def disableLoggingFor(system):
     systems[system] = DISABLED
+
 
 def setLoggingFor(system, level):
     if level:
@@ -46,17 +48,19 @@ def setLoggingFor(system, level):
     else:
         systems[system] = DISABLED
 
+
 def isoTS(t=None, format="%Y-%m-%d %H:%M:%S", zone="Z"):
     """ Return a proper ISO timestamp for t, or now if t==None. """
 
-    if t == None:
+    if t is None:
         t = time()
 
-    if zone == None:
+    if zone is None:
         zone = ''
 
     return strftime(format, gmtime(t)) \
-           + ".%03d%s" % (1000 * modf(t)[0], zone)
+        + ".%03d%s" % (1000 * modf(t)[0], zone)
+
 
 def rollover(t):
     global logfile
@@ -66,9 +70,9 @@ def rollover(t):
     if t > rolloverTime:
         logfile = None
 
-    if logfile == None:
+    if logfile is None:
         # Set next rollover time.
-        rolloverTime = t - t%rolloverChunk + rolloverChunk + rolloverOffset
+        rolloverTime = t - t % rolloverChunk + rolloverChunk + rolloverOffset
 
         # this can happen at startup
         if rolloverTime < t:
@@ -78,23 +82,24 @@ def rollover(t):
         currentName = os.path.join(logfileDir, logID, "current.log")
         try:
             os.unlink(currentName)
-        except:
+        except BaseException:
             pass
         os.symlink(logfileName, currentName)
         log("log", "next rollover is at %d (%s)" % (rolloverTime, isoTS(rolloverTime)))
+
 
 def log(system, detail, state=None):
     now = time()
     nowStamp = isoTS(now)
     rollover(now)
 
-    #if not hasattr(globals(), 'logfile'):
+    # if not hasattr(globals(), 'logfile'):
     #    logfile = sys.stderr
 
     # If the logging state has not explicitely been enabled or disabled,
     # print the notice, but mark the system name with a '?'
     #
-    if state == None:
+    if state is None:
         state = systems.get(system, UNDEFINED)
 
     if state == UNDEFINED:
@@ -104,6 +109,6 @@ def log(system, detail, state=None):
         logfile.write("%s %s %s %s %s\n" % (nowStamp, logID, state, system, detail))
         logfile.flush()
 
-def error(*args):
-    apply(log, args, {'state':ERROR})
 
+def error(*args):
+    log(*args, **{'state': ERROR})

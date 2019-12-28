@@ -1,6 +1,7 @@
-__all__ = [ 'ParseException' ]
+__all__ = ['ParseException']
 
-import exceptions
+from . import exceptions
+
 
 class ParseException(exceptions.Exception):
     """ A mini Exception used to pass useful information up from the bowels of the parser.
@@ -8,9 +9,9 @@ class ParseException(exceptions.Exception):
     In particular:
         leftoverText is whatever text has not been parsed.
         KVs is whatever keys have already been parsed.
-        
+
     """
-    
+
     def __init__(self, leftoverText, KVs=None):
         exceptions.Exception.__init__(self)
 
@@ -19,7 +20,7 @@ class ParseException(exceptions.Exception):
 
     def __str__(self):
         return "ParseException(leftover=%s, KVs=%s)" % (self.leftoverText, self.KVs)
-    
+
     def prependText(self, t):
         """ Insert t at the beginning of .leftoverText. """
 
@@ -29,4 +30,3 @@ class ParseException(exceptions.Exception):
         """ Set .KVs. """
 
         self.KVs = KVs
-        

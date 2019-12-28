@@ -2,10 +2,11 @@ __all__ = ['CommError']
 
 import exceptions
 
+
 class CommError(exceptions.Exception):
     """ An exception that specifies that a low-level communication error occurred. These should only
         be thrown for serious communications errors. The top-level event loop will close/cleanup/destroy
-        any running command. The error message will be returned on distxt. 
+        any running command. The error message will be returned on distxt.
     """
 
     def __init__(self, device, error, details=None):

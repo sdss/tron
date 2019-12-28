@@ -3,8 +3,9 @@
 
 __all__ = ['Auth']
 
-import Misc
 import g
+import Misc
+
 
 class Auth(Misc.Object):
     """
@@ -23,7 +24,7 @@ class Auth(Misc.Object):
         self.lockedActors = {}
 
         self.hackOn = False
-        self.gods = ("APO", 'OBSERVER', 'LCO')
+        self.gods = ('APO', 'OBSERVER', 'LCO')
 
         for a in ['perms']:
             self.actors[a] = True
@@ -32,7 +33,7 @@ class Auth(Misc.Object):
         #  - can _always_ command "perms"
         #  - can command newly added actors.
         #
-        self.addPrograms(self.gods, ["perms"])
+        self.addPrograms(self.gods, ['perms'])
         self.status()
 
     def checkAccess(self, cmdr, actor, cmd=None):
@@ -47,7 +48,7 @@ class Auth(Misc.Object):
         program = cmdr.split('.', 1)[0].upper()
 
         if self.debug > 5:
-            Misc.log("Auth.checkAccess", "checking %s (%s) -> %s" % (cmdr, program, actor))
+            Misc.log('Auth.checkAccess', 'checking %s (%s) -> %s' % (cmdr, program, actor))
 
         if not cmd:
             cmd = self.defaultCmd
@@ -65,19 +66,19 @@ class Auth(Misc.Object):
             if access:
                 return True
             else:
-                cmd.warn("text=%s" % (Misc.qstr("%s is locked by APO" % (actorName))))
+                cmd.warn('text=%s' % (Misc.qstr('%s is locked by APO' % (actorName))))
                 return False
 
         # If we don't know about an actor, let the command go through
         if actorName not in self.actors:
             if self.hackOn and self.debug > 1:
-                Misc.log("Auth.checkAccess", "unregistered actor %s" % (actorName))
+                Misc.log('Auth.checkAccess', 'unregistered actor %s' % (actorName))
             return True
 
         # If the command is declared safe by the actor, let it go though.
         safeCmds = actor.safeCmds
         if self.debug > 1:
-            Misc.log("auth.checkAccess", "checking '%s' against %s" % (cmd.cmd, safeCmds))
+            Misc.log('auth.checkAccess', "checking '%s' against %s" % (cmd.cmd, safeCmds))
         if safeCmds is not None and cmd.cmd is not None:
             if safeCmds.search(cmd.cmd):
                 return True
@@ -90,12 +91,12 @@ class Auth(Misc.Object):
         try:
             accessList = self.programs[program]
             if self.debug > 5:
-                Misc.log("Auth.checkAccess", "cmdr %s accessList = %s" % (cmdr, accessList))
+                Misc.log('Auth.checkAccess', 'cmdr %s accessList = %s' % (cmdr, accessList))
 
             ok = actorName in accessList
 
             if self.hackOn:
-                Misc.log("Auth.checkAccess", "actor hacked on, in accessList = %s" % (ok))
+                Misc.log('Auth.checkAccess', 'actor hacked on, in accessList = %s' % (ok))
                 return True
             else:
                 return ok
@@ -106,11 +107,19 @@ class Auth(Misc.Object):
                 return True
 
             # In this case, send a warning to our .defaultCmd as well as to the affected cmd
-            cmd.warn("permsTxt=%s" % (Misc.qstr("Authorization table has no entry for program: %s" % (program))))
+            cmd.warn(
+                'permsTxt=%s' %
+                (Misc.qstr(
+                    'Authorization table has no entry for program: %s' %
+                    (program))))
             if cmd != self.defaultCmd:
-                self.defaultCmd.warn("permsTxt=%s" % (Misc.qstr("Authorization table has no entry for program: %s" % (program))))
+                self.defaultCmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Authorization table has no entry for program: %s' %
+                        (program))))
             if self.hackOn:
-                Misc.log("Auth.checkAccess", "unknown program %s" % (program))
+                Misc.log('Auth.checkAccess', 'unknown program %s' % (program))
                 return True
             else:
                 return False
@@ -141,17 +150,16 @@ class Auth(Misc.Object):
         if not cmd:
             cmd = self.defaultCmd
 
-        actors = self.actors.keys()
+        actors = list(self.actors.keys())
         actors.remove('perms')
         actors.sort()
         actors = [Misc.qstr(x) for x in actors]
 
         # HACK - older TUIs do not like empty variables ("name=")
         if actors:
-            cmd.inform("actors=%s" % (','.join(actors)))
+            cmd.inform('actors=%s' % (','.join(actors)))
         else:
-            cmd.inform("actors")
-
+            cmd.inform('actors')
 
     def genProgramsKey(self, cmd=None):
         """ Generate key describing the programs we control access to.
@@ -166,16 +174,14 @@ class Auth(Misc.Object):
         if not cmd:
             cmd = self.defaultCmd
 
-        programs = self.programs.keys()
-        programs.sort()
+        programs = sorted(self.programs.keys())
         programs = [Misc.qstr(x) for x in programs]
 
         # HACK - older TUIs do not like empty variables ("name=")
         if programs:
-            cmd.inform("programs=%s" % (','.join(programs)))
+            cmd.inform('programs=%s' % (','.join(programs)))
         else:
-            cmd.inform("programs")
-
+            cmd.inform('programs')
 
     def genLockedKey(self, cmd=None):
         """ Generate key describing the locked actors.
@@ -190,15 +196,14 @@ class Auth(Misc.Object):
         if not cmd:
             cmd = self.defaultCmd
 
-        actors = self.lockedActors.keys()
-        actors.sort()
+        actors = sorted(self.lockedActors.keys())
         actors = [Misc.qstr(x) for x in actors]
 
         # HACK - older TUIs do not like empty variables ("name=")
         if actors:
-            cmd.inform("lockedActors=%s" % (','.join(actors)))
+            cmd.inform('lockedActors=%s' % (','.join(actors)))
         else:
-            cmd.inform("lockedActors")
+            cmd.inform('lockedActors')
 
     def addActors(self, actors, cmd=None):
         """ Register a list of actors to be controlled.
@@ -209,11 +214,15 @@ class Auth(Misc.Object):
             cmd = self.defaultCmd
 
         if self.debug > 3:
-            Misc.log("auth.addActors", "adding actors %s" % (actors))
+            Misc.log('auth.addActors', 'adding actors %s' % (actors))
 
         for a in actors:
             if a in self.actors:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is already registered for access control." % (a))))
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Actor %s is already registered for access control.' %
+                        (a))))
             else:
                 self.actors[a] = True
 
@@ -237,16 +246,20 @@ class Auth(Misc.Object):
         if not cmd:
             cmd = self.defaultCmd
 
-        if actors == None:
+        if actors is None:
             actors = self.actors
 
         if self.debug > 3:
-            Misc.log("auth.lockActor", "locking actors %s" % (actors))
+            Misc.log('auth.lockActor', 'locking actors %s' % (actors))
 
         self.lockedActors = {}
         for a in actors:
             if a not in self.actors:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not subject to permissions and will not be locked" % (a))))
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Actor %s is not subject to permissions and will not be locked' %
+                        (a))))
             else:
                 self.lockedActors[a] = True
 
@@ -266,13 +279,17 @@ class Auth(Misc.Object):
             actors = self.actors
 
         if self.debug > 3:
-            Misc.log("auth.lockActor", "locking actors %s" % (actors))
+            Misc.log('auth.lockActor', 'locking actors %s' % (actors))
 
         for a in actors:
             if a in self.lockedActors:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is already locked" % (a))))
+                cmd.warn('permsTxt=%s' % (Misc.qstr('Actor %s is already locked' % (a))))
             elif a not in self.actors:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not subject to permissions and will not be locked" % (a))))
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Actor %s is not subject to permissions and will not be locked' %
+                        (a))))
             else:
                 self.lockedActors[a] = True
 
@@ -289,13 +306,13 @@ class Auth(Misc.Object):
             actors = self.lockedActors
 
         if self.debug > 3:
-            Misc.log("auth.unlockActor", "unlocking actors %s" % (actors))
+            Misc.log('auth.unlockActor', 'unlocking actors %s' % (actors))
 
         for a in actors:
             try:
                 del self.lockedActors[a]
             except KeyError:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s was not locked" % (a))))
+                cmd.warn('permsTxt=%s' % (Misc.qstr('Actor %s was not locked' % (a))))
 
         self.genLockedKey(cmd=cmd)
 
@@ -313,20 +330,20 @@ class Auth(Misc.Object):
         if not cmd:
             cmd = self.defaultCmd
         if not programs:
-            programs = self.programs.keys()
+            programs = list(self.programs.keys())
 
         programs.sort()
-        Misc.log("auth.genAuthKeys", "listing programs: %s" % (programs))
+        Misc.log('auth.genAuthKeys', 'listing programs: %s' % (programs))
 
         for prog in programs:
             try:
-                pAuth = self.programs[prog].keys()
+                pAuth = list(self.programs[prog].keys())
             except KeyError:
-                raise Exception("No authorization entry found for program %s" % (prog))
+                raise Exception('No authorization entry found for program %s' % (prog))
 
             pAuth.sort()
             actors = [Misc.qstr(x) for x in pAuth]
-            cmd.inform("authList=%s,%s" % (Misc.qstr(prog), ','.join(actors)))
+            cmd.inform('authList=%s,%s' % (Misc.qstr(prog), ','.join(actors)))
 
     def addPrograms(self, programs=[], actors=[], cmd=None):
         """ Add a list program to the control list.
@@ -341,18 +358,21 @@ class Auth(Misc.Object):
 
         if not programs:
             programs = []
-            for name, cmdr in g.commanders.iteritems():
+            for name, cmdr in g.commanders.items():
                 if cmdr.needsAuth and name not in self.programs:
                     programs.append(name)
 
         if self.debug > 3:
-            Misc.log("auth.addPrograms",
-                    "adding programs %s with actors=%s" % (programs, actors))
+            Misc.log('auth.addPrograms',
+                     'adding programs %s with actors=%s' % (programs, actors))
 
         for prog in programs:
             if prog in self.programs:
-                cmd.warn("permsTxt=%s" % \
-                         (Misc.qstr("Program %s already has an authorization entry, which will not be modified." % (prog))))
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Program %s already has an authorization entry, which will not be modified.' %
+                        (prog))))
                 continue
             prog = prog.upper()
             self.programs[prog] = {}
@@ -369,25 +389,31 @@ class Auth(Misc.Object):
         """
 
         if not programs:
-            programs = self.programs.keys()
+            programs = list(self.programs.keys())
 
         if self.debug > 3:
-            Misc.log("auth.dropProgram", "dropping programs %s" % (programs))
+            Misc.log('auth.dropProgram', 'dropping programs %s' % (programs))
 
         if not cmd:
             cmd = self.defaultCmd
 
         for program in programs:
             if program in self.gods:
-                cmd.warn("permsTxt=%s" % \
-                         (Misc.qstr("Super-%s cannot be removed from the list of authorized programs" % (program))))
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Super-%s cannot be removed from the list of authorized programs' %
+                        (program))))
                 self.genAuthKeys([program], cmd)
                 continue
             try:
                 del self.programs[program]
-            except:
-                cmd.warn("permsTxt=%s" % \
-                         (Misc.qstr("Program %s did not have an authorization entry, so could not be deleted" % (program))))
+            except BaseException:
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Program %s did not have an authorization entry, so could not be deleted' %
+                        (program))))
 
         self.genProgramsKey(cmd=cmd)
 
@@ -396,20 +422,28 @@ class Auth(Misc.Object):
         """
 
         if self.debug > 3:
-            Misc.log("auth.setActors", "setting actors for commander %s: %s" % (program, actors))
+            Misc.log('auth.setActors', 'setting actors for commander %s: %s' % (program, actors))
 
         if not cmd:
             cmd = self.defaultCmd
 
         if program not in self.programs:
-            cmd.fail("permsTxt=%s" % (Misc.qstr("Program %s did not have an authorization entry, so could not be set" % (program))))
+            cmd.fail(
+                'permsTxt=%s' %
+                (Misc.qstr(
+                    'Program %s did not have an authorization entry, so could not be set' %
+                    (program))))
             return
 
         d = {}
         for a in actors:
             d[a] = True
             if a not in self.actors:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not currentlu in the list of actors." % (a))))
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Actor %s is not currentlu in the list of actors.' %
+                        (a))))
 
         # Make sure God-like commanders can always command us...
         if program in self.gods:
@@ -427,17 +461,25 @@ class Auth(Misc.Object):
             cmd = self.defaultCmd
 
         if self.debug > 3:
-            Misc.log("auth.addActors", "adding actors for program %s: %s" % (program, actors))
+            Misc.log('auth.addActors', 'adding actors for program %s: %s' % (program, actors))
 
         try:
             d = self.programs[program]
         except KeyError:
-            cmd.fail("permsTxt=%s" % (Misc.qstr("Program %s did not have an authorization entry, so could not be added to" % (program))))
+            cmd.fail(
+                'permsTxt=%s' %
+                (Misc.qstr(
+                    'Program %s did not have an authorization entry, so could not be added to' %
+                    (program))))
             return
 
         for a in actors:
             if a not in self.actors:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s is not subject to permissions." % (a))))
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        'Actor %s is not subject to permissions.' %
+                        (a))))
             else:
                 d[a] = True
 
@@ -448,77 +490,86 @@ class Auth(Misc.Object):
         """
 
         if self.debug > 3:
-            Misc.log("auth.dropActors", "dropping actors for program %s: %s" % (program, actors))
+            Misc.log('auth.dropActors', 'dropping actors for program %s: %s' % (program, actors))
 
         try:
             d = self.programs[program]
         except KeyError:
-            cmd.fail("permsTxt=%s" % (Misc.qstr("Program %s did not have an authorization entry, so could not be modified" % (program))))
+            cmd.fail(
+                'permsTxt=%s' %
+                (Misc.qstr(
+                    'Program %s did not have an authorization entry, so could not be modified' %
+                    (program))))
             return
 
         for a in actors:
             try:
                 del d[a]
             except KeyError:
-                cmd.warn("permsTxt=%s" % (Misc.qstr("Actor %s was not in program %s's athorized list" % (a, program))))
+                cmd.warn(
+                    'permsTxt=%s' %
+                    (Misc.qstr(
+                        "Actor %s was not in program %s's athorized list" %
+                        (a, program))))
 
         self.genAuthKeys(programs=[program], cmd=cmd)
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     def checkAndPrint(cmdr, actor, expect):
         access = a.checkAccess(cmdr, actor)
         if access == expect:
-            ok = "    "
+            ok = '    '
         else:
-            ok = "BAD "
+            ok = 'BAD '
 
-        print "%s %s\t-> %s\t = %s" % (ok, cmdr, actor, access)
+        print('%s %s\t-> %s\t = %s' % (ok, cmdr, actor, access))
 
     g.actors = ('tcc', 'them')
     a = Auth(Misc.tcmd(name='auth'), debug=9)
 
     a.status()
 
-    checkAndPrint("meme", "them", False)
+    checkAndPrint('meme', 'them', False)
 
     a.addPrograms(['me'], ['yy'])
-    checkAndPrint("meme", "them", False)
-    checkAndPrint("me.me", "them", False)
+    checkAndPrint('meme', 'them', False)
+    checkAndPrint('me.me', 'them', False)
 
     #a.addActors('xxxx', 'yyyy')
     a.addActors('me.me', ['them', 'theOthers'])
-    checkAndPrint("me.me", "them", True)
-    checkAndPrint("me.me", "theOthers", True)
-    checkAndPrint("me.me", "theOtherOtherss", False)
+    checkAndPrint('me.me', 'them', True)
+    checkAndPrint('me.me', 'theOthers', True)
+    checkAndPrint('me.me', 'theOtherOtherss', False)
 
     a.addActors('me.me', ['them'])
-    checkAndPrint("me.me", "them", True)
+    checkAndPrint('me.me', 'them', True)
 
     a.status()
 
     a.lockActors(['vvv', 'them'])
-    checkAndPrint("me.me", "them", False)
+    checkAndPrint('me.me', 'them', False)
 
     a.addPrograms(['too'], ['them'])
 
     a.status()
 
     a.unlockActors(['them'])
-    checkAndPrint("me.me", "them", True)
+    checkAndPrint('me.me', 'them', True)
 
     a.unlockActors(['them'])
-    checkAndPrint("me.me", "them", True)
+    checkAndPrint('me.me', 'them', True)
 
     a.unlockActors(['vvv'])
-    checkAndPrint("me.me", "them", True)
+    checkAndPrint('me.me', 'them', True)
 
     a.status()
 
     a.dropActors('me.me', ['them'])
-    checkAndPrint("me.me", "them", False)
-    checkAndPrint("me.me", "theOthers", True)
+    checkAndPrint('me.me', 'them', False)
+    checkAndPrint('me.me', 'theOthers', True)
 
     a.dropPrograms([])
-    checkAndPrint("me.me", "theOthers", False)
+    checkAndPrint('me.me', 'theOthers', False)
 
     a.status()

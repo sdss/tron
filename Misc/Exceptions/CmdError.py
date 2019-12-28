@@ -2,6 +2,7 @@ __all__ = ['CmdError']
 
 import exceptions
 
+
 class CmdError(exceptions.Exception):
     """ A exception due to commands sent to the ICC. Anything can throw one, passing a one line
         error message. The top-level event loop will close/cleanup/destroy any running command

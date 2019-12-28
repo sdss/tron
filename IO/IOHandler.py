@@ -1,4 +1,4 @@
-#/usr/bin/env python
+# /usr/bin/env python
 
 __all__ = ['IOHandler']
 
@@ -7,6 +7,7 @@ import socket
 import time
 
 import Misc
+
 
 class IOHandler(Misc.Object):
     """ Stub class for IO connections that can be managed by a PollHandler.
@@ -44,7 +45,7 @@ class IOHandler(Misc.Object):
         self.in_f = self.out_f = None
         self.in_fd = self.out_fd = None
         self.outQueue = []
-        self.queueLock = Misc.LLock(debug = (argv.get('debug', 0) > 7))
+        self.queueLock = Misc.LLock(debug=(argv.get('debug', 0) > 7))
         self.setInputFile(argv.get('in_f', None))
         self.setOutputFile(argv.get('out_f', None))
 
@@ -71,7 +72,6 @@ class IOHandler(Misc.Object):
         self.setOutputFile(None)
         self.setInputFile(None)
 
-
     def shutdown(self, **argv):
         """ Unregister ourselves.
 
@@ -88,18 +88,18 @@ class IOHandler(Misc.Object):
 
         # Detach and possibly close existing .in_f
         #
-        if self.in_f != None:
+        if self.in_f is not None:
             self.poller.removeInput(self)
             if self.in_f != f:
                 try:
                     self.in_f.close()
-                except:
+                except BaseException:
                     Misc.error("IOHandler.setInput", "failed to close input for %s", self)
 
         # Establish new .in_f
         #
         self.in_f = f
-        if f == None:
+        if f is None:
             self.in_fd = None
         else:
             self.in_fd = f.fileno()
@@ -112,21 +112,21 @@ class IOHandler(Misc.Object):
         """
 
         if self.debug > 2:
-            Misc.log("IOHandler.setOutput", "%s changing output %s to %s. queue=%s" % \
-                    (self, self.out_f, f, self.outQueue))
+            Misc.log("IOHandler.setOutput", "%s changing output %s to %s. queue=%s" %
+                     (self, self.out_f, f, self.outQueue))
 
-        if self.out_f != None:
+        if self.out_f is not None:
             self.poller.removeOutput(self)
             if f != self.out_f:
                 try:
                     self.out_f.close()
-                except:
+                except BaseException:
                     Misc.error("IOHandler.setOutput", "failed to close output for %s", self)
 
         # Establish new .out_f
         #
         self.out_f = f
-        if f == None:
+        if f is None:
             self.out_fd = None
         else:
             self.out_fd = f.fileno()
@@ -171,7 +171,7 @@ class IOHandler(Misc.Object):
     def queueForOutput(self, s, timer=None):
         """ Append s to the output queue. """
 
-        assert s != None, "queueing nothing!"
+        assert s is not None, "queueing nothing!"
 
         self.queueLock.acquire(src='queueForOutput')
         try:
@@ -182,7 +182,7 @@ class IOHandler(Misc.Object):
             self.outQueue.append(s)
 
             # Add any timer.
-            if timer != None:
+            if timer is not None:
                 self.addTimer(timer)
 
             # Bump the stats.
@@ -192,20 +192,18 @@ class IOHandler(Misc.Object):
 
             if self.debug > 4:
                 Misc.log("IOHandler.queueForOutput",
-                        "appended %r to queue (len=%d) of %s" % \
-                        (s, len(self.outQueue), self))
+                         "appended %r to queue (len=%d) of %s" %
+                         (s, len(self.outQueue), self))
             if mustRegister:
                 self.poller.addOutput(self)
         finally:
             self.queueLock.release(src='queueForOutput')
-
 
     def checkQueue(self):
         """ Check whether we need to (re-) register ourselves with the poller. """
 
         if self.outQueue != []:
             self.poller.addOutput(self)
-
 
     def readInput(self):
         """ Read what is available to read, buffer that, and consume complete input.
@@ -217,16 +215,16 @@ class IOHandler(Misc.Object):
         readIn = ""
         try:
             readIn = os.read(self.in_fd, self.tryToRead)
-        except socket.error, e:
-            error = "socket exception %s" % (e,)
+        except socket.error as e:
+            error = "socket exception %s" % (e, )
             Misc.log("IOHandler.readInput", error)
             readIn = ""
-        except os.error, e:
-            error = "os exception %s" % (e,)
+        except os.error as e:
+            error = "os exception %s" % (e, )
             Misc.log("IOHandler.readInput", error)
             readIn = ""
-        except Exception, e:
-            error = "unknown exception %s" % (e,)
+        except Exception as e:
+            error = "unknown exception %s" % (e, )
             Misc.log("IOHandler.readInput", error)
             readIn = ""
 
@@ -278,21 +276,21 @@ class IOHandler(Misc.Object):
 
             wlen = min(len(qtop), self.tryToWrite)
             if self.debug > 5:
-                Misc.log("IOHandler.mayOutput", "writing len=%d wlen=%d %r" % \
-                        (len(qtop), wlen, qtop[:min(wlen, 50)]))
+                Misc.log("IOHandler.mayOutput", "writing len=%d wlen=%d %r" %
+                         (len(qtop), wlen, qtop[:min(wlen, 50)]))
 
             try:
                 wrote = os.write(self.out_fd, qtop[:wlen])
-            except socket.error, e:
-                Misc.log("IOHandler.mayOutput", "socket exception %r" % (e,))
+            except socket.error as e:
+                Misc.log("IOHandler.mayOutput", "socket exception %r" % (e, ))
                 self.shutdown(why=str(e))
                 return
-            except os.error, e:
-                Misc.log("IOHandler.mayOutput", "os exception %r" % (e,))
+            except os.error as e:
+                Misc.log("IOHandler.mayOutput", "os exception %r" % (e, ))
                 self.shutdown(why=str(e))
                 return
-            except Exception, e:
-                Misc.log("IOHandler.mayOutput", "unhandled exception %r" % (e,))
+            except Exception as e:
+                Misc.log("IOHandler.mayOutput", "unhandled exception %r" % (e, ))
                 self.shutdown(why=str(e))
                 return
 
@@ -341,17 +339,21 @@ class IOHandler(Misc.Object):
         """ Send sundry status information keywords.
         """
 
-        cmd.inform('ioConfig=%s,%d,%d,"%s"' % \
+        cmd.inform('ioConfig=%s,%d,%d,"%s"' %
                    (Misc.qstr(name),
                     self.tryToRead, self.tryToWrite, self.tryToWriteMany))
-        cmd.inform('ioQueue=%s,%d,%d,%d' % \
+        cmd.inform('ioQueue=%s,%d,%d,%d' %
                    (Misc.qstr(name),
                     len(self.outQueue), self.totalQueued, self.maxQueue))
-        cmd.inform('ioReads=%s,%d,%d,%d' % \
+        cmd.inform('ioReads=%s,%d,%d,%d' %
                    (Misc.qstr(name),
                     self.totalReads, self.totalBytesRead, self.largestRead))
-        cmd.inform('ioWrites=%s,%d,%d,%d,%d' % \
-                   (Misc.qstr(name),
-                    self.totalOutputs, self.totalWrites, self.totalBytesWritten, self.largestWrite))
+        cmd.inform(
+            'ioWrites=%s,%d,%d,%d,%d' %
+            (Misc.qstr(name),
+             self.totalOutputs,
+             self.totalWrites,
+             self.totalBytesWritten,
+             self.largestWrite))
         if doFinish:
             cmd.finish()

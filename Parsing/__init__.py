@@ -1,5 +1,4 @@
-from Exceptions import *
-from dequote import *
-from args import *
-from keys import *
-
+from .args import *
+from .dequote import *
+from .Exceptions import *
+from .keys import *
