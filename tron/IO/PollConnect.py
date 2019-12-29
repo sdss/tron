@@ -9,7 +9,7 @@ from tron import Misc
 from . import IOHandler
 
 
-class PollConnect(IOHandler.IOHandler):
+class PollConnect(IOHandler):
     """ Provide asynchronous socket accept() handling. """
 
     def __init__(self, poller, host, port, depth=5, callback=None):

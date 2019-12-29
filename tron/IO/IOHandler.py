@@ -3,7 +3,6 @@
 __all__ = ['IOHandler']
 
 import os
-import socket
 import time
 
 from tron import Misc
@@ -215,12 +214,12 @@ class IOHandler(Misc.Object):
         error = ''
         readIn = ''
         try:
-            readIn = os.read(self.in_fd, self.tryToRead)
-        except socket.error as e:
+            readIn = os.read(self.in_fd, self.tryToRead).decode()
+        except IOError as e:
             error = 'socket exception %s' % (e, )
             Misc.log('IOHandler.readInput', error)
             readIn = ''
-        except os.error as e:
+        except OSError as e:
             error = 'os exception %s' % (e, )
             Misc.log('IOHandler.readInput', error)
             readIn = ''
@@ -284,12 +283,12 @@ class IOHandler(Misc.Object):
                          (len(qtop), wlen, qtop[:min(wlen, 50)]))
 
             try:
-                wrote = os.write(self.out_fd, qtop[:wlen])
-            except socket.error as e:
+                wrote = os.write(self.out_fd, qtop[:wlen].encode())
+            except IOError as e:
                 Misc.log('IOHandler.mayOutput', 'socket exception %r' % (e, ))
                 self.shutdown(why=str(e))
                 return
-            except os.error as e:
+            except OSError as e:
                 Misc.log('IOHandler.mayOutput', 'os exception %r' % (e, ))
                 self.shutdown(why=str(e))
                 return

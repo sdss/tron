@@ -3,7 +3,6 @@
 __all__ = ['FileHandler']
 
 import sys
-import socket
 
 from tron import Misc
 
@@ -22,7 +21,7 @@ class FileHandler(IOHandler):
         # Misc.log("Cat.readInput", "reading...")
         try:
             readIn = self.in_f.read(self.tryToRead)
-        except socket.error:
+        except IOError:
             Misc.log('Cat.readInput', 'exception %r' % (sys.exc_info, ))
             self.poller.removeInput(self)
             if len(self.outBuffer) > 0:
@@ -50,7 +49,7 @@ class FileHandler(IOHandler):
 
         try:
             sent = self.out_f.write(self.outBuffer[:self.tryToWrite])
-        except socket.error as e:
+        except IOError as e:
             Misc.log('Cat.mayOutput', 'exception %r' % (e, ))
             self.poller.removeOutput(self)
             try:

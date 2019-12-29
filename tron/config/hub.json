@@ -1,0 +1,4 @@
+{
+    "logDir": "/data/logs/tron",
+    "vocabulary": ["perms", "hub", "keys", "msg"]
+}

@@ -30,8 +30,9 @@ cd $TRON_DIR/tron
 # Return the ICC's pid, or the empty string.
 #
 get_pid() {
+
     PID=""
-    pid=`/bin/ps -e -ww -o pid,user,command | egrep -v 'awk|grep' | grep 'python runhub.py' | awk '{print $1}'`
+    pid=`/bin/ps -e -ww -o pid,user,command | egrep -v 'awk|grep' | grep '[p|P]ython runhub.py' | awk '{print $1}'`
     PID=$pid
 
     if test "$pid"; then
@@ -52,7 +53,7 @@ do_start() {
         return
     fi
 
-    echo "Starting new tron...\c"
+    echo "Starting new tron..."
 
     #now=`now`.log
     #(cd $LOG_DIR; rm -f current.log; ln -s $now current.log)

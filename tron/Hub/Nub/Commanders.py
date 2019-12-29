@@ -4,11 +4,11 @@ from tron import hub
 from tron import Misc
 from tron.Hub.Reply.ReplyTaster import ReplyTaster
 
-from . import CoreNub
+from .CoreNub import CoreNub
 from .NubAuth import NubAuth
 
 
-class CommanderNub(CoreNub.CoreNub):
+class CommanderNub(CoreNub):
     """ Base class for ICC connections, where we accept commands from and s
     end replies to the remote end.  """
 
@@ -20,7 +20,7 @@ class CommanderNub(CoreNub.CoreNub):
            forceUser - override any automatically derived username.
         """
 
-        CoreNub.CoreNub.__init__(self, poller, **argv)
+        CoreNub.__init__(self, poller, **argv)
 
         # Note which Replies we want to accept. The default
         # is to accept only responses to our own commands.

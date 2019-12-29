@@ -3,11 +3,11 @@
 
 __all__ = ['init', 'get', 'flush']
 
+import json
 import os
 import sys
 
 from tron.Misc.Exceptions import ICCError
-
 
 cfgCache = None
 
@@ -79,15 +79,11 @@ def _loadSpace(space):
         space    - a namespace to load from cfgPath/space + ".py"
     """
 
-    gdict = {}
     ldict = {}
 
-    filename = os.path.join(cfgPath, '%s.py' % (space.lower()))
+    filename = os.path.join(cfgPath, '%s.json' % (space.lower()))
     try:
-        exec(compile(open(filename, 'rb').read(), filename, 'exec'), gdict, ldict)
-    except SyntaxError as e:
-        raise ICCError('syntax error at or before line %d (%s) of the configuration file %s' %
-                       (e.lineno, e.text, filename))
+        ldict = json.load(open(filename))
     except Exception as e:
         raise ICCError('failed to read the configuration file %s: %s' % (filename, e))
 

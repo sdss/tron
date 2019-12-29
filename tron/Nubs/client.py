@@ -40,14 +40,14 @@ def acceptStdin(in_f, out_f, addr=None):
 def start(poller):
     stop()
 
-    l = SocketListener(poller, listenPort, name, acceptStdin)
-    hub.addAcceptor(l)
+    ll = SocketListener(poller, listenPort, name, acceptStdin)
+    hub.addAcceptor(ll)
 
     time.sleep(1)
 
 
 def stop():
-    l = hub.findAcceptor(name)
-    if l:
-        hub.dropAcceptor(l)
-        del l
+    ll = hub.findAcceptor(name)
+    if ll:
+        hub.dropAcceptor(ll)
+        del ll

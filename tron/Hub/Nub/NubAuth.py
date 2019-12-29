@@ -1,6 +1,8 @@
 __all__ = ['NubAuth']
 
-import sha
+
+import os
+import hashlib as sha
 import configparser
 
 from tron import Misc, Parsing, g, hub
@@ -74,13 +76,13 @@ class NubAuth(object):
         program = matched['program'].upper()
 
         config = configparser.ConfigParser()
-        config.readfp(open('/home/sdss4/.tronpass.cfg'))
-        ourPW = config.get('hub', program, None)
+        config.readfp(open(os.path.expanduser('~/.tronpass.cfg')))
+        ourPW = config.get('hub', program, fallback=None)
 
         if ourPW is None:
             return 'unknown program'
 
-        enc = sha.new(self.nonce + ourPW)
+        enc = sha.sha1((self.nonce + ourPW).encode())
         if enc.hexdigest() != matched['password']:
             return 'incorrect password'
 
@@ -136,13 +138,13 @@ class NubAuth(object):
 
         import base64
 
-        f = open('/dev/urandom', 'r')
+        f = open('/dev/urandom', 'rb')
         bits = f.read(64)
-        s = base64.encodestring(bits)
+        s = base64.encodebytes(bits)
 
         # base64 encoding inserts and appends NLs. Strip these.
         #
-        self.nonce = s.replace('\n', '')
+        self.nonce = s.decode().replace('\n', '')
 
         f.close()
 

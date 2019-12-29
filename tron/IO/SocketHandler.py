@@ -2,7 +2,6 @@
 
 __all__ = ['SocketHandler']
 
-import socket
 import sys
 
 from tron import Misc
@@ -22,7 +21,7 @@ class SocketHandler(IOHandler):
         # Misc.log("Cat.readInput", "reading...")
         try:
             readIn = self.in_f.recv(self.tryToRead)
-        except socket.error:
+        except IOError:
             Misc.log('Cat.readInput', 'exception %r' % (sys.exc_info, ))
             self.poller.removeInput(self)
             if len(self.outBuffer) > 0:
@@ -45,7 +44,7 @@ class SocketHandler(IOHandler):
 
         try:
             sent = self.out_f.send(self.outBuffer[:self.tryToWrite])
-        except socket.error as e:
+        except IOError as e:
             Misc.log('Cat.mayOutput', 'exception %r' % (e, ))
             self.poller.removeOutput(self)
             try:

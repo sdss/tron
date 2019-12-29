@@ -12,7 +12,6 @@ __all__ = ['PollHandler']
 
 import os
 import select
-import socket
 import time
 from threading import Lock
 
@@ -413,7 +412,7 @@ class PollHandler(Misc.Object):
 
             try:
                 events = self.poller.poll(timeout * 1000.0)
-            except (socket.error, os.error, 'error') as e:
+            except (IOError, OSError) as e:
                 Misc.log('PollHandler.run', 'poll trying to clean up: %s' % (e, ))
                 try:
                     fd, eString = e

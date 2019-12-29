@@ -1,16 +1,18 @@
 import os.path
 
+import tron.Misc
 from tron import g, hub
 from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from tron.Hub.Nub.SocketActorNub import SocketActorNub
 from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
-
 
 name = 'mcp'
 
 
 def start(poller):
     stop()
+
+    cfg = tron.Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
 
     initCmds = ('info', )
 
@@ -21,8 +23,8 @@ def start(poller):
     e = ASCIICmdEncoder(debug=1)
     nub = SocketActorNub(
         poller,
-        'sdssmcp',
-        31012,
+        cfg['host'],
+        cfg['port'],
         name=name,
         encoder=e,
         decoder=d,

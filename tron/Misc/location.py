@@ -13,12 +13,12 @@ def determine_location(location=None):
     else:
         return location
 
-    if 'apo' in fqdn:
+    if 'ACTORCORE_LOCAL' in os.environ and os.environ['ACTORCORE_LOCAL'] == '1':
+        return 'LOCAL'
+    elif 'apo' in fqdn:
         return 'APO'
     elif 'lco' in fqdn:
         return 'LCO'
-    elif 'ACTORCORE_LOCAL' in os.environ and os.environ['ACTORCORE_LOCAL'] == '1':
-        return 'LOCAL'
     else:
-        warnings.warn('Using test setup for tron.', UserWarning)
-        return 'TEST'
+        warnings.warn('Using local setup for tron.', UserWarning)
+        return 'LOCAL'

@@ -23,11 +23,11 @@
 
 import os
 import re
-import imp
 import sys
 import json
 import time
 import signal
+import importlib
 from collections import OrderedDict
 
 import tron.Auth
@@ -47,7 +47,8 @@ def init(programsFile=None):
 
     # Bootstrap the whole configuration system
     configPath = os.environ.get('CONFIG_DIR',
-                                os.path.join(os.environ['TRON_DIR'], 'config'))
+                                os.path.join(os.environ['TRON_DIR'],
+                                             'tron/config'))
     Misc.cfg.init(path=configPath)
     os.environ['CONFIG_DIR'] = configPath
 
@@ -165,39 +166,26 @@ def _loadWords(wordlist):
     # level.
     #
     Misc.log('hub.loadVocab', 'trying to (re-)load Vocab module')
-    fp, pathname, description = imp.find_module('Vocab')
-    vocab_mod = imp.load_module('Vocab', fp, pathname, description)
-    if fp:
-        fp.close()
-    Misc.log('hub.loadVocab', 'Vocab module: %s' % (dir(vocab_mod)))
 
     for w in wordlist:
         # Now try to load the module itself.
-        #
-        modName = w
+        modName = 'tron.Vocab.' + w
         if w == 'hub':
-            modName = 'hubCommands'
+            modName = 'tron.Vocab.hubCommands'
         try:
             Misc.log('hub.loadVocab', 'trying to (re-)load vocabulary word %s' % (w,))
-            fp, pathname, description = imp.find_module(modName, vocab_mod.__path__)
-            mod = imp.load_module(modName, fp, pathname, description)
+            mod = importlib.import_module(modName)
         except ImportError as e:
             raise Exception('Import of %s failed: %s' % (modName, e))
 
-        if fp:
-            fp.close()
-
         Misc.log('hub.loadWords', 'loading vocabulary word %s from %s...' % (w, modName))
 
+        cmdSet = getattr(mod, 'hubCommands' if w == 'hub' else w)()
         try:
-            cmdSet = getattr(mod, modName)()
-            try:
-                dropActor(cmdSet)
-            except BaseException:
-                pass
-            g.vocabulary[w] = cmdSet
-        except Exception as e:
-            raise Exception('Failed to load word %s: %s' % (w, e))
+            dropActor(cmdSet)
+        except BaseException:
+            pass
+        g.vocabulary[w] = cmdSet
 
         addActor(cmdSet)
 
@@ -537,55 +525,15 @@ def runCmd(c):
     Misc.log('hub.runCmd', 'ret = %r' % (ret))
 
 
-def forceReload(name, all=True):
+def forceReload(name):
     """ Do whatever we can to force a given module/package to be reloaded.
 
     """
-
-    mod = None
-    partName = name
-    if all:
-        # Optionally (re-)load all the containing modules. Let that fail to the top
-        # level.
-        #
-        start = 0
-        while True:
-            end = name.find('.', start)
-            if end == -1:
-                partName = name[start:]
-                break
-            partName = name[start:end]
-            start = end + 1
-
-            Misc.log('hub.forceReload', 'trying to (re-)load module %s in %s' % (partName, mod))
-            if mod is None:
-                fp, pathname, description = imp.find_module(partName)
-            else:
-                fp, pathname, description = imp.find_module(partName, mod.__path__)
-
-            try:
-                mod = imp.load_module(partName, fp, pathname, description)
-            finally:
-                if fp:
-                    fp.close()
-
-    # Now try to load the module itself.
-    #
     try:
-        Misc.log('hub.forceReload', 'trying to (re-)load final %s in %s' % (partName, mod))
-        if mod is None:
-            fp, pathname, description = imp.find_module(partName)
-        else:
-            fp, pathname, description = imp.find_module(partName, mod.__path__)
+        Misc.log('hub.forceReload', 'trying to (re-)load %s' % (name))
+        mod = importlib.import_module(f'tron.Nubs.{name}')
     except BaseException:
         raise
-
-    try:
-        mod = imp.load_module(name, fp, pathname, description)
-    finally:
-        # Since we may exit via an exception, close fp explicitly.
-        if fp:
-            fp.close()
 
     return mod
 
@@ -597,35 +545,14 @@ def stopNub(name):
 
 
 def startNub(name):
-    """ Launch a single Nub.
+    """Launch a single Nub.
 
     (Re-)Loads a module named 'name' from the Nubs folder and calls the start function.
     """
 
     Misc.log('hub.startNub', 'trying to start %s' % (name))
 
-    # First, (re-)load the entire Nubs module. Let that fail to the top
-    # level.
-    #
-    fp, pathname, description = imp.find_module('Nubs')
-    nubs_mod = imp.load_module('Nubs', fp, pathname, description)
-    if fp:
-        fp.close()
-
-    # Now try to load the module itself.
-    #
-    try:
-        Misc.log('hub.startNub', 'trying to (re-)load Nub %s' % (name))
-        fp, pathname, description = imp.find_module(name, nubs_mod.__path__)
-    except BaseException:
-        raise
-
-    try:
-        mod = imp.load_module(name, fp, pathname, description)
-    finally:
-        # Since we may exit via an exception, close fp explicitly.
-        if fp:
-            fp.close()
+    mod = importlib.import_module(f'tron.Nubs.{name}')
 
     # And call the start() function.
     #
