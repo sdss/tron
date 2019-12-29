@@ -2,7 +2,7 @@
 
 import os
 
-import Misc
+from tron import Misc
 
 
 location = Misc.location.determine_location()
@@ -25,42 +25,42 @@ def getActors(actorName=None, hostName=None):
 def printActors(actors, verbose=False):
     if verbose:
         actorList = [
-            "%s,%s,%s" % (actors[name]['actorName'], actors[name]['host'], actors[name]['port'])
+            '%s,%s,%s' % (actors[name]['actorName'], actors[name]['host'], actors[name]['port'])
             for name in list(actors.keys())
         ]
     else:
         actorList = [actors[name]['actorName'] for name in list(actors.keys())]
 
     if actorList:
-        print("\n".join(actorList))
+        print('\n'.join(actorList))
 
 
 def main():
     printActors(getActors())
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     from optparse import OptionParser
 
     parser = OptionParser()
-    parser.add_option("-H",
-                      "--host",
-                      dest="hostName",
+    parser.add_option('-H',
+                      '--host',
+                      dest='hostName',
                       default=None,
-                      help="match actors on given host",
-                      metavar="HOST")
-    parser.add_option("-n",
-                      "--name",
-                      dest="actorName",
+                      help='match actors on given host',
+                      metavar='HOST')
+    parser.add_option('-n',
+                      '--name',
+                      dest='actorName',
                       default=None,
-                      help="match given actor",
-                      metavar="ACTOR")
-    parser.add_option("-v",
-                      "--verbose",
+                      help='match given actor',
+                      metavar='ACTOR')
+    parser.add_option('-v',
+                      '--verbose',
                       action='store_true',
-                      dest="verbose",
+                      dest='verbose',
                       default=False,
-                      help="print all actor fields")
+                      help='print all actor fields')
 
     (options, args) = parser.parse_args()
 

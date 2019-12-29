@@ -33,7 +33,7 @@ get_pid() {
     PID=""
     pid=`/bin/ps -e -ww -o pid,user,command | egrep -v 'awk|grep' | grep 'python runhub.py' | awk '{print $1}'`
     PID=$pid
-    
+
     if test "$pid"; then
         echo "Tron is running as process $pid"
     else
@@ -41,32 +41,27 @@ get_pid() {
     fi
 }
 
-# Start a new ICC. Complains if the ICC is already running, 
+# Start a new ICC. Complains if the ICC is already running,
 # and does not start a new one.
 #
 do_start() {
     get_pid
-    
+
     if test "$PID"; then
         echo "NOT starting new tron. Use restart if you want a new one."
         return
     fi
-    
+
     echo "Starting new tron...\c"
 
-    # reset WWW access.
-    # sudoers: tron hub35m = NOPASSWD: /usr/local/bin/www-access, /bin/kill
-#    sudo /usr/local/bin/www-access reset
-    
-
-    #now=`now`.log 
+    #now=`now`.log
     #(cd $LOG_DIR; rm -f current.log; ln -s $now current.log)
     cd $TRON_DIR
     LOG_FILE=$LOG_DIR/run.log
     echo "top-level run log is appended to $LOG_FILE"
-    echo "=========== restarting at `now`" >> $LOG_FILE 
-    python runhub.py >>$LOG_FILE 2>&1 &        
-    
+    echo "=========== restarting at `TZ=GMT date +"%Y-%m-%dT%H:%M:%S"`" >> $LOG_FILE
+    python runhub.py >>$LOG_FILE 2>&1 &
+
     # Check that it really started...
     #
     sleep 1
@@ -79,28 +74,28 @@ do_start() {
     fi
 }
 
-# Stop any running ICC. 
+# Stop any running ICC.
 #
 do_stop() {
     get_pid
-    
+
     if test ! "$PID"; then
         return
     fi
-    
+
     echo "Stopping tron."
     kill -TERM $PID
 }
 
-# Stop any running ICC fairly violently. 
+# Stop any running ICC fairly violently.
 #
 do_stopdead() {
     get_pid
-    
+
     if test ! "$PID"; then
         return
     fi
-    
+
     echo "Stopping tron gently."
     kill -TERM $PID
     sleep 2
@@ -116,7 +111,7 @@ do_status() {
 }
 
 case $cmd in
-    start) 
+    start)
         do_start
         ;;
     stop)
@@ -128,13 +123,13 @@ case $cmd in
     status)
         # Check whether the ICC is running
         get_pid
-        
+
         # Query it for essential liveness
         ;;
     restart)
         do_stop
         sleep 2
-        do_start                
+        do_start
         ;;
     *)
         usage
@@ -142,4 +137,3 @@ case $cmd in
 esac
 
 exit 0
-
