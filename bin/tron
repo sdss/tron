@@ -25,7 +25,7 @@ if test $# != 1; then
 fi
 cmd=$1
 
-cd $TRON_DIR
+cd $TRON_DIR/tron
 
 # Return the ICC's pid, or the empty string.
 #
@@ -56,7 +56,7 @@ do_start() {
 
     #now=`now`.log
     #(cd $LOG_DIR; rm -f current.log; ln -s $now current.log)
-    cd $TRON_DIR
+    cd $TRON_DIR/tron
     LOG_FILE=$LOG_DIR/run.log
     echo "top-level run log is appended to $LOG_FILE"
     echo "=========== restarting at `TZ=GMT date +"%Y-%m-%dT%H:%M:%S"`" >> $LOG_FILE
