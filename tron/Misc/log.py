@@ -1,4 +1,5 @@
-__all__ = ['setID', 'setLogdir', 'enableLoggingFor', 'disableLoggingFor', 'isoTS', 'log', 'error']
+__all__ = ['setID', 'setLogdir', 'enableLoggingFor', 'disableLoggingFor',
+           'isoTS', 'log', 'error']
 
 import os
 from math import modf
@@ -13,9 +14,9 @@ ERROR = 'E'
 FATAL = 'F'
 UNDEFINED = '?'
 
-logfileDir = "/data/logs/tron"
+logfileDir = '/data/logs/tron'
 logfileName = None
-logID = "log"
+logID = 'log'
 logfile = None
 rolloverOffset = -0.3 * (24 * 3600)  # Fermi MJD offset.
 rolloverChunk = 24 * 3600
@@ -49,7 +50,7 @@ def setLoggingFor(system, level):
         systems[system] = DISABLED
 
 
-def isoTS(t=None, format="%Y-%m-%d %H:%M:%S", zone="Z"):
+def isoTS(t=None, format='%Y-%m-%d %H:%M:%S', zone='Z'):
     """ Return a proper ISO timestamp for t, or now if t==None. """
 
     if t is None:
@@ -59,7 +60,7 @@ def isoTS(t=None, format="%Y-%m-%d %H:%M:%S", zone="Z"):
         zone = ''
 
     return strftime(format, gmtime(t)) \
-        + ".%03d%s" % (1000 * modf(t)[0], zone)
+        + '.%03d%s' % (1000 * modf(t)[0], zone)
 
 
 def rollover(t):
@@ -77,15 +78,15 @@ def rollover(t):
         # this can happen at startup
         if rolloverTime < t:
             rolloverTime += rolloverChunk
-        logfileName = "%s.log" % (strftime("%Y-%m-%dT%H:%M:%S", gmtime(t)))
-        logfile = open(os.path.join(logfileDir, logID, logfileName), "w", 1)
-        currentName = os.path.join(logfileDir, logID, "current.log")
+        logfileName = '%s.log' % (strftime('%Y-%m-%dT%H:%M:%S', gmtime(t)))
+        logfile = open(os.path.join(logfileDir, logID, logfileName), 'w', 1)
+        currentName = os.path.join(logfileDir, logID, 'current.log')
         try:
             os.unlink(currentName)
         except BaseException:
             pass
         os.symlink(logfileName, currentName)
-        log("log", "next rollover is at %d (%s)" % (rolloverTime, isoTS(rolloverTime)))
+        log('log', 'next rollover is at %d (%s)' % (rolloverTime, isoTS(rolloverTime)))
 
 
 def log(system, detail, state=None):
@@ -106,7 +107,7 @@ def log(system, detail, state=None):
         state = systems.get('default', state)
 
     if state != DISABLED:
-        logfile.write("%s %s %s %s %s\n" % (nowStamp, logID, state, system, detail))
+        logfile.write('%s %s %s %s %s\n' % (nowStamp, logID, state, system, detail))
         logfile.flush()
 
 

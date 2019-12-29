@@ -1,12 +1,11 @@
 import os
 import time
 
-import g
-import hub
-from Hub.Command.Decoders.ASCIICmdDecoder import ASCIICmdDecoder
-from Hub.Nub.Commanders import StdinNub
-from Hub.Nub.Listeners import SocketListener
-from Hub.Reply.Encoders.ASCIIReplyEncoder import ASCIIReplyEncoder
+from tron import g, hub
+from tron.Hub.Command.Decoders.ASCIICmdDecoder import ASCIICmdDecoder
+from tron.Hub.Nub.Commanders import StdinNub
+from tron.Hub.Nub.Listeners import SocketListener
+from tron.Hub.Reply.Encoders.ASCIIReplyEncoder import ASCIIReplyEncoder
 
 
 name = 'nclient'
@@ -40,14 +39,14 @@ def acceptStdin(in_f, out_f, addr=None):
 def start(poller):
     stop()
 
-    l = SocketListener(poller, listenPort, name, acceptStdin)
-    hub.addAcceptor(l)
+    ll = SocketListener(poller, listenPort, name, acceptStdin)
+    hub.addAcceptor(ll)
 
     time.sleep(1)
 
 
 def stop():
-    l = hub.findAcceptor(name)
-    if l:
-        hub.dropAcceptor(l)
-        del l
+    ll = hub.findAcceptor(name)
+    if ll:
+        hub.dropAcceptor(ll)
+        del ll

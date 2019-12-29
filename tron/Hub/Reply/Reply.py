@@ -3,8 +3,8 @@ __all__ = ['Reply']
 import time
 from collections import OrderedDict
 
-import Misc
-import Parsing
+from tron import Misc
+from tron import Parsing
 
 
 """
@@ -25,8 +25,9 @@ class Reply(Misc.Object):
         Args:
            cmd  - the Command which we are a Reply to.
            flag - the completion state flag.
-           KVs  - parsed or unparsed keys. We accept OrderedDicts, lists&tuples, and strings. The
-                  latter are parsed into OrderedDicts.
+           KVs  - parsed or unparsed keys. We accept OrderedDicts,
+                  lists & tuples, and strings. The latter are parsed
+                  into OrderedDicts.
         """
 
         Misc.Object.__init__(self, **argv)
@@ -49,7 +50,7 @@ class Reply(Misc.Object):
         return self.flag in ':fF'
 
     def __str__(self):
-        return "Reply(cmd=%s flag=%s KVs=%s)" % (self.cmd, self.flag, self.KVs)
+        return 'Reply(cmd=%s flag=%s KVs=%s)' % (self.cmd, self.flag, self.KVs)
 
     def parseKVs(self, kvl):
         """ Convert some form of keys to an OrderedDict.
@@ -70,9 +71,9 @@ class Reply(Misc.Object):
                     k, v, junk = Parsing.parseKV(i)
                     od[k] = v
                 elif type(i) in (list, tuple) and len(i) == 2:
-                    k, v, junk = Parsing.parseKV("%s=%s" % i)
+                    k, v, junk = Parsing.parseKV('%s=%s' % i)
                 else:
                     Misc.log('Reply', 'kvl item is not a string: %r' % (i))
-                    raise Exception("kvl == %r" % (i))
+                    raise Exception('kvl == %r' % (i))
 
         return od

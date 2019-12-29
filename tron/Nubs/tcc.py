@@ -1,11 +1,11 @@
 import os.path
 
-import g as hub_globals
-import hub
-import Misc.cfg
-from Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
-from Hub.Nub.SocketActorNub import SocketActorNub
-from Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
+import tron.Misc
+from tron import g as hub_globals
+from tron import hub
+from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
+from tron.Hub.Nub.SocketActorNub import SocketActorNub
+from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
 name = 'tcc'
@@ -13,13 +13,13 @@ name = 'tcc'
 
 def start(poller):
 
-    cfg = Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
+    cfg = tron.Misc.cfg.get(hub_globals.location, 'actors', doFlush=True)[name]
 
     stop()
 
     isLCO = False
     try:
-        isLCO = g.location == "LCO"
+        isLCO = hub_globals.location == 'LCO'
     except BaseException:
         pass
     if isLCO:
@@ -32,7 +32,7 @@ def start(poller):
                     'show object/full', 'show axisconfig', 'show focus', 'axis status',
                     'mir status')
 
-    safeCmds = r"(^device )|(status$)"
+    safeCmds = r'(^device )|(status$)'
 
     d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
     e = ASCIICmdEncoder(EOL='\r', useCID=False, CIDfirst=False, debug=1)

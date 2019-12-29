@@ -5,7 +5,7 @@ import resource
 import signal
 import sys
 
-import Misc
+from tron import Misc
 
 from .ActorNub import ActorNub
 
@@ -26,16 +26,16 @@ class ShellNub(ActorNub):
         try:
             os.kill(self.pid, self.sig)
         except Exception as e:
-            Misc.log("Shell.shutdown",
-                     "os.kill(pid=%s, sig=%s) failed with %s" %
+            Misc.log('Shell.shutdown',
+                     'os.kill(pid=%s, sig=%s) failed with %s' %
                      (self.pid, self.sig, e))
 
         pid, status = os.waitpid(self.pid, 0)
-        Misc.log("Shell.shutdown", "waitpid returned pid=%s and status=%s" % (pid, status))
+        Misc.log('Shell.shutdown', 'waitpid returned pid=%s and status=%s' % (pid, status))
 
     def shell(self, cmd):
 
-        Misc.log('Shell.shell', "%s launching %r" % (self.name, cmd))
+        Misc.log('Shell.shell', '%s launching %r' % (self.name, cmd))
 
         self.cmd = cmd
         p1_i, p1_o = os.pipe()
@@ -62,7 +62,7 @@ class ShellNub(ActorNub):
                     pass
 
             os.execv(cmd[0], cmd)
-            assert "child" == "alive"
+            assert 'child' == 'alive'
 
         else:
             # Parent
@@ -72,10 +72,10 @@ class ShellNub(ActorNub):
 
             self.pid = pid
             if self.name is None:
-                self.ID = "shell-%ld" % (pid)
+                self.ID = 'shell-%ld' % (pid)
                 self.name = self.ID
 
-            self.setInputFile(os.fdopen(p2_i, "r"))
-            self.setOutputFile(os.fdopen(p1_o, "w"))
+            self.setInputFile(os.fdopen(p2_i, 'r'))
+            self.setOutputFile(os.fdopen(p1_o, 'w'))
 
             Misc.log('Shell.shell', "launched '%s' %r as pid %d" % (cmd[0], cmd[1:], pid))

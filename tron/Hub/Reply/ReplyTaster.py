@@ -1,6 +1,6 @@
 __all__ = ['ReplyTaster']
 
-import Misc
+from tron import Misc
 
 
 class ReplyTaster(Misc.Object):
@@ -16,7 +16,7 @@ class ReplyTaster(Misc.Object):
         self.sources = {}
 
     def __str__(self):
-        return "ReplyTaster(actors=%s; cmdrs=%s; sources=%s)" % (list(
+        return 'ReplyTaster(actors=%s; cmdrs=%s; sources=%s)' % (list(
             self.actors.keys()), list(self.cmdrs.keys()), list(self.sources.keys()))
 
     def listeningTo(self):

@@ -1,16 +1,16 @@
 __all__ = ['CommanderNub', 'AuthCommanderNub', 'StdinNub', 'AuthStdinNub']
 
-import g
-import hub
-import Misc
-from Hub.Reply.ReplyTaster import ReplyTaster
+from tron import hub
+from tron import Misc
+from tron.Hub.Reply.ReplyTaster import ReplyTaster
 
 from . import CoreNub
 from .NubAuth import NubAuth
 
 
 class CommanderNub(CoreNub.CoreNub):
-    """ Base class for ICC connections, where we accept commands from and send replies to the remote end.  """
+    """ Base class for ICC connections, where we accept commands from and s
+    end replies to the remote end.  """
 
     def __init__(self, poller, **argv):
         """
@@ -35,7 +35,7 @@ class CommanderNub(CoreNub.CoreNub):
             self.setNames(program, user)
 
     def __str__(self):
-        return "%s(id=%s, name=%s, type=%s)" % (self.__class__.__name__, self.ID, self.name,
+        return '%s(id=%s, name=%s, type=%s)' % (self.__class__.__name__, self.ID, self.name,
                                                 self.nubType)
 
     def setNames(self, programName, username):
@@ -66,7 +66,7 @@ class CommanderNub(CoreNub.CoreNub):
         """
 
         if self.debug > 2:
-            Misc.log('Nub.copeWithInput', "CommanderNub %s read: %r" % (self.name, s))
+            Misc.log('Nub.copeWithInput', 'CommanderNub %s read: %r' % (self.name, s))
 
         # Find and execute _every_ complete input.
         # The only time this function gets called is when new input comes in, so we
@@ -83,7 +83,7 @@ class CommanderNub(CoreNub.CoreNub):
                 try:
                     txt = cmd['RawText']
                 except BaseException:
-                    txt = "UNKNOWN INPUT"
+                    txt = 'UNKNOWN INPUT'
                 self.log.log(txt, note='<')
 
             intercepted = False
@@ -117,7 +117,7 @@ class CommanderNub(CoreNub.CoreNub):
             if self.log:
                 self.log.log(er, note='>')
         else:
-            Misc.log("CommanderNub.reply", "not bcast; rID=%s selfID=%s" % (r.cmd.cmdrID, self.ID))
+            Misc.log('CommanderNub.reply', 'not bcast; rID=%s selfID=%s' % (r.cmd.cmdrID, self.ID))
             if r.finishesCommand():
                 er = self.encoder.encode(r, self, noKeys=True)
                 self.queueForOutput(er)
@@ -126,7 +126,7 @@ class CommanderNub(CoreNub.CoreNub):
 
     def tasteReply(self, r):
         if self.debug > 3:
-            Misc.log('ActorNub.tasteReply', "%s tasting %s" % (self, r))
+            Misc.log('ActorNub.tasteReply', '%s tasting %s' % (self, r))
 
         if self.taster.taste(r):
             self.reply(r)

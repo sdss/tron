@@ -6,10 +6,10 @@ import struct
 import tempfile
 from collections import OrderedDict
 
-import g
-import Misc
-import pixel16
-from Parsing import *
+import pixel16  # This does not exist but it seems this module is not imported.
+
+from tron import Misc, g
+from tron.Parsing import ParseException, parseKVs
 
 from .ReplyDecoder import ReplyDecoder
 
@@ -18,7 +18,8 @@ class BinaryReplyDecoder(ReplyDecoder):
     msg_re = re.compile(
         r"""
     \s*                          # Skip leading whitespace
-    (?P<flag>[iw:f>!])           # The flag. Should allow more characters, and check them elsewhere.
+    (?P<flag>[iw:f>!])           # The flag. Should allow more characters,
+                                 # and check them elsewhere.
     (?P<rest>.*)""", re.VERBOSE | re.IGNORECASE)
 
     def __init__(self, scratchDir, **argv):
@@ -38,11 +39,11 @@ class BinaryReplyDecoder(ReplyDecoder):
     def saveImageData(self, image, xpix, ypix, bitpix):
         """ Save image data to a scratch FITS file, register and return the file name. """
 
-        f, fname = tempfile.mkstemp('.fits', "%s-" % (self.nubID), self.scratchDir)
+        f, fname = tempfile.mkstemp('.fits', '%s-' % (self.nubID), self.scratchDir)
 
         # Create a minimal header.
         hdr = []
-        fmt = "%-08s=%21s / %-47s"
+        fmt = '%-08s=%21s / %-47s'
         hdr.append(fmt % ('SIMPLE', 'T', ''))
         hdr.append(fmt % ('BITPIX', repr(bitpix), 'Number of bits/data pixel'))
         hdr.append(fmt % ('NAXIS', '2', 'An image'))
@@ -61,30 +62,31 @@ class BinaryReplyDecoder(ReplyDecoder):
 
         # Possibly fiddle the data bits.
         if self.doByteSwapFirst:
-            Misc.log("Binary.saveImage", "byteswap first")
+            Misc.log('Binary.saveImage', 'byteswap first')
             pixel16.byteswap(image)
         if self.doSignFlip:
-            Misc.log("Binary.saveImage", "signflip")
+            Misc.log('Binary.saveImage', 'signflip')
             pixel16.uflip(image)
         if self.doByteSwapLast:
-            Misc.log("Binary.saveImage", "byteswap last")
+            Misc.log('Binary.saveImage', 'byteswap last')
             pixel16.byteswap(image)
 
         written = os.write(f, image)
         assert (written == len(image)
-                ), "SHORT WRITE ON IMAGE DATA: written=%d len(image)=%d" % (written, len(image))
+                ), 'SHORT WRITE ON IMAGE DATA: written=%d len(image)=%d' % (written, len(image))
 
         # Pad data to FITS 2880-byte block.
         remain = len(image) % 2880
 
         if remain > 0:
-            Misc.log("Binary.saveImage",
-                     "padding %d-byte data with %d null bytes" % (len(image), 2880 - remain))
+            Misc.log('Binary.saveImage',
+                     'padding %d-byte data with %d null bytes' % (len(image), 2880 - remain))
             os.write(f, '\000' * (2880 - remain))
 
         os.close(f)
 
-        # Register the filename. We probably eventually want to register the data, but this is safer.
+        # Register the filename. We probably eventually want to register the
+        # data, but this is safer.
         #
         g.KVs.setKV('images', '%sFile' % (self.nubID), fname, None)
 
@@ -135,7 +137,7 @@ class BinaryReplyDecoder(ReplyDecoder):
         is_file = is_file > 1
 
         if self.debug >= 5:
-            Misc.log("Binary.decap", "is_file=%s length=%d (%d) cid=%d mid=%d" %
+            Misc.log('Binary.decap', 'is_file=%s length=%d (%d) cid=%d mid=%d' %
                      (is_file, length, len(buf), cid, mid))
 
         fullLength = length + 10 + 2
@@ -177,10 +179,10 @@ class BinaryReplyDecoder(ReplyDecoder):
         buf = buf[fullLength:]
 
         if self.debug >= 7:
-            Misc.log("Binary.decap", "csum=%d match=%s trailer=%d left=%d (%r) msg=(%r)" %
+            Misc.log('Binary.decap', 'csum=%d match=%s trailer=%d left=%d (%r) msg=(%r)' %
                      (csum, csum == my_csum, trailer, len(buf), buf, msg))
         elif self.debug >= 5:
-            Misc.log("Binary.decap", "csum=%d match=%s trailer=%d left=%d (%r)" %
+            Misc.log('Binary.decap', 'csum=%d match=%s trailer=%d left=%d (%r)' %
                      (csum, csum == my_csum, trailer, len(buf), buf))
 
         d = {'mid': mid, 'cid': cid}
@@ -216,7 +218,7 @@ class BinaryReplyDecoder(ReplyDecoder):
                 KVs = e.KVs
                 KVs['UNPARSEDTEXT'] = Misc.qstr(e.leftoverText)
             except Exception as e:
-                Misc.log("parseASCIIReply", "unexpected Exception: %s" % (e))
+                Misc.log('parseASCIIReply', 'unexpected Exception: %s' % (e))
                 KVs = OrderedDict()
                 KVs['RawLine'] = Misc.qstr(msg_d['rest'])
 

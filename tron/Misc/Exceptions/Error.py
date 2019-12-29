@@ -1,9 +1,7 @@
 __all__ = ['Error']
 
-import exceptions
 
-
-class Error(exceptions.Exception):
+class Error(Exception):
 
     def __init__(self, oneliner, **argv):
         """ Create a generic error with arbitray attributes.
@@ -13,7 +11,7 @@ class Error(exceptions.Exception):
            argv    - a dictionary of attributes.
         """
 
-        exceptions.Exception.__init__(self)
+        Exception.__init__(self)
 
         self.oneliner = oneliner
 
@@ -24,5 +22,5 @@ class Error(exceptions.Exception):
         try:
             return self.argv[name]
         except BaseException:
-            raise AttributeError("%s instance has no attribute %s"
+            raise AttributeError('%s instance has no attribute %s'
                                  (self.__class__.__name__, name))

@@ -1,7 +1,6 @@
 __all__ = ['RawActorNub']
 
-import g
-import Misc
+from tron import Misc
 
 from .ActorNub import ActorNub
 from .SocketActorNub import SocketActorNub
@@ -10,7 +9,8 @@ from .SocketActorNub import SocketActorNub
 class RawActorNub(SocketActorNub, ActorNub):
 
     def getCmdForReply(self, r):
-        """ Assign the current (and _only_) command ID to the reply, and set flag appropriately """
+        """ Assign the current (and _only_) command ID to the reply,
+        and set flag appropriately """
 
         try:
             activeMid = self.activeMid
@@ -20,7 +20,7 @@ class RawActorNub(SocketActorNub, ActorNub):
         cmdDone = False
         try:
             replyText = r['RawText']
-            if replyText == " OK":
+            if replyText == ' OK':
                 Misc.log('rawReply', 'converting reply flag')
                 r['flag'] = ':'
                 cmdDone = True

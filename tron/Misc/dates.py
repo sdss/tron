@@ -22,7 +22,7 @@ def getDayDirName(t=None):
     localNow = t - localTZ
 
     localNowPlus12H = localNow + (12 * 3600)
-    dateString = time.strftime("UT%y%m%d", time.gmtime(localNowPlus12H))
+    dateString = time.strftime('UT%y%m%d', time.gmtime(localNowPlus12H))
 
     return dateString
 
@@ -43,7 +43,7 @@ def getQuarterName(t=None):
     localNowMinus12H = localNow - (12 * 3600)
     month = time.gmtime(localNowMinus12H)[1]
 
-    return "Q%d" % ((month + 2) / 3)
+    return 'Q%d' % ((month + 2) / 3)
 
 
 def _test():
@@ -53,5 +53,5 @@ def _test():
         print(getDayDirName(t=testNow))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     _test()

@@ -42,8 +42,8 @@ class cdict(object):
 
     def __repr__(self):
         """String representation of the dictionary."""
-        items = ", ".join([("%r: %r" % (k, v)) for k, v in list(self.items())])
-        return "{%s}" % items
+        items = ', '.join([('%r: %r' % (k, v)) for k, v in list(self.items())])
+        return '{%s}' % items
 
     def __setitem__(self, key, value):
         """Associate 'value' with 'key'. If 'key' already exists, but

@@ -1,18 +1,18 @@
 import os.path
 
-import g
-import hub
-import Misc.cfg
-from Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
-from Hub.Nub.SocketActorNub import SocketActorNub
-from Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
+from tron import g, hub
+from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
+from tron.Hub.Nub.SocketActorNub import SocketActorNub
+from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
+from tron.Misc import cfg
 
 
 name = 'alerts'
 
 
 def start(poller):
-    cfg = Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
+
+    my_cfg = cfg.get(g.location, 'actors', doFlush=True)[name]
 
     stop()
 
@@ -25,8 +25,8 @@ def start(poller):
     e = ASCIICmdEncoder(sendCommander=True, useCID=False, debug=1)
     nub = SocketActorNub(
         poller,
-        cfg['host'],
-        cfg['port'],
+        my_cfg['host'],
+        my_cfg['port'],
         name=name,
         encoder=e,
         decoder=d,

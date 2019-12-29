@@ -6,7 +6,7 @@ import os
 import socket
 import time
 
-import Misc
+from tron import Misc
 
 
 class IOHandler(Misc.Object):
@@ -33,7 +33,7 @@ class IOHandler(Misc.Object):
 
         self.poller = poller
 
-        Misc.log("IOHandler.init", "IOHandler(argv=%s)" % (argv))
+        Misc.log('IOHandler.init', 'IOHandler(argv=%s)' % (argv))
 
         # The IO size tweaks would mean something for slow network links.
         #
@@ -66,8 +66,8 @@ class IOHandler(Misc.Object):
     def ioshutdown(self, **argv):
         """ Unregister ourselves """
 
-        why = argv.get('why', "just cuz")
-        Misc.log("IOhandler.ioshutdown", "what=%s why=%s" % (self, why))
+        why = argv.get('why', 'just cuz')
+        Misc.log('IOhandler.ioshutdown', 'what=%s why=%s' % (self, why))
 
         self.setOutputFile(None)
         self.setInputFile(None)
@@ -81,10 +81,11 @@ class IOHandler(Misc.Object):
         self.ioshutdown()
 
     def setInputFile(self, f):
-        """ Change the input file. Close and unregister any old file. Register the new one for input. """
+        """ Change the input file. Close and unregister any old file.
+        Register the new one for input. """
 
         if self.debug > 2:
-            Misc.log("IOHandler.setInput", "%s changing input %s to %s" % (self, self.in_f, f))
+            Misc.log('IOHandler.setInput', '%s changing input %s to %s' % (self, self.in_f, f))
 
         # Detach and possibly close existing .in_f
         #
@@ -94,7 +95,7 @@ class IOHandler(Misc.Object):
                 try:
                     self.in_f.close()
                 except BaseException:
-                    Misc.error("IOHandler.setInput", "failed to close input for %s", self)
+                    Misc.error('IOHandler.setInput', 'failed to close input for %s', self)
 
         # Establish new .in_f
         #
@@ -112,7 +113,7 @@ class IOHandler(Misc.Object):
         """
 
         if self.debug > 2:
-            Misc.log("IOHandler.setOutput", "%s changing output %s to %s. queue=%s" %
+            Misc.log('IOHandler.setOutput', '%s changing output %s to %s. queue=%s' %
                      (self, self.out_f, f, self.outQueue))
 
         if self.out_f is not None:
@@ -121,7 +122,7 @@ class IOHandler(Misc.Object):
                 try:
                     self.out_f.close()
                 except BaseException:
-                    Misc.error("IOHandler.setOutput", "failed to close output for %s", self)
+                    Misc.error('IOHandler.setOutput', 'failed to close output for %s', self)
 
         # Establish new .out_f
         #
@@ -171,7 +172,7 @@ class IOHandler(Misc.Object):
     def queueForOutput(self, s, timer=None):
         """ Append s to the output queue. """
 
-        assert s is not None, "queueing nothing!"
+        assert s is not None, 'queueing nothing!'
 
         self.queueLock.acquire(src='queueForOutput')
         try:
@@ -191,8 +192,8 @@ class IOHandler(Misc.Object):
                 self.maxQueue = len(self.outQueue)
 
             if self.debug > 4:
-                Misc.log("IOHandler.queueForOutput",
-                         "appended %r to queue (len=%d) of %s" %
+                Misc.log('IOHandler.queueForOutput',
+                         'appended %r to queue (len=%d) of %s' %
                          (s, len(self.outQueue), self))
             if mustRegister:
                 self.poller.addOutput(self)
@@ -211,35 +212,35 @@ class IOHandler(Misc.Object):
 
         """
 
-        error = ""
-        readIn = ""
+        error = ''
+        readIn = ''
         try:
             readIn = os.read(self.in_fd, self.tryToRead)
         except socket.error as e:
-            error = "socket exception %s" % (e, )
-            Misc.log("IOHandler.readInput", error)
-            readIn = ""
+            error = 'socket exception %s' % (e, )
+            Misc.log('IOHandler.readInput', error)
+            readIn = ''
         except os.error as e:
-            error = "os exception %s" % (e, )
-            Misc.log("IOHandler.readInput", error)
-            readIn = ""
+            error = 'os exception %s' % (e, )
+            Misc.log('IOHandler.readInput', error)
+            readIn = ''
         except Exception as e:
-            error = "unknown exception %s" % (e, )
-            Misc.log("IOHandler.readInput", error)
-            readIn = ""
+            error = 'unknown exception %s' % (e, )
+            Misc.log('IOHandler.readInput', error)
+            readIn = ''
 
         if self.debug > 4:
-            Misc.log("IOHandler.readInput", "read len=%d %r" % (len(readIn), readIn[:50]))
+            Misc.log('IOHandler.readInput', 'read len=%d %r' % (len(readIn), readIn[:50]))
 
         # I/O error: by being called, we are told that we have input. But the read
         # showed no available input.
         # So close ourselves.
         #
 
-        if readIn == "" and error == "":
-            error = "read returned nothing."
+        if readIn == '' and error == '':
+            error = 'read returned nothing.'
 
-        if error != "":
+        if error != '':
             self.shutdown(why=error)
         else:
             self.totalBytesRead += len(readIn)
@@ -253,11 +254,14 @@ class IOHandler(Misc.Object):
         """ Try to write as much as we should from the queue.
 
         We are controlled by two object variables:
-            .tryToWrite: the maximum number of bytes we can send before returning control to the poller.
-            .tryToWriteMany: whether we can write several queued commands before returning to the poller.
+            .tryToWrite: the maximum number of bytes we can
+                         send before returning control to the poller.
+            .tryToWriteMany: whether we can write several queued
+                             commands before returning to the poller.
 
-        We send queued items individually, regardless. It might be worth having a .coalesce variable to
-        control that. I worry about the system limits being lower than our limits.
+        We send queued items individually, regardless. It might be worth
+        having a .coalesce variable to control that. I worry about the system
+        limits being lower than our limits.
 
         """
 
@@ -272,25 +276,25 @@ class IOHandler(Misc.Object):
                 qtop = self.outQueue[0]
             except IndexError:
                 self.setOutputFile(None)
-                raise RuntimeError("mayOutput queue for %s is empty!" % (self))
+                raise RuntimeError('mayOutput queue for %s is empty!' % (self))
 
             wlen = min(len(qtop), self.tryToWrite)
             if self.debug > 5:
-                Misc.log("IOHandler.mayOutput", "writing len=%d wlen=%d %r" %
+                Misc.log('IOHandler.mayOutput', 'writing len=%d wlen=%d %r' %
                          (len(qtop), wlen, qtop[:min(wlen, 50)]))
 
             try:
                 wrote = os.write(self.out_fd, qtop[:wlen])
             except socket.error as e:
-                Misc.log("IOHandler.mayOutput", "socket exception %r" % (e, ))
+                Misc.log('IOHandler.mayOutput', 'socket exception %r' % (e, ))
                 self.shutdown(why=str(e))
                 return
             except os.error as e:
-                Misc.log("IOHandler.mayOutput", "os exception %r" % (e, ))
+                Misc.log('IOHandler.mayOutput', 'os exception %r' % (e, ))
                 self.shutdown(why=str(e))
                 return
             except Exception as e:
-                Misc.log("IOHandler.mayOutput", "unhandled exception %r" % (e, ))
+                Misc.log('IOHandler.mayOutput', 'unhandled exception %r' % (e, ))
                 self.shutdown(why=str(e))
                 return
 
@@ -321,7 +325,7 @@ class IOHandler(Misc.Object):
                     break
 
                 if self.debug > 5:
-                    Misc.log("IOHandler.mayOutput", "queue len=%d" % (len(self.outQueue)))
+                    Misc.log('IOHandler.mayOutput', 'queue len=%d' % (len(self.outQueue)))
 
                 # Quit if we only write one item or if we have written alot.
                 #

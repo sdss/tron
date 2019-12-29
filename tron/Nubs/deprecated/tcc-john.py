@@ -1,13 +1,13 @@
 import os.path
 
-import g as hub_globals
-import Hub
-import hub
+from tron import g as hub_globals
+from tron import hub
+from tron import hub
 import IO
-from Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
-from Hub.Nub.Listeners import SocketListener
-from Hub.Nub.SocketActorNub import SocketActorNub
-from Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
+from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
+from tron.Hub.Nub.Listeners import SocketListener
+from tron.Hub.Nub.SocketActorNub import SocketActorNub
+from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
 name = 'tcc'
@@ -20,7 +20,7 @@ def start(poller):
     initCmds = ('show version', 'show users', 'show time', 'show status', 'show inst/full',
                 'show object/full', 'show axisconfig', 'show focus', 'axis status', 'mir status')
 
-    safeCmds = r"(^show )|(status$)"
+    safeCmds = r'(^show )|(status$)'
 
     d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
     e = ASCIICmdEncoder(EOL='\r', debug=1)

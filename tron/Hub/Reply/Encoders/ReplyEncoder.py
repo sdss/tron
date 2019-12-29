@@ -1,6 +1,6 @@
 __all__ = ['ReplyEncoder']
 
-import Misc
+from tron import Misc
 
 
 class ReplyEncoder(Misc.Object):
@@ -18,4 +18,4 @@ class ReplyEncoder(Misc.Object):
         self.name = s
 
     def encode(self, s):
-        RuntimeError(".encode() must be defined in a ReplyEncoder subclass.")
+        RuntimeError('.encode() must be defined in a ReplyEncoder subclass.')

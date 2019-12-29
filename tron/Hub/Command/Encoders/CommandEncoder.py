@@ -1,6 +1,6 @@
 __all__ = ['CommandEncoder']
 
-import Misc
+from tron import Misc
 
 
 class CommandEncoder(Misc.Object):

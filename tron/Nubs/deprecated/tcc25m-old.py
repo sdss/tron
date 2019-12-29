@@ -1,11 +1,9 @@
 import os.path
 
-import g
-import hub
-import IO
-from Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
-from Hub.Nub.TCCShellNub import TCCShellNub
-from Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
+from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
+from tron.Hub.Nub.TCCShellNub import TCCShellNub
+from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
+from tron import g, hub
 
 
 name = 'tcc'
@@ -19,7 +17,7 @@ def start(poller):
                 'show object/full', 'show axisconfig', 'show focus', 'axis status', 'show scale',
                 'mir status')
 
-    safeCmds = r"(^show )|(status$)"
+    safeCmds = r'(^show )|(status$)'
 
     d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
     e = ASCIICmdEncoder(EOL='\r', debug=1, CIDfirst=False)

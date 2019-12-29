@@ -1,8 +1,8 @@
 __all__ = ['SocketListener']
 
-import hub
-import IO
-import Misc
+from tron import hub
+from tron import IO
+from tron import Misc
 
 
 class SocketListener(object):
@@ -21,7 +21,7 @@ class SocketListener(object):
     def __del__(self):
         self.listener = None
 
-    def shutdown(self, notifyHub=True, why=""):
+    def shutdown(self, notifyHub=True, why=''):
         """ Release all resources and shut down.
 
         If called from "below" (i.e. a socket has been shutdown), just
@@ -30,7 +30,7 @@ class SocketListener(object):
         If called from the hub, close all IO resources.
         """
 
-        Misc.log("Hub.shutdown", "notify=%s why=%s" % (notifyHub, why))
+        Misc.log('Hub.shutdown', 'notify=%s why=%s' % (notifyHub, why))
 
         if notifyHub:
             hub.dropNub(self)

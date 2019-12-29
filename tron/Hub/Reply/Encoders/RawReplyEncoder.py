@@ -1,10 +1,9 @@
 __all__ = ['RawReplyEncoder']
 
-import Misc
-from Hub.KV.KVDict import kvAsASCII
-from Parsing.dequote import dequote
+from tron import Misc
+from tron.Hub.KV.KVDict import kvAsASCII
+from tron.Parsing.dequote import dequote
 
-from .ASCIIReplyEncoder import ASCIIReplyEncoder
 from .ReplyEncoder import ReplyEncoder
 
 
@@ -30,12 +29,12 @@ class RawReplyEncoder(ReplyEncoder):
         if self.keyName:
             rawVal = r.KVs.get(self.keyName, '')
             val = dequote(rawVal)
-            Misc.log('RAWDEQUOTE', "rawVal=%r val=%r" % (rawVal, val))
+            Misc.log('RAWDEQUOTE', 'rawVal=%r val=%r' % (rawVal, val))
         else:
             val = self.encodeKeys(r.src, r.KVs)
 
         if val:
-            return "%s%s" % (val, self.EOL)
+            return '%s%s' % (val, self.EOL)
         else:
             return ''
 
@@ -50,15 +49,15 @@ class RawReplyEncoder(ReplyEncoder):
         """
 
         if self.debug > 5:
-            Misc.log("ASCIIReplyEnc.encode", "encoding %r" % (KVs, ))
+            Misc.log('ASCIIReplyEnc.encode', 'encoding %r' % (KVs, ))
         if KVs is None:
-            return ""
+            return ''
 
         keylist = []
         for k, v in KVs.items():
             if self.debug > 5:
-                Misc.log("ASCIIReplyEnc.encode", "encoding %r=%r" % (k, v))
+                Misc.log('ASCIIReplyEnc.encode', 'encoding %r=%r' % (k, v))
 
             keylist.append(kvAsASCII(k, v))
 
-        return "; ".join(keylist)
+        return '; '.join(keylist)

@@ -1,13 +1,11 @@
-import os
-import socket
 import time
+import socket
 
-import g
-import hub
-from Hub.Command.Decoders.ASCIICmdDecoder import ASCIICmdDecoder
-from Hub.Nub.Commanders import AuthStdinNub
-from Hub.Nub.Listeners import SocketListener
-from Hub.Reply.Encoders.ASCIIReplyEncoder import ASCIIReplyEncoder
+from tron import g, hub
+from tron.Hub.Command.Decoders.ASCIICmdDecoder import ASCIICmdDecoder
+from tron.Hub.Nub.Commanders import AuthStdinNub
+from tron.Hub.Nub.Listeners import SocketListener
+from tron.Hub.Reply.Encoders.ASCIIReplyEncoder import ASCIIReplyEncoder
 
 
 name = 'TUI'
@@ -30,7 +28,7 @@ def acceptTUI(in_f, out_f, addr=None):
     try:
         otherFQDN = socket.getfqdn(otherIP)
     except BaseException:
-        otherFQDN = "unknown"
+        otherFQDN = 'unknown'
 
     # os.system("/usr/bin/sudo /usr/local/bin/www-access add %s" % (otherIP))
 

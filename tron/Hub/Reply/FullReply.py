@@ -21,10 +21,11 @@ class FullReply(object):
     """
 
     def __str__(self):
-        return "FullReply(cmdrName=%s, cmdrMid=%s, cmdrCid=%s, actorName=%s, actorMid=%s, actorCid=%s, src=%s, flag=%s, KVs=%s)" \
-               % (self.cmdrName, self.cmdrMid, self.cmdrCid,
-                  self.actorName, self.actorMid, self.actorCid,
-                  self.src, self.flag, self.KVs)
+        return ('FullReply(cmdrName=%s, cmdrMid=%s, cmdrCid=%s, actorName=%s, '
+                'actorMid=%s, actorCid=%s, src=%s, flag=%s, KVs=%s)'
+                % (self.cmdrName, self.cmdrMid, self.cmdrCid,
+                   self.actorName, self.actorMid, self.actorCid,
+                   self.src, self.flag, self.KVs))
 
     def initFromReply(self, r, noKeys=False):
 

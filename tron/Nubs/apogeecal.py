@@ -1,11 +1,10 @@
 import os
 
-import g
-import hub
-import Misc.cfg
-from Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
-from Hub.Nub.SocketActorNub import SocketActorNub
-from Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
+import tron.Misc
+from tron import g, hub
+from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
+from tron.Hub.Nub.SocketActorNub import SocketActorNub
+from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
 # this point to the APOGEE calibration box Java actor
@@ -14,7 +13,7 @@ name = 'apogeecal'
 
 
 def start(poller):
-    cfg = Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
+    cfg = tron.Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
 
     stop()
 

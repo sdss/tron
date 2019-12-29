@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 __all__ = ['PollHandler']
+
 """ PollHandler.py -- wrap poll loop.
 
     The intent is to get non-blocking, event loop I/O.
@@ -13,9 +14,9 @@ import os
 import select
 import socket
 import time
-from threading import *
+from threading import Lock
 
-import Misc
+from tron import Misc
 
 
 class NullIO(object):
@@ -38,7 +39,7 @@ class NullIO(object):
         if self.debug > 0:
             Misc.log('NullIO', 'reading token')
 
-        d = os.read(self.fd, 1)
+        os.read(self.fd, 1)
 
 
 class PollHandler(Misc.Object):
@@ -145,7 +146,7 @@ class PollHandler(Misc.Object):
 
         fd = obj.getInputFd()
         if fd is None or fd == -1:
-            Misc.log("IOHandler.addInput", "fd for obj=%s was %s!" % (obj, fd))
+            Misc.log('IOHandler.addInput', 'fd for obj=%s was %s!' % (obj, fd))
             return
 
         self.lock.acquire()
@@ -183,10 +184,13 @@ class PollHandler(Misc.Object):
         return lastHandler
 
     def addOutput(self, obj):
-        """ Register an IOHandler instance for output and callback. Return existing handler or None.
+        """ Register an IOHandler instance for output and callback.
+
+        Return existing handler or None.
 
         Args:
-           obj  - an IOHandler instance, which must provide .getOutputFd() and .canOutput() methods.
+           obj  - an IOHandler instance, which must provide .getOutputFd()
+                  and .canOutput() methods.
 
         Returns:
            - the previously registered IOHandler object for the given output file, or None.
@@ -260,8 +264,8 @@ class PollHandler(Misc.Object):
             eventMask = pollInfo['eventMask']
             eventMask &= ~select.POLLIN
         else:
-            Misc.log("Poll.registry",
-                     "removeInput clearing all IO for unregistered object fd=%r." % (fd))
+            Misc.log('Poll.registry',
+                     'removeInput clearing all IO for unregistered object fd=%r.' % (fd))
             self.lock.release()
             return
 
@@ -312,8 +316,8 @@ class PollHandler(Misc.Object):
             eventMask = pollInfo['eventMask']
             eventMask &= ~select.POLLOUT
         else:
-            Misc.log("Poll.registry",
-                     "removeOutput clearing all IO for unregistered object fd=%r" % (fd))
+            Misc.log('Poll.registry',
+                     'removeOutput clearing all IO for unregistered object fd=%r' % (fd))
             self.lock.release()
             return
 
@@ -349,22 +353,22 @@ class PollHandler(Misc.Object):
         """ Return a string describing a poll event flag mask. """
 
         names = None
-        for fmask, fname in ((select.POLLHUP, "HUP"), (select.POLLERR, "ERR"),
-                             (select.POLLIN, "IN"), (select.POLLOUT, "OUT"),
-                             (select.POLLNVAL, "NVAL"), (select.POLLPRI, "PRI")):
+        for fmask, fname in ((select.POLLHUP, 'HUP'), (select.POLLERR, 'ERR'),
+                             (select.POLLIN, 'IN'), (select.POLLOUT, 'OUT'),
+                             (select.POLLNVAL, 'NVAL'), (select.POLLPRI, 'PRI')):
             if flags & fmask:
                 if names is None:
                     names = fname
                 else:
-                    names += "|%s" % (fname, )
+                    names += '|%s' % (fname, )
 
                 flags &= ~fmask
 
         if flags != 0:
             if names is None:
-                names = "%0x" % (flags, )
+                names = '%0x' % (flags, )
             else:
-                names += "|%0x" % (flags, )
+                names += '|%0x' % (flags, )
 
         return names
 
@@ -376,22 +380,22 @@ class PollHandler(Misc.Object):
             inHandler = f.get('inputHandler', None)
             outHandler = f.get('outputHandler', None)
 
-            dlist.append("fd=%s io=%s in=%s out=%s" %
+            dlist.append('fd=%s io=%s in=%s out=%s' %
                          (fd, self.flagNames(f['eventMask']), inHandler, outHandler))
 
-        return ", ".join(dlist)
+        return ', '.join(dlist)
 
     def run(self):
         """ Wait for I/O and dispatch to handlers. """
 
-        Misc.log("PollHandler.run", "running...")
+        Misc.log('PollHandler.run', 'running...')
 
         while True:
             if self.debug > 7:
-                Misc.log("PollHandler.run",
-                         "loop, threaded=%s, id=%s" % (bool(self.looper is not None), id(self)))
+                Misc.log('PollHandler.run',
+                         'loop, threaded=%s, id=%s' % (bool(self.looper is not None), id(self)))
                 if self.debug > 8:
-                    Misc.log("PollHandler.run", "files=%s" % (self.fileNames()))
+                    Misc.log('PollHandler.run', 'files=%s' % (self.fileNames()))
 
             # Calculate the proper timeout. Basically, use the loop default
             # or the next item in .timedCallbacks
@@ -409,19 +413,19 @@ class PollHandler(Misc.Object):
 
             try:
                 events = self.poller.poll(timeout * 1000.0)
-            except (socket.error, os.error, "error") as e:
-                Misc.log("PollHandler.run", "poll trying to clean up: %s" % (e, ))
+            except (socket.error, os.error, 'error') as e:
+                Misc.log('PollHandler.run', 'poll trying to clean up: %s' % (e, ))
                 try:
                     fd, eString = e
                     self.removeOutputFd(fd)
                     self.removeInputFd(fd)
                 except BaseException:
-                    Misc.log("PollHandler.run",
-                             "poll failed with unknown error exception: %s" % (e, ))
+                    Misc.log('PollHandler.run',
+                             'poll failed with unknown error exception: %s' % (e, ))
             except Exception as e:
-                Misc.log("PollHandler.run", "poll failed with: %s (%s)" % (e, type(e)))
+                Misc.log('PollHandler.run', 'poll failed with: %s (%s)' % (e, type(e)))
                 if isinstance(e, type((), )) and len(e) == 2:
-                    Misc.log("PollHandler.run", "poll trying to clean up mess: %s" % (e, ))
+                    Misc.log('PollHandler.run', 'poll trying to clean up mess: %s' % (e, ))
                     fd, errString = e
                     self.removeOutputFd(fd)
                     self.removeInputFd(fd)
@@ -435,10 +439,10 @@ class PollHandler(Misc.Object):
                     self.timeoutHandler()
                 else:
                     if self.debug > 8:
-                        Misc.log("PollHandler.run", "time out on poll, with no timeoutHandler!")
+                        Misc.log('PollHandler.run', 'time out on poll, with no timeoutHandler!')
 
-            # Regardless of whether we got here by timeout or by event, check the timed callbacks for
-            # expired events.
+            # Regardless of whether we got here by timeout or by event,
+            # check the timed callbacks for expired events.
             #
             if self.timedCallbacks != []:
                 now = time.time()
@@ -466,17 +470,17 @@ class PollHandler(Misc.Object):
                 fd, flag = event
 
                 if self.debug > 4:
-                    Misc.log("PollHandler.run", "got fd=%s events=%s" % (fd, self.flagNames(flag)))
+                    Misc.log('PollHandler.run', 'got fd=%s events=%s' % (fd, self.flagNames(flag)))
 
                 if flag & ~(select.POLLIN | select.POLLOUT):
                     Misc.log(
-                        "PollHandler.run",
-                        "poll got exception flags: fd=%r, flag=%s" % (fd, self.flagNames(flag)))
+                        'PollHandler.run',
+                        'poll got exception flags: fd=%r, flag=%s' % (fd, self.flagNames(flag)))
 
                 try:
                     d = self.files[fd]
-                except KeyError as e:
-                    Misc.log("PollHandler.run", "invalid file on poll: %s" % (repr(fd)))
+                except KeyError:
+                    Misc.log('PollHandler.run', 'invalid file on poll: %s' % (repr(fd)))
 
                     continue
 
@@ -490,20 +494,27 @@ class PollHandler(Misc.Object):
                     callbackObj = d['inputHandler']
                     callbackObj.readInput()
 
-                # Check exception flags separately from RW flags. Why? Because there may have been I/O
-                # pending before the error was raised. Think of a client that closes right after writing.
+                # Check exception flags separately from RW flags.
+                # Why? Because there may have been I/O
+                # pending before the error was raised.
+                # Think of a client that closes right after writing.
                 #
-                # This is all a sad misunderstanding. The original intent was to have this .run() loop
-                # handle essentially all connection errors and closes. But it turns out that Unixes vary
-                # tremendously on how much poll() sees. In some cases, HUP and ERR are never seen for
-                # network sockets. Because of that, I am shifting the burden to the callbacks -- read() and write()
+                # This is all a sad misunderstanding.
+                # The original intent was to have this .run() loop
+                # handle essentially all connection errors and closes.
+                # But it turns out that Unixes vary
+                # tremendously on how much poll() sees. In some cases,
+                # HUP and ERR are never seen for
+                # network sockets. Because of that, I am shifting the burden
+                # to the callbacks -- read() and write()
                 # do dependably generate errors.
                 #
                 if flag & (select.POLLHUP | select.POLLERR):
-                    # On HUP or ERR, let the readInput() or mayOutput() discover the error and act on it.
+                    # On HUP or ERR, let the readInput() or mayOutput()
+                    # discover the error and act on it.
                     #
-                    Misc.log("PollHandler.run",
-                             "HUP/ERR (%s) on poll: %s" % (self.flagNames(flag), repr(fd)))
+                    Misc.log('PollHandler.run',
+                             'HUP/ERR (%s) on poll: %s' % (self.flagNames(flag), repr(fd)))
                     outputHandler = d.get('outputHandler', None)
                     inputHandler = d.get('inputHandler', None)
                     if outputHandler:
@@ -514,8 +525,8 @@ class PollHandler(Misc.Object):
                 if flag & select.POLLNVAL:
                     # I don't know what I'm doing here. -- Misc
                     #
-                    Misc.log("PollHandler.run",
-                             "NVAL (%s) on poll: %s" % (self.flagNames(flag), repr(fd)))
+                    Misc.log('PollHandler.run',
+                             'NVAL (%s) on poll: %s' % (self.flagNames(flag), repr(fd)))
 
                     outputHandler = d.get('outputHandler', None)
                     inputHandler = d.get('inputHandler', None)

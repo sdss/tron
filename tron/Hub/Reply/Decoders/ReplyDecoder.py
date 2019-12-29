@@ -1,6 +1,6 @@
 __all__ = ['ReplyDecoder']
 
-import Misc
+from tron import Misc
 
 
 class ReplyDecoder(Misc.Object):
@@ -21,4 +21,4 @@ class ReplyDecoder(Misc.Object):
         self.name = s
 
     def decode(self, s0, s1):
-        raise RuntimeError(".decode() must be defined in a ReplyDecoder subclass.")
+        raise RuntimeError('.decode() must be defined in a ReplyDecoder subclass.')

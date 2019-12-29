@@ -1,14 +1,11 @@
 __all__ = ['hubCommands']
 
-import os
 import sys
-import time
 
-import g
-import hub
-import Misc
 import Vocab.InternalCmd as InternalCmd
-from Hub.KV.KVDict import *
+
+from tron import Misc, g, hub
+from tron.Hub.KV.KVDict import kvAsASCII
 
 
 class hubCommands(InternalCmd.InternalCmd):
@@ -63,27 +60,27 @@ class hubCommands(InternalCmd.InternalCmd):
 
         cmdr = cmd.cmdr()
         if not cmdr:
-            cmd.fail('debug=%s' % (Misc.qstr("cmdr=%s; cmd=%s" % (cmdr, cmd))))
+            cmd.fail('debug=%s' % (Misc.qstr('cmdr=%s; cmd=%s' % (cmdr, cmd))))
             return
-        Misc.log("doListen", "start: %s" % (cmdr.taster))
-        Misc.log("doListen", "leftovers: %s" % (leftovers))
+        Misc.log('doListen', 'start: %s' % (cmdr.taster))
+        Misc.log('doListen', 'leftovers: %s' % (leftovers))
 
         if 'addActors' in matched:
             actors = list(leftovers.keys())
-            Misc.log("doListen", "addActors: %s" % (actors))
-            #cmd.inform('text="%s"' % (Misc.qstr("adding actors: %s" % (actors))))
+            Misc.log('doListen', 'addActors: %s' % (actors))
+            # cmd.inform('text="%s"' % (Misc.qstr("adding actors: %s" % (actors))))
             cmdr.taster.addToFilter(actors, [], actors)
             cmd.finish()
         elif 'delActors' in matched:
             actors = list(leftovers.keys())
-            Misc.log("doListen", "delActors: %s" % (actors))
-            #cmd.inform('text="%s"' % (Misc.qstr("removing actors: %s" % (actors))))
+            Misc.log('doListen', 'delActors: %s' % (actors))
+            # cmd.inform('text="%s"' % (Misc.qstr("removing actors: %s" % (actors))))
             cmdr.taster.removeFromFilter(actors, [], actors)
             cmd.finish()
         else:
             cmd.fail('text="unknown listen command"')
 
-        Misc.log("doListen", "finish: %s" % (cmdr.taster))
+        Misc.log('doListen', 'finish: %s' % (cmdr.taster))
 
     def actors(self, cmd, finish=True):
         """ Return a list of the currently connected actors. """
@@ -132,13 +129,12 @@ class hubCommands(InternalCmd.InternalCmd):
             cmd.fail('text="must specify one or more nubs to stop..."')
             return
 
-        ok = True
         for nub in nubs:
             try:
-                cmd.inform('text=%s' % (Misc.qstr("stopping nub %s" % (nub))))
+                cmd.inform('text=%s' % (Misc.qstr('stopping nub %s' % (nub))))
                 hub.stopNub(nub)
             except Exception as e:
-                cmd.warn('text=%s' % (Misc.qstr("failed to stop nub %s: %s" % (nub, e))))
+                cmd.warn('text=%s' % (Misc.qstr('failed to stop nub %s: %s' % (nub, e))))
 
         cmd.finish('')
 
@@ -150,13 +146,12 @@ class hubCommands(InternalCmd.InternalCmd):
             cmd.fail('text="must specify one or more nubs to start..."')
             return
 
-        ok = True
         for nub in nubs:
             try:
-                cmd.inform('text=%s' % (Misc.qstr("(re-)starting nub %s" % (nub))))
+                cmd.inform('text=%s' % (Misc.qstr('(re-)starting nub %s' % (nub))))
                 hub.startNub(nub)
             except Exception as e:
-                cmd.warn('text=%s' % (Misc.qstr("failed to start nub %s: %s" % (nub, e))))
+                cmd.warn('text=%s' % (Misc.qstr('failed to start nub %s: %s' % (nub, e))))
 
         cmd.finish('')
 
@@ -173,7 +168,7 @@ class hubCommands(InternalCmd.InternalCmd):
                 nub = g.actors[n]
                 nub.statusCmd(cmd, doFinish=False)
             except Exception as e:
-                cmd.warn('text=%s' % (Misc.qstr("failed to query actor %s: %s" % (n, e))))
+                cmd.warn('text=%s' % (Misc.qstr('failed to query actor %s: %s' % (n, e))))
 
         cmd.finish('')
 
@@ -190,7 +185,7 @@ class hubCommands(InternalCmd.InternalCmd):
                 nub = g.actors[n]
                 nub.listCommandsCmd(cmd, doFinish=False)
             except Exception as e:
-                cmd.warn('text=%s' % (Misc.qstr("failed to query actor %s: %s" % (n, e))))
+                cmd.warn('text=%s' % (Misc.qstr('failed to query actor %s: %s' % (n, e))))
 
         cmd.finish('')
 
@@ -202,7 +197,7 @@ class hubCommands(InternalCmd.InternalCmd):
         if len(words) == 0:
             words = None
 
-        Misc.log("hubCmd", "loadWords loading %s" % (words))
+        Misc.log('hubCmd', 'loadWords loading %s' % (words))
         try:
             hub.loadWords(words)
         except Exception as e:
@@ -230,12 +225,12 @@ class hubCommands(InternalCmd.InternalCmd):
         keys = words[2:]
 
         matched, unmatched = g.KVs.getValues(src, keys)
-        Misc.log("hub.getKeys", "matched=%s unmatched=%s" % (matched, unmatched))
+        Misc.log('hub.getKeys', 'matched=%s unmatched=%s' % (matched, unmatched))
         for k, v in matched.items():
             kvString = kvAsASCII(k, v)
-            cmd.inform(kvString, src="hub.%s" % (src))
+            cmd.inform(kvString, src='hub.%s' % (src))
         if unmatched:
-            cmd.warn("text=%s" % (Misc.qstr("unmatched %s keys: %s" %
+            cmd.warn('text=%s' % (Misc.qstr('unmatched %s keys: %s' %
                                             (src, ', '.join(unmatched)))))
         cmd.finish('')
 
@@ -261,11 +256,11 @@ class hubCommands(InternalCmd.InternalCmd):
         filename = args[0]
         import os
 
-        f = file(filename, "a", 1)
+        f = open(filename, 'a', 1)
         os.dup2(f.fileno(), 1)
         os.dup2(f.fileno(), 2)
-        sys.stdout = os.fdopen(1, "w", 1)
-        sys.stderr = os.fdopen(2, "w", 1)
+        sys.stdout = os.fdopen(1, 'w', 1)
+        sys.stderr = os.fdopen(2, 'w', 1)
         f.close()
 
         cmd.finish('text="Jeebus, you done it now, whatever it was"')

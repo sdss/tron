@@ -2,7 +2,7 @@ __all__ = ['BinaryCmdEncoder']
 
 import struct
 
-import Misc
+from tron import Misc
 
 from .CommandEncoder import CommandEncoder
 
@@ -27,6 +27,6 @@ class BinaryCmdEncoder(CommandEncoder):
                              str, csum, 4)
 
         if self.debug > 3:
-            Misc.log('BinaryCmdEncoder', "cmd=%s data=%r" % (cmd, packet))
+            Misc.log('BinaryCmdEncoder', 'cmd=%s data=%r' % (cmd, packet))
 
         return packet

@@ -1,6 +1,6 @@
 __all__ = ['RawCmdEncoder']
 
-import Misc
+from tron import Misc
 
 from .CommandEncoder import CommandEncoder
 
@@ -19,8 +19,8 @@ class RawCmdEncoder(CommandEncoder):
 
     def encode(self, cmd):
 
-        e = "%s%s" % (cmd.cmd, self.EOL)
+        e = '%s%s' % (cmd.cmd, self.EOL)
         if self.debug > 5:
-            Misc.log("RawEncoder", "encoded: %s" % (e))
+            Misc.log('RawEncoder', 'encoded: %s' % (e))
 
         return e

@@ -14,7 +14,8 @@ class CmdError(exceptions.Exception):
 
         Args:
            error   - one line of text, intended for users. Will be returned on distxt.
-           details - optional text, intended for operators/programmers. Will be returned on diserrtxt.
+           details - optional text, intended for operators/programmers.
+                     Will be returned on diserrtxt.
         """
 
         exceptions.Exception.__init__(self)

@@ -1,9 +1,7 @@
 __all__ = ['ASCIIReplyEncoder']
 
-import re
-
-import Misc
-from Hub.KV.KVDict import kvAsASCII
+from tron import Misc
+from tron.Hub.KV.KVDict import kvAsASCII
 
 from .ReplyEncoder import ReplyEncoder
 
@@ -50,9 +48,9 @@ class ASCIIReplyEncoder(ReplyEncoder):
             cid = cmd.cmdrName
 
         if self.CIDfirst:
-            id_s = "%s %s" % (cid, mid)
+            id_s = '%s %s' % (cid, mid)
         else:
-            id_s = "%s %s" % (mid, cid)
+            id_s = '%s %s' % (mid, cid)
 
         if self.debug > 5:
             Misc.log('ASCIIReplyEncoder.encode',
@@ -64,10 +62,10 @@ class ASCIIReplyEncoder(ReplyEncoder):
             keys = self.encodeKeys(r.src, r.KVs)
 
         if self.noSrc:
-            return "%s %s %s%s" % (id_s,
+            return '%s %s %s%s' % (id_s,
                                    r.flag, keys, self.EOL)
         else:
-            return "%s %s %s %s%s" % (id_s,
+            return '%s %s %s %s%s' % (id_s,
                                       r.src, r.flag, keys, self.EOL)
 
     def encodeFull(self, r, nub, noKeys=False):
@@ -83,7 +81,7 @@ class ASCIIReplyEncoder(ReplyEncoder):
         else:
             keys = self.encodeKeys(r.src, r.KVs)
 
-        return "%s %s %s %s %s %s %s %s %s%s" % (cmd.cmdrName, cmd.cmdrMid, cmd.cmdrCid,
+        return '%s %s %s %s %s %s %s %s %s%s' % (cmd.cmdrName, cmd.cmdrMid, cmd.cmdrCid,
                                                  cmd.actorName, cmd.actorMid, cmd.actorCid, r.src,
                                                  r.flag, keys, self.EOL)
 
@@ -98,29 +96,29 @@ class ASCIIReplyEncoder(ReplyEncoder):
         """
 
         if self.debug > 5:
-            Misc.log("ASCIIReplyEnc.encode", "encoding %r" % (KVs, ))
+            Misc.log('ASCIIReplyEnc.encode', 'encoding %r' % (KVs, ))
         if KVs is None:
-            return ""
+            return ''
 
         keylist = []
         for k, v in KVs.items():
             if self.debug > 5:
-                Misc.log("ASCIIReplyEnc.encode", "encoding %r=%r" % (k, v))
+                Misc.log('ASCIIReplyEnc.encode', 'encoding %r=%r' % (k, v))
 
             keylist.append(kvAsASCII(k, v, escape=self.EOL))
 
-        return "; ".join(keylist)
+        return '; '.join(keylist)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import sys
 
     tests = ('Received="26437.910 00010000   14.6028678 -10.32"   0"',
-             "distxt=\"Unrecognized command: '\"'\"", "", 'e="', "e='",
-             'abc = "oh no", "please no", 1', "d=99.9", "e=99,9", "k=a,'b'", "z29=   abc;  def",
+             "distxt=\"Unrecognized command: '\"'\"", '', 'e="', "e='",
+             'abc = "oh no", "please no", 1', 'd=99.9', 'e=99,9', "k=a,'b'", 'z29=   abc;  def',
              'k9="sddsas')
     sys.stderr.write('\n\n')
     for t in tests:
-        sys.stderr.write("====== :%s:\n" % (t))
+        sys.stderr.write('====== :%s:\n' % (t))
         d = parseKVs(t)
-        print("t=:%s: d=%s" % (t, d))
+        print('t=:%s: d=%s' % (t, d))

@@ -1,6 +1,4 @@
-import g
-import Hub
-import hub
+from tron import g, hub
 
 
 name = 'cmdinauth'
@@ -20,7 +18,7 @@ def acceptStdin(in_f, out_f, addr=None):
     try:
         otherFQDN = socket.getfqdn(otherIP)
     except BaseException:
-        otherFQDN = "unknown"
+        otherFQDN = 'unknown'
 
     d = Hub.ASCIICmdDecoder(needCID=False, EOL='\n', name=name, debug=1)
     e = Hub.ASCIIReplyEncoder(name=name, simple=True, debug=1, needCID=False)

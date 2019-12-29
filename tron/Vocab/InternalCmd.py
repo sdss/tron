@@ -2,7 +2,7 @@ __all__ = ['InternalCmd']
 
 import re
 
-import Misc
+from tron import Misc
 
 
 class InternalCmd(object):
@@ -21,7 +21,7 @@ class InternalCmd(object):
         self.name = name
         self.ID = name
         self.isActor = isActor
-        self.needsAuth = argv.get("needsAuth", False)
+        self.needsAuth = argv.get('needsAuth', False)
         # if self.needsAuth == True:
         #     self.needsAuth = self.name
 
@@ -43,7 +43,7 @@ class InternalCmd(object):
         """
         """
 
-        Misc.log("%s.cmd" % (self.name), "running cmd=%s" % (Misc.qstr(cmd.cmd)))
+        Misc.log('%s.cmd' % (self.name), 'running cmd=%s' % (Misc.qstr(cmd.cmd)))
         self.totalCommands += 1
 
         cmd.parseArgs()
@@ -56,7 +56,7 @@ class InternalCmd(object):
         cmdHandler = self.commands.get(cmdWord, None)
         if cmdHandler is None:
             cmd.fail('%sTxt=%s' %
-                     (self.name, Misc.qstr("No command named %s" % (cmdWord))))
+                     (self.name, Misc.qstr('No command named %s' % (cmdWord))))
             return
 
         cmd.reportQueued()
@@ -70,7 +70,7 @@ class InternalCmd(object):
     def statusCmd(self, cmd, doFinish=True):
         """ """
 
-        cmd.inform("vocabStats=%s,%d" % (Misc.qstr(self.name), self.totalCommands))
+        cmd.inform('vocabStats=%s,%d' % (Misc.qstr(self.name), self.totalCommands))
 
         if doFinish:
             cmd.finish()

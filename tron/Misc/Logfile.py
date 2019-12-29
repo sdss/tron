@@ -2,7 +2,6 @@ __all__ = ['Logfile']
 
 import os
 import os.path
-import sys
 from math import modf
 from time import gmtime, sleep, strftime, time
 
@@ -45,12 +44,12 @@ class Logfile(object):
         We use the current time to name the file.
         """
 
-        name = strftime("%Y-%m-%dT%H:%M:%S.log", gmtime())
-        newFile = file(os.path.join(self.dir, name), "a+", 1)  # The 1 specifies line-buffering
+        name = strftime('%Y-%m-%dT%H:%M:%S.log', gmtime())
+        newFile = open(os.path.join(self.dir, name), 'a+', 1)  # The 1 specifies line-buffering
 
         self.logfile = newFile
 
-    def getTS(self, t=None, format="%Y-%m-%d %H:%M:%S", zone="Z"):
+    def getTS(self, t=None, format='%Y-%m-%d %H:%M:%S', zone='Z'):
         """ Return a proper ISO timestamp for t, or now if t==None. """
 
         if t is None:
@@ -60,9 +59,9 @@ class Logfile(object):
             zone = ''
 
         return strftime(format, gmtime(t)) \
-            + ".%04d%s" % (10000 * modf(t)[0], zone)
+            + '.%04d%s' % (10000 * modf(t)[0], zone)
 
-    def log(self, txt, note="", level=1):
+    def log(self, txt, note='', level=1):
         """ Append txt to our log if the given level is <= self.level.
 
         Args:
@@ -75,26 +74,6 @@ class Logfile(object):
         ts = self.getTS()
 
         if self.doEncode:
-            self.logfile.write("%s %s %r\n" % (ts, note, txt))
+            self.logfile.write('%s %s %r\n' % (ts, note, txt))
         else:
-            self.logfile.write("%s %s %s%s" % (ts, note, txt, self.EOL))
-
-
-def test():
-    l = Log('/tmp/tlogs')
-
-    for i in range(20):
-        l.log("logging %d and pausing 1s" % (i))
-        sleep(1)
-
-    n = 10000
-    start = time()
-    for i in range(n):
-        l.log("logging %d" % (i))
-    end = time()
-    l.log("%d lines in %0.3fs, or %d lines/s" %
-          (n, (end - start), n / (end - start)))
-
-
-if __name__ == "__main__":
-    test()
+            self.logfile.write('%s %s %s%s' % (ts, note, txt, self.EOL))

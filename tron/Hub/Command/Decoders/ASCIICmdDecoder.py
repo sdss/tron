@@ -2,9 +2,9 @@ __all__ = ['ASCIICmdDecoder']
 
 import re
 
-import g
-import Misc
-from Hub.Command import Command
+from tron import g
+from tron import Misc
+from tron.Hub.Command import Command
 
 from . import CommandDecoder
 
@@ -54,7 +54,7 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
         self.hackEOL = argv.get('hackEOL', False)
 
         if self.needCID and not self.needMID:
-            Misc.log("ASCIICmdDecoder", "if CID is needed, than MID must also be.")
+            Misc.log('ASCIICmdDecoder', 'if CID is needed, than MID must also be.')
         if not self.needMID:
             self.mid = 1
 
@@ -76,7 +76,7 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
         eol = buf.find(self.EOL)
 
         if self.debug > 2:
-            Misc.log('ASCIICmdDecoder.extractCmd', "EOL at %d in buffer %r" % (eol, buf))
+            Misc.log('ASCIICmdDecoder.extractCmd', 'EOL at %d in buffer %r' % (eol, buf))
 
         # No complete command found. Return the original buffer so that the caller
         # can easily determine that no input was consumed.
@@ -91,11 +91,11 @@ class ASCIICmdDecoder(CommandDecoder.CommandDecoder):
                 self.hackEOL = False
                 eol = buf.find(self.EOL)
                 Misc.log('ASCIICmdDecoder.decode',
-                         "adjusted EOL to %r (at %d) in: %r" % (self.EOL, eol, buf))
+                         'adjusted EOL to %r (at %d) in: %r' % (self.EOL, eol, buf))
                 g.hubcmd.warn(
                     'Text=%s' %
                     Misc.qstr(
-                        "adjusted EOL for %s to %r (at %d) in: %r" %
+                        'adjusted EOL for %s to %r (at %d) in: %r' %
                         (self.name, self.EOL, eol, buf)), src='hub')
                 if eol == -1:
                     return None, buf

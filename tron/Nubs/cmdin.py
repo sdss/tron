@@ -1,9 +1,8 @@
-import g
-import hub
-from Hub.Command.Decoders.ASCIICmdDecoder import ASCIICmdDecoder
-from Hub.Nub.Listeners import SocketListener
-from Hub.Nubs.StdinNub import StdinNub
-from Hub.Reply.Encoders.ASCIIReplyEncoder import ASCIIReplyEncoder
+from tron import g, hub
+from tron.Hub.Command.Decoders.ASCIICmdDecoder import ASCIICmdDecoder
+from tron.Hub.Nub.Listeners import SocketListener
+from tron.Hub.Nubs.StdinNub import StdinNub
+from tron.Hub.Reply.Encoders.ASCIIReplyEncoder import ASCIIReplyEncoder
 
 
 name = 'cmdin'
@@ -31,12 +30,12 @@ def acceptStdin(in_f, out_f, addr=None):
 def start(poller):
     stop()
 
-    l = SocketListener(poller, listenPort, name, acceptStdin)
-    hub.addAcceptor(l)
+    ll = SocketListener(poller, listenPort, name, acceptStdin)
+    hub.addAcceptor(ll)
 
 
 def stop():
-    l = hub.findAcceptor(name)
-    if l:
-        hub.dropAcceptor(l)
-        del l
+    ll = hub.findAcceptor(name)
+    if ll:
+        hub.dropAcceptor(ll)
+        del ll

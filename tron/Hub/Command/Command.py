@@ -4,10 +4,10 @@ import re
 import time
 from collections import OrderedDict
 
-import g
-import Misc
-import Parsing
-from Hub.Reply.Reply import Reply
+from tron import g
+from tron import Misc
+from tron import Parsing
+from tron.Hub.Reply.Reply import Reply
 
 
 class Command(Misc.Object):
@@ -53,11 +53,11 @@ class Command(Misc.Object):
         except BaseException:
             self.cmdrName = cmdrID
             if len(cmdrID) > 0 and cmdrID[0] != '.':
-                Misc.log("Command", "no commander %s" % (cmdrID))
+                Misc.log('Command', 'no commander %s' % (cmdrID))
 
         # How the caller wants the command identified.
         if cid is None:
-            cid = ".%s" % (self.cmdrID)
+            cid = '.%s' % (self.cmdrID)
         self.cmdrCid = cid
         self.cmdrMid = mid
 
@@ -75,16 +75,6 @@ class Command(Misc.Object):
         # Register ourselves in a convenient place.
         # g.pendingCommands[self.xid] = self
 
-        if self.cmdrCid is None:
-            cid_s = "None"
-        else:
-            cid_s = self.cmdrCid
-
-        if self.cmd is None:
-            cmd_s = ""
-        else:
-            cmd_s = self.cmd
-
         self.argDict = None
 
         # We need to put this silly test here, 'cuz the hub creates g.hubcmd at startup,
@@ -94,12 +84,12 @@ class Command(Misc.Object):
 
         if g.hubcmd is not None and self.bcastCmdInfo:
             g.hubcmd.diag(
-                "CmdIn=%s,%s,%s" %
+                'CmdIn=%s,%s,%s' %
                 (Misc.qstr(self.cmdrCid), Misc.qstr(self.actorName), Misc.qstr(self.cmd)),
                 src='cmds')
 
     def __str__(self):
-        return "Command(xid=%s, cmdr=%s, cmdrCid=%s, cmdrMid=%s, actor=%s, cmd=%s)" % \
+        return 'Command(xid=%s, cmdr=%s, cmdrCid=%s, cmdrMid=%s, actor=%s, cmd=%s)' % \
                (self.xid, self.cmdrName, self.cmdrCid, self.cmdrMid, self.actorName,
                 Misc.qstr(self.cmd))
 
@@ -120,7 +110,7 @@ class Command(Misc.Object):
 
     def reportQueued(self):
         if g.hubcmd is not None and self.bcastCmdInfo:
-            g.hubcmd.diag(("CmdQueued=%d,%0.2f,%s,%s,%s,%s,%s" %
+            g.hubcmd.diag(('CmdQueued=%d,%0.2f,%s,%s,%s,%s,%s' %
                            (self.xid, self.ctime, Misc.qstr(self.cmdrCid), self.cmdrMid,
                             Misc.qstr(self.actorName), self.actorMid, Misc.qstr(self.cmd))),
                           src='cmds')
@@ -131,7 +121,7 @@ class Command(Misc.Object):
         self.actorCid = cid
         self.actorMid = mid
 
-    """
+    r"""
        The command syntax that we accept is:
            cmd        := cmdword args
            cmdWord    := [a-zA-Z_]\S*
@@ -158,12 +148,12 @@ class Command(Misc.Object):
         """ Return our commander. """
 
         for c in list(g.commanders.values()):
-            Misc.log("Command.cmdr()", "checking %s in %s" % (self.cmdrName, c))
+            Misc.log('Command.cmdr()', 'checking %s in %s' % (self.cmdrName, c))
             if self.cmdrName == c.name:
-                Misc.log("Command.cmdr()", "matched %s in %s" % (self.cmdrName, c))
+                Misc.log('Command.cmdr()', 'matched %s in %s' % (self.cmdrName, c))
                 return c
 
-        Misc.log("Command.cmdr()", "no cmdr %s in %s" % (self.cmdrName, g.commanders))
+        Misc.log('Command.cmdr()', 'no cmdr %s in %s' % (self.cmdrName, g.commanders))
         return None
 
     def eatAVee(self, s):
@@ -211,11 +201,11 @@ class Command(Misc.Object):
         level = 0
 
         if len(s) == 0:
-            raise SyntaxError("unexpected empty string while parsing")
+            raise SyntaxError('unexpected empty string while parsing')
 
         startQuote = s[0]
         if startQuote != "\"" and startQuote != "\'":
-            raise SyntaxError("string does not start with a quote: %r" % (s))
+            raise SyntaxError('string does not start with a quote: %r' % (s))
 
         c = startQuote
         for i in range(1, len(s)):
@@ -224,7 +214,7 @@ class Command(Misc.Object):
             if c == startQuote:
                 if level % 2 == 0:
                     return {'val': s[1:i], 'level': 0, 'rest': s[i + 1:].lstrip()}
-            elif c == "\\":
+            elif c == '\\':
                 level += 1
             else:
                 level = 0
@@ -232,9 +222,9 @@ class Command(Misc.Object):
         # OK, we fell off the end of the string without matching the closing quote.
         # Force the string to look OK so that nobody else needs to deal with a mangled string.
         #
-        add = ""
-        if c == "\\" and level % 2 == 1:
-            add += "\\"
+        add = ''
+        if c == '\\' and level % 2 == 1:
+            add += '\\'
 
         g.hubcmd.inform([('ParseError', Misc.qstr('appended %s to string %s' % (add, s)))],
                         src='hub')
@@ -261,7 +251,7 @@ class Command(Misc.Object):
         """
 
         s = s.strip()
-        if s == "":
+        if s == '':
             return None
 
         match = self.kv_re.match(s)
@@ -271,11 +261,11 @@ class Command(Misc.Object):
             return None
 
         d = match.groupdict()
-        Misc.log("Command.parseKV", "kv_re=%s" % (d))
+        Misc.log('Command.parseKV', 'kv_re=%s' % (d))
 
         rest = d['rest']
 
-        if d['delim'] == "" or d['delim'][-1] != '=':
+        if d['delim'] == '' or d['delim'][-1] != '=':
             # If the key is not delimited by and '=', we have a valueless keyword.
             #
             return {'key': d['key'], 'val': [], 'rest': rest}
@@ -393,8 +383,8 @@ class Command(Misc.Object):
         if not hasattr(self, 'argv'):
             self.parse()
 
-        Misc.log("MCCommand.coverArgs",
-                 "requiredArgs=%r optionalArgs=%r ignoreFirst=%r argv=%r"
+        Misc.log('MCCommand.coverArgs',
+                 'requiredArgs=%r optionalArgs=%r ignoreFirst=%r argv=%r'
                  % (requiredArgs, optionalArgs, ignoreFirst, self.argv))
 
         # Start with a copy of the command args, which we consume as we copy to
@@ -428,8 +418,8 @@ class Command(Misc.Object):
             else:
                 leftovers.append((k, v))
 
-        Misc.log("MCCommand.coverArgs",
-                 "raw=%r requiredMatches=%r optionalMatches=%r unmatched=%r leftovers=%r"
+        Misc.log('MCCommand.coverArgs',
+                 'raw=%r requiredMatches=%r optionalMatches=%r unmatched=%r leftovers=%r'
                  % (self.argv, requiredMatches, optionalMatches, requiredArgs, leftovers))
 
         return requiredMatches, requiredArgs, optionalMatches, leftovers
@@ -470,8 +460,8 @@ class Command(Misc.Object):
         bcast = argv.get('bcast', True)
 
         if self.debug > 0:
-            Misc.log("Command.makeAndSendReply",
-                     "src = %r, flag = %s, KVs = %r" % (src, flag, KVs))
+            Misc.log('Command.makeAndSendReply',
+                     'src = %r, flag = %s, KVs = %r' % (src, flag, KVs))
 
         r = Reply(self, flag, KVs, src=src, bcast=bcast)
         self.reply(r, **argv)
@@ -480,7 +470,7 @@ class Command(Misc.Object):
         """ Finally register a Reply's KVs and offer it to any interested parties."""
 
         if self.debug > 1:
-            Misc.log("Command.sendReply", "reply = %r" % (r))
+            Misc.log('Command.sendReply', 'reply = %r' % (r))
 
         if not argv.get('noRegister', False):
             g.KVs.setKVsFromReply(r)
@@ -491,4 +481,4 @@ class Command(Misc.Object):
         if r.finishesCommand():
             # del g.pendingCommands[self.xid]
             if self.bcastCmdInfo:
-                g.hubcmd.diag("CmdDone=%s,%s" % (self.xid, Misc.qstr(r.flag.lower())), src="cmds")
+                g.hubcmd.diag('CmdDone=%s,%s' % (self.xid, Misc.qstr(r.flag.lower())), src='cmds')

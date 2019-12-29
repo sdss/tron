@@ -19,13 +19,13 @@ def floatArgs(s, cnt=None, failWith=None):
     try:
         stringList = s.split(',')
         floatList = list(map(float(stringList)))
-    except Exception as e:
+    except Exception:
         if failWith:
-            raise RuntimeError("%s: %s" % (failWith, s))
+            raise RuntimeError('%s: %s' % (failWith, s))
         else:
             raise
 
     if cnt is not None and len(floatList) != cnt:
-        raise RuntimeError("%s. wrong number of arguments: %s" % (failWith, s))
+        raise RuntimeError('%s. wrong number of arguments: %s' % (failWith, s))
 
     return floatList

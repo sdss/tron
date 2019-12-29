@@ -1,7 +1,7 @@
 __all__ = ['TCCShellNub']
 
-import Hub.Reply
-import Misc
+from tron.Hub import Reply
+from tron import Misc
 
 from .ShellNub import ShellNub
 
@@ -15,7 +15,7 @@ class TCCShellNub(ShellNub):
         """ Find YourUserNum key in list of KVs. Return the CID or None. """
 
         for k, v in kvl.items():
-            if k == "YourUserNum":
+            if k == 'YourUserNum':
                 cid = int(v[0])
                 return cid
         return None
@@ -25,7 +25,7 @@ class TCCShellNub(ShellNub):
 
         if self.debug > 5:
             Misc.log('TCCShell.copeWithInput',
-                     "Nub %s read: %r, with buf=%r" % (self.name, s, self.inputBuffer))
+                     'Nub %s read: %r, with buf=%r' % (self.name, s, self.inputBuffer))
 
         while True:
             # Connections to the TCC's tccuser captive account return lines
@@ -39,7 +39,7 @@ class TCCShellNub(ShellNub):
             s = None
             if self.debug > 5:
                 Misc.log('TCCShell.copeWithInput',
-                         "decoded: %s, yielding buf=%r" % (reply, leftover))
+                         'decoded: %s, yielding buf=%r' % (reply, leftover))
 
             self.inputBuffer = leftover
             if not reply:
@@ -49,7 +49,7 @@ class TCCShellNub(ShellNub):
                 try:
                     txt = reply['RawText']
                 except BaseException:
-                    txt = "UNKNOWN INPUT"
+                    txt = 'UNKNOWN INPUT'
                 self.log.log(txt, note='<')
 
             # Here's the special TCC bit: search for YourUserNum,
@@ -57,9 +57,9 @@ class TCCShellNub(ShellNub):
                 newCID = self.findUserNum(reply['KVs'])
                 if newCID is not None:
                     self.cid = newCID
-                    Misc.log('TCCShell.copeWithInput', "setting CID=%s" % (self.cid))
+                    Misc.log('TCCShell.copeWithInput', 'setting CID=%s' % (self.cid))
                     self.connected()
 
             cmd = self.getCmdForReply(reply)
-            r = Hub.Reply.Reply(cmd, reply['flag'], reply['KVs'])
+            r = Reply.Reply(cmd, reply['flag'], reply['KVs'])
             cmd.reply(r)

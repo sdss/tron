@@ -1,11 +1,11 @@
 import os.path
 
-import g as hub_globals
-import hub
-import Misc.cfg
-from Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
-from Hub.Nub.SocketActorNub import SocketActorNub
-from Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
+from tron import g as hub_globals
+from tron import hub
+from tron import Misc.cfg
+from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
+from tron.Hub.Nub.SocketActorNub import SocketActorNub
+from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
 name = 'bmo'
@@ -19,7 +19,7 @@ def start(poller):
 
     initCmds = ('status', 'version')
 
-    safeCmds = r"(^device )|(status$)"
+    safeCmds = r'(^device )|(status$)'
 
     d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
     e = ASCIICmdEncoder(EOL='\r', useCID=False, CIDfirst=False, debug=1)

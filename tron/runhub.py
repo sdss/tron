@@ -4,9 +4,7 @@ Start the hub server, including all Nubs for connections.
 
 import sys
 
-import g
-import hub
-import Misc
+from tron import Misc, g, hub
 
 
 def startAllConnections(names):

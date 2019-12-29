@@ -1,8 +1,8 @@
 __all__ = ['CoreNub']
 
-import hub
-import IO
-import Misc
+from tron import hub
+from tron import IO
+from tron import Misc
 
 
 class CoreNub(IO.IOHandler):
@@ -39,17 +39,17 @@ class CoreNub(IO.IOHandler):
         self.otherIP = argv.get('otherIP', None)
         self.otherFQDN = argv.get('otherFQDN', None)
 
-        self.inputBuffer = ""
-        self.outputBuffer = ""
+        self.inputBuffer = ''
+        self.outputBuffer = ''
 
-        logDir = argv.get("logDir", None)
+        logDir = argv.get('logDir', None)
         if logDir:
             self.log = Misc.Logfile(logDir, EOL='', doEncode=True)
         else:
             self.log = None
 
     def __str__(self):
-        return "CoreNub(id=%s, name=%s, type=%s)" % (self.ID, self.name, self.nubType)
+        return 'CoreNub(id=%s, name=%s, type=%s)' % (self.ID, self.name, self.nubType)
 
     def setName(self, newName):
         """ Change our username(s). """
@@ -77,7 +77,7 @@ class CoreNub(IO.IOHandler):
         notifyHub = argv.get('notifyHub', True)
         why = argv.get('why', '')
 
-        Misc.log("Hub.shutdown", "notify=%s why=%s" % (notifyHub, why))
+        Misc.log('Hub.shutdown', 'notify=%s why=%s' % (notifyHub, why))
 
         if notifyHub:
             hub.dropNub(self)

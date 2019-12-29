@@ -2,7 +2,7 @@ __all__ = ['LLock']
 
 from threading import Lock
 
-import Misc
+from tron import Misc
 
 
 class LLock(object):
@@ -18,19 +18,19 @@ class LLock(object):
         self.name = name
 
         if self.debug > 0:
-            Misc.log("LLock.create", "name=%s" % (self.name))
+            Misc.log('LLock.create', 'name=%s' % (self.name))
 
-    def acquire(self, block=True, src="up"):
+    def acquire(self, block=True, src='up'):
         if self.debug > 0:
-            Misc.log("LLock.acquiring", "name=%s, block=%s, src=%s" %
+            Misc.log('LLock.acquiring', 'name=%s, block=%s, src=%s' %
                      (self.name, block, src))
         self.lock.acquire(block)
         if self.debug > 0:
-            Misc.log("LLock.acquired", "name=%s, block=%s, src=%s" %
+            Misc.log('LLock.acquired', 'name=%s, block=%s, src=%s' %
                      (self.name, block, src))
 
-    def release(self, src="up"):
+    def release(self, src='up'):
         if self.debug > 0:
-            Misc.log("LLock.release", "name=%s, src=%s" %
+            Misc.log('LLock.release', 'name=%s, src=%s' %
                      (self.name, src))
         self.lock.release()

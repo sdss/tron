@@ -1,10 +1,8 @@
 __all__ = ['bcast']
 
-import time
 
-import Hub
-import Misc
 import Vocab.InternalCmd as InternalCmd
+from tron import Hub, Misc
 
 
 """ A variant on instant messaging, where a Commander can inject keywords.
@@ -48,14 +46,14 @@ class bcast(InternalCmd.InternalCmd):
         #
         s = cmd.cmd
         s.strip()
-        s = "%s.%s\n" % ('bcast', s)
+        s = '%s.%s\n' % ('bcast', s)
         r, leftover = self.decoder.decode(s, None)
         if not r:
             cmd.fail('bcastTxt="could not parse command line"')
             return
         if leftover:
             cmd.fail('bcastTxt=%s' %
-                     (Misc.qstr("could not completely parse command line. Leftovers=%s" %
+                     (Misc.qstr('could not completely parse command line. Leftovers=%s' %
                                 (leftover))))
             return
 

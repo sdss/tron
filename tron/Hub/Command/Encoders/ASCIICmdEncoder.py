@@ -1,6 +1,6 @@
 __all__ = ['ASCIICmdEncoder']
 
-import Misc
+from tron import Misc
 
 from .CommandEncoder import CommandEncoder
 
@@ -27,25 +27,25 @@ class ASCIICmdEncoder(CommandEncoder):
     def encode(self, cmd):
         if self.useCID:
             if self.CIDfirst:
-                ids = "%s %s " % (cmd.actorCid, cmd.actorMid)
+                ids = '%s %s ' % (cmd.actorCid, cmd.actorMid)
             else:
-                ids = "%s %s " % (cmd.actorMid, cmd.actorCid)
+                ids = '%s %s ' % (cmd.actorMid, cmd.actorCid)
         else:
-            ids = "%s " % (cmd.actorMid, )
+            ids = '%s ' % (cmd.actorMid, )
 
         if self.sendCmdrCID:
-            cmdrInfo = "%s " % (cmd.cmdrCid)
+            cmdrInfo = '%s ' % (cmd.cmdrCid)
         elif self.sendCmdr:
-            cmdrInfo = "%s " % (cmd.cmdrName)
+            cmdrInfo = '%s ' % (cmd.cmdrName)
         else:
-            cmdrInfo = ""
+            cmdrInfo = ''
 
         if self.useTarget:
-            e = "%s%s %s%s%s" % (cmdrInfo, cmd.actorName, ids, cmd.cmd, self.EOL)
+            e = '%s%s %s%s%s' % (cmdrInfo, cmd.actorName, ids, cmd.cmd, self.EOL)
         else:
-            e = "%s%s%s%s" % (cmdrInfo, ids, cmd.cmd, self.EOL)
+            e = '%s%s%s%s' % (cmdrInfo, ids, cmd.cmd, self.EOL)
 
         if self.debug > 5:
-            Misc.log("ASCIIEncoder", "encoded: %s" % (e))
+            Misc.log('ASCIIEncoder', 'encoded: %s' % (e))
 
         return e

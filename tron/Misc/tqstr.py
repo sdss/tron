@@ -2,7 +2,7 @@ __all__ = ['qstr']
 
 
 def qstr(o, equotes=None, tquote='"'):
-    """ Put a string representation of an object into quotes and escape it minimally.
+    r""" Put a string representation of an object into quotes and escape it minimally.
 
     Return the string wrapped in tquotes.
     Escape all the characters in equotes, as well as backslashes. If equotes are
@@ -30,8 +30,8 @@ def qstr(o, equotes=None, tquote='"'):
     #   '\\'.join(match pieces)
     #
     for equote in equotes:
-        equote_repl = "\\" + equote
-        print("replacing %s with %s" % (equote, equote_repl))
+        equote_repl = '\\' + equote
+        print('replacing %s with %s' % (equote, equote_repl))
 
         idx = 0
         while 1:
@@ -40,10 +40,10 @@ def qstr(o, equotes=None, tquote='"'):
             if dq == -1:
                 break
 
-            print("found %s at %s. p1=:%s: p2=:%s:" % (equote, dq, s[:dq], s[dq + 1:]), end=' ')
+            print('found %s at %s. p1=:%s: p2=:%s:' % (equote, dq, s[:dq], s[dq + 1:]), end=' ')
 
             s = ''.join((s[:dq], equote_repl, s[dq + 1:]))
-            print(" s=:%s:" % (s))
+            print(' s=:%s:' % (s))
 
             idx = dq + 2
 
@@ -53,23 +53,23 @@ def qstr(o, equotes=None, tquote='"'):
         return s
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     tests = ('', '"', '""', "''", "'", "\'", '\"', '\\', '\"', 'abcdef', 'abc"\\')
 
     for t in tests:
         qt = qstr(t)
         try:
             e = eval(qt)
-        except Exception as e:
-            print("===== NE: %s" % (t))
-            print("        : %s" % (qt))
+        except Exception:
+            print('===== NE: %s' % (t))
+            print('        : %s' % (qt))
             continue
 
         if t == e:
-            print("===== OK: %s" % (qt))
+            print('===== OK: %s' % (qt))
         else:
-            print("===== NG: %s:" % (t))
-            print("        : %s:" % (qt))
+            print('===== NG: %s:' % (t))
+            print('        : %s:' % (qt))
 
     print()
     print()

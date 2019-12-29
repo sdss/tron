@@ -4,7 +4,7 @@ __all__ = ['PollAccept']
 
 import socket
 
-import Misc
+from tron import Misc
 
 from . import IOHandler
 
@@ -49,10 +49,10 @@ class PollAccept(IOHandler.IOHandler):
         self.poller.addInput(self)
 
     def __str__(self):
-        return "PollAccept(host=%s port=%s depth=%s)" % (self.host, self.port, self.depth)
+        return 'PollAccept(host=%s port=%s depth=%s)' % (self.host, self.port, self.depth)
 
     def shutdown(self, **argv):
-        Misc.log("PollAccept.shutdown", "shutting down %s" % (self))
+        Misc.log('PollAccept.shutdown', 'shutting down %s' % (self))
 
         self.poller.removeInput(self)
         self.listenFd.close()
@@ -62,7 +62,7 @@ class PollAccept(IOHandler.IOHandler):
 
     def readInput(self):
 
-        Misc.log("IOAccept.readInput", "accepting...")
+        Misc.log('IOAccept.readInput', 'accepting...')
         newfd, addr = self.listenFd.accept()
 
         # Listen for a single connect. Kill ourselves if we should.

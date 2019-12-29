@@ -18,25 +18,24 @@
       actorCid, actorMid
 
    r = Reply(cmd=cmd
+
 """
 
-import imp
-import json
 import os
 import re
-import signal
+import imp
 import sys
+import json
 import time
+import signal
 from collections import OrderedDict
 
-import Auth
-import g
-import Hub.Command.Command
-import Hub.KV.KVDict
-import IO
-import Misc
-import svnVersion
-from Misc.cdict import cdict
+import tron.Auth
+import tron.Hub.Command.Command
+import tron.Hub.KV.KVDict
+import tron.IO
+from tron import Misc, __version__, g
+from tron.Misc.cdict import cdict
 
 
 def init(programsFile=None):
@@ -66,13 +65,13 @@ def init(programsFile=None):
     #   All of these are in the global namespace "g".
     #
     #   - A dictionary of KVs
-    g.KVs = Hub.KV.KVDict.KVDict(debug=5)
+    g.KVs = tron.Hub.KV.KVDict.KVDict(debug=5)
 
     g.commanders = cdict()
     g.actors = cdict()
 
     g.hubcmd = None
-    g.hubcmd = Hub.Command.Command(
+    g.hubcmd = tron.Hub.Command.Command(
         '.hub',
         '0',
         0,
@@ -83,7 +82,7 @@ def init(programsFile=None):
         neverEnd=True)
 
     #   - An authorization manager
-    permsCmd = Hub.Command.Command(
+    permsCmd = tron.Hub.Command.Command(
         '.perms',
         '0',
         0,
@@ -92,7 +91,7 @@ def init(programsFile=None):
         actorCid=0,
         actorMid=0,
         neverEnd=True)
-    g.perms = Auth.Auth(permsCmd, debug=1)
+    g.perms = tron.Auth.Auth(permsCmd, debug=1)
 
     # Loads the programs with their custom permissions
     Misc.log('hub.init', 'loading programs ...')
@@ -113,7 +112,7 @@ def init(programsFile=None):
     g.pendingCommands = {}
 
     #   - A PollHandler
-    g.poller = IO.PollHandler(debug=1)
+    g.poller = tron.IO.PollHandler(debug=1)
 
     Misc.log('hub.init', 'loading internal vocabulary...')
     loadWords(None)
@@ -137,7 +136,7 @@ def handleSIGTERM(signal, frame):
 def getSetHubVersion():
     """ Put the uncached svn version info into the hub.version keyword. """
 
-    version = Misc.qstr(svnVersion.svnTagOrRevision())
+    version = Misc.qstr(__version__)
     g.KVs.setKV('hub', 'version', version, None)
 
 
@@ -319,7 +318,8 @@ class CmdrDict(NubDict):
 
 
 def addNubToDict(nub, nubDict):
-    """ Add a new nub to the given dict. The nub's ID must not be the same as for any existing nub. """
+    """Add a new nub to the given dict.
+    The nub's ID must not be the same as for any existing nub. """
 
     existingNub = findNubInDict(nub.ID, nubDict)
     if existingNub is not None:
@@ -467,11 +467,11 @@ def getActor(cmd):
 
     actorName = cmd.actorName
 
-    #Misc.log("hub.getActor", "looking for actor %s" % (actorName))
+    # Misc.log("hub.getActor", "looking for actor %s" % (actorName))
     tgt = g.actors.get(actorName, None)
 
     if tgt is None:
-        #Misc.log("hub.getActor", "looking for vocabulary word %s" % (actorName))
+        # Misc.log("hub.getActor", "looking for vocabulary word %s" % (actorName))
         tgt = g.vocabulary.get(actorName, None)
 
     Misc.log('hub.getActor', 'actornName %s target = %s' % (actorName, tgt))

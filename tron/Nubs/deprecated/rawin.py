@@ -1,6 +1,6 @@
-import g
-import Hub
-import hub
+from tron import g
+from tron import hub
+from tron import hub
 
 
 name = 'rawin'

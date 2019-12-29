@@ -4,7 +4,7 @@ __all__ = ['PollConnect']
 
 import socket
 
-import Misc
+from tron import Misc
 
 from . import IOHandler
 
@@ -52,7 +52,7 @@ class PollConnect(IOHandler.IOHandler):
 
     def readInput(self):
 
-        Misc.log("IOAccept.readInput", "accepting...")
+        Misc.log('IOAccept.readInput', 'accepting...')
         newfd, addr = self.listenFd.accept()
 
         # Listen for a single connect. Kill ourselves if we should.

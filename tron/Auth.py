@@ -3,8 +3,8 @@
 
 __all__ = ['Auth']
 
-import g
-import Misc
+from tron import g
+from tron import Misc
 
 
 class Auth(Misc.Object):
@@ -236,11 +236,13 @@ class Auth(Misc.Object):
     def setLockedActors(self, actors, cmd=None):
         """ Block non-APO users form commanding a list of actors.
 
-        Any actors not in .actors will be ignored with a warning. This may not be the right behavior. We may
+        Any actors not in .actors will be ignored with a warning.
+        This may not be the right behavior. We may
         actually want to allow actors we do not control to be locked.
 
         Args:
-           actors   - if None, lock all .actors. Else clear all existing locks and add the given actors.
+           actors   - if None, lock all .actors. Else clear all existing locks
+                      and add the given actors.
         """
 
         if not cmd:
@@ -268,7 +270,8 @@ class Auth(Misc.Object):
     def lockActors(self, actors, cmd=None):
         """ Block non-APO users form commanding a list of actors.
 
-        Any actors not in .actors will be ignored with a warning. This may not be the right behavior. We may
+        Any actors not in .actors will be ignored with a warning.
+        This may not be the right behavior. We may
         actually want to allow actors we do not control to be locked.
         """
 
@@ -321,7 +324,8 @@ class Auth(Misc.Object):
 
         Args:
            cmd       - if set, the command to reply to. Otherwise use our .defaultCmd
-           programs  - if set, a list of programs to generate keys for. Otherwise describe all programs.
+           programs  - if set, a list of programs to generate keys for.
+                       Otherwise describe all programs.
 
         Notes:
            Never finishes the cmd.
@@ -371,8 +375,8 @@ class Auth(Misc.Object):
                 cmd.warn(
                     'permsTxt=%s' %
                     (Misc.qstr(
-                        'Program %s already has an authorization entry, which will not be modified.' %
-                        (prog))))
+                        'Program %s already has an authorization entry, '
+                        'which will not be modified.' % (prog))))
                 continue
             prog = prog.upper()
             self.programs[prog] = {}
@@ -536,7 +540,7 @@ if __name__ == '__main__':
     checkAndPrint('meme', 'them', False)
     checkAndPrint('me.me', 'them', False)
 
-    #a.addActors('xxxx', 'yyyy')
+    # a.addActors('xxxx', 'yyyy')
     a.addActors('me.me', ['them', 'theOthers'])
     checkAndPrint('me.me', 'them', True)
     checkAndPrint('me.me', 'theOthers', True)

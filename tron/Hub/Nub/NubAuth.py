@@ -1,13 +1,9 @@
 __all__ = ['NubAuth']
 
-import configparser
 import sha
+import configparser
 
-import g
-import hub
-import keyring
-import Misc
-import Parsing
+from tron import Misc, Parsing, g, hub
 
 
 class NubAuth(object):
@@ -62,7 +58,7 @@ class NubAuth(object):
         """
 
         if self.state != self.CONNECTING or self.nonce is None:
-            return "unexpected login ignored."
+            return 'unexpected login ignored.'
 
         matched, unmatched, leftovers = cmd.match([('program', Parsing.dequote),
                                                    ('password', Parsing.dequote),
@@ -71,36 +67,26 @@ class NubAuth(object):
                                                    ('version', Parsing.dequote),
                                                    ('platform', Parsing.dequote)])
 
-        if "program" not in matched or "password" not in matched:
-            return "not all arguments to login were found."
+        if 'program' not in matched or 'password' not in matched:
+            return 'not all arguments to login were found.'
 
         # OK. Look for the full program name:
-        #
-        program = matched["program"].upper()
+        program = matched['program'].upper()
 
-        # Gets the password from the keyring. It assumes that the password for
-        # each program has been input in the keyring under the service 'hub'
-        # (multiple programs-users-can be under the same service). If the
-        # program or service are not found, returns None.
-
-        # LCOHACK: using .tronpass (set to chmod 600) to store the password
-        if g.location.lower() == 'lco':
-            config = configparser.ConfigParser()
-            config.readfp(open('/home/sdss4/.tronpass'))
-            ourPW = config.get('hub', program, None)
-        else:
-            ourPW = keyring.get_password('hub', program)
+        config = configparser.ConfigParser()
+        config.readfp(open('/home/sdss4/.tronpass.cfg'))
+        ourPW = config.get('hub', program, None)
 
         if ourPW is None:
-            return "unknown program"
+            return 'unknown program'
 
         enc = sha.new(self.nonce + ourPW)
         if enc.hexdigest() != matched['password']:
-            return "incorrect password"
+            return 'incorrect password'
 
         # Register our IDs.
         #
-        username = matched.get("username", None)
+        username = matched.get('username', None)
         if not username:
             username = program
 
@@ -191,7 +177,7 @@ class NubAuth(object):
             if self.state == self.CONNECTED:
                 return False
             else:
-                cmd.fail('why=%s' % (Misc.qstr("please log in.")), src='auth')
+                cmd.fail('why=%s' % (Misc.qstr('please log in.')), src='auth')
                 return True
 
         cmdWords = cmd.cmd.split()
@@ -215,7 +201,7 @@ class NubAuth(object):
                 self.makeMyNonce()
                 cmd.finish('nonce=%s' % (Misc.qstr(self.nonce)), src='auth')
             else:
-                cmd.fail('why=%s' % (Misc.qstr("please log in.")), src='auth')
+                cmd.fail('why=%s' % (Misc.qstr('please log in.')), src='auth')
 
             return True
         else:
@@ -232,5 +218,5 @@ class NubAuth(object):
                     cmd.fail('why=%s' % Misc.qstr(ret), src='auth')
             else:
                 self.state = self.NOT_CONNECTED
-                cmd.fail('why=%s' % (Misc.qstr("please play by the rules.")), src='auth')
+                cmd.fail('why=%s' % (Misc.qstr('please play by the rules.')), src='auth')
             return True

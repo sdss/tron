@@ -1,6 +1,6 @@
 __all__ = ['CommandDecoder']
 
-import Misc
+from tron import Misc
 
 
 class CommandDecoder(Misc.Object):

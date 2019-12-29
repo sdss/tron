@@ -1,11 +1,10 @@
 import time
 
-import g
-import hub
-import Hub.Command.Decoders as hubDecoders
-import Hub.Nub.Commanders as hubCommanders
-import Hub.Reply.Encoders as hubEncoders
-from Hub.Nub.Listeners import SocketListener
+import tron.Hub.Command.Decoders as hubDecoders
+import tron.Hub.Nub.Commanders as hubCommanders
+import tron.Hub.Reply.Encoders as hubEncoders
+from tron import g, hub
+from tron.Hub.Nub.Listeners import SocketListener
 
 
 name = 'client'

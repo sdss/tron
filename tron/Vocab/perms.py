@@ -1,13 +1,8 @@
 __all__ = ['perms']
 
-import os
-import time
+from tron import g
 
-import g
-import hub
-import Misc
-from Hub.KV.KVDict import *
-from Vocab.InternalCmd import *
+from .InternalCmd import InternalCmd
 
 
 class perms(InternalCmd):
@@ -243,12 +238,3 @@ class perms(InternalCmd):
 
         if finish:
             cmd.finish()
-
-
-def _test():
-    a = auth()
-    a.statusCmd
-
-
-if __name__ == "__main__":
-    _test()

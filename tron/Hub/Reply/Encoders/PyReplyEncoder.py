@@ -2,8 +2,8 @@ __all__ = ['PyReplyEncoder']
 
 import pickle
 
-import Misc
-from Hub.Reply.FullReply import FullReply
+from tron import Misc
+from tron.Hub.Reply.FullReply import FullReply
 
 from .ReplyEncoder import ReplyEncoder
 
@@ -35,4 +35,4 @@ class PyReplyEncoder(ReplyEncoder):
         elif self.debug > 3:
             Misc.log('PyEncode.encode', 'encoding FullReply %s' % (fullReply, ))
 
-        return "%s%s" % (fullPickle, self.EOL)
+        return '%s%s' % (fullPickle, self.EOL)

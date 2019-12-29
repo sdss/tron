@@ -3,11 +3,10 @@ __all__ = ['parseArgs', 'match']
 import re
 from collections import OrderedDict
 
-import Misc
+from tron import Misc
 
-from .dequote import dequote
 from .Exceptions import ParseException
-from .keys import *
+from .keys import eatAString
 
 
 # Match "  key = STUFF"
@@ -29,7 +28,8 @@ noarg_re = re.compile(
 
 
 def eatAVee(s):
-    """ Match a keyword value -- a possibly space-padded value ended by a whitespace, a comma, or a semicolon.
+    """ Match a keyword value -- a possibly space-padded value ended by a
+    whitespace, a comma, or a semicolon.
 
     Args:
        s - a string
@@ -41,7 +41,7 @@ def eatAVee(s):
 
     s = s.lstrip()
     if len(s) == 0:
-        return '', ""
+        return '', ''
 
     # String parsing is trickier, let eatAString() handle that.
     if s[0] in "\"'":
@@ -66,7 +66,7 @@ def parseArg(s):
     """
 
     s = s.lstrip()
-    if s == "":
+    if s == '':
         return None, None, None
 
     # Try to match for K=V. If we can't, gobble the next non-blank word.
@@ -128,7 +128,7 @@ def parseArgs(s):
 
         KVs[key] = values
 
-    #Misc.log('parseArgs', 'KVs: %s' % (KVs))
+    # Misc.log('parseArgs', 'KVs: %s' % (KVs))
     return KVs
 
 
@@ -154,8 +154,8 @@ def match(argv, opts):
     for o in opts:
         try:
             a, b = o
-        except Exception as e:
-            raise Exception("the argument to Command.matchDicts must be a list of duples")
+        except Exception:
+            raise Exception('the argument to Command.matchDicts must be a list of duples')
 
         want[a] = b
 
@@ -170,7 +170,7 @@ def match(argv, opts):
             converter = want[opt]
             if converter is None:
                 if arg is not None:
-                    raise Exception("option %s takes no argument" % (Misc.qstr(opt, tquote="'")))
+                    raise Exception('option %s takes no argument' % (Misc.qstr(opt, tquote="'")))
                 matches[opt] = None
             else:
                 try:

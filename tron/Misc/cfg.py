@@ -6,7 +6,7 @@ __all__ = ['init', 'get', 'flush']
 import os
 import sys
 
-from Misc.Exceptions import ICCError
+from tron.Misc.Exceptions import ICCError
 
 
 cfgCache = None
@@ -25,13 +25,13 @@ def init(path=None, verbose=True):
         path = os.environ.get('CONFIG_DIR', None)
 
     if path is None:
-        raise RuntimeError("Cannot initialize configuration module: no path given")
+        raise RuntimeError('Cannot initialize configuration module: no path given')
 
     cfgPath = path
     flush()
 
     if verbose:
-        sys.stderr.write("initialized configuration under %s\n" % (cfgPath))
+        sys.stderr.write('initialized configuration under %s\n' % (cfgPath))
 
 
 def flush():
@@ -82,14 +82,14 @@ def _loadSpace(space):
     gdict = {}
     ldict = {}
 
-    filename = os.path.join(cfgPath, "%s.py" % (space.lower()))
+    filename = os.path.join(cfgPath, '%s.py' % (space.lower()))
     try:
-        exec(compile(open(filename, "rb").read(), filename, 'exec'), gdict, ldict)
+        exec(compile(open(filename, 'rb').read(), filename, 'exec'), gdict, ldict)
     except SyntaxError as e:
-        raise ICCError("syntax error at or before line %d (%s) of the configuration file %s" %
+        raise ICCError('syntax error at or before line %d (%s) of the configuration file %s' %
                        (e.lineno, e.text, filename))
     except Exception as e:
-        raise ICCError("failed to read the configuration file %s: %s" % (filename, e))
+        raise ICCError('failed to read the configuration file %s: %s' % (filename, e))
 
     cfgCache[space] = ldict
     return ldict
