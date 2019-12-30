@@ -45,10 +45,14 @@ def init(programsFile=None):
 
     g.rootDir = os.getcwd()
 
+    if 'TRON_PACKAGE_DIR' in os.environ:
+        tron_package_dir = os.environ['TRON_PACKAGE_DIR']
+    else:
+        tron_package_dir = os.path.dirname(__file__)
+
     # Bootstrap the whole configuration system
-    configPath = os.environ.get('CONFIG_DIR',
-                                os.path.join(os.environ['TRON_DIR'],
-                                             'tron/config'))
+    configPath = os.environ.get('CONFIG_DIR', os.path.join(tron_package_dir, 'config'))
+
     Misc.cfg.init(path=configPath)
     os.environ['CONFIG_DIR'] = configPath
 

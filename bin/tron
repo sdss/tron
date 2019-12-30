@@ -1,7 +1,9 @@
 #!/bin/bash
 
-if test -z "$TRON_DIR"; then
-    echo "TRON_DIR is not set, and needs to be setup" >&1
+export TRON_PACKAGE_DIR="`python -c 'import os; import tron; print(os.path.dirname(tron.__file__))'`"
+
+if test -z "$TRON_PACKAGE_DIR"; then
+    echo "TRON_PACKAGE_DIR is not set, and needs to be setup" >&1
     exit 1
 fi
 export LOG_DIR=/data/logs/tron
@@ -12,7 +14,7 @@ export LOG_DIR=/data/logs/tron
 #fi
 
 echo
-echo ====================== Using tron with TRON_DIR=$TRON_DIR
+echo ====================== Using tron with TRON_PACKAGE_DIR=$TRON_PACKAGE_DIR
 echo
 
 usage() {
@@ -25,7 +27,7 @@ if test $# != 1; then
 fi
 cmd=$1
 
-cd $TRON_DIR/tron
+cd $TRON_PACKAGE_DIR
 
 # Return the ICC's pid, or the empty string.
 #
@@ -57,7 +59,7 @@ do_start() {
 
     #now=`now`.log
     #(cd $LOG_DIR; rm -f current.log; ln -s $now current.log)
-    cd $TRON_DIR/tron
+    cd $TRON_PACKAGE_DIR
     LOG_FILE=$LOG_DIR/run.log
     echo "top-level run log is appended to $LOG_FILE"
     echo "=========== restarting at `TZ=GMT date +"%Y-%m-%dT%H:%M:%S"`" >> $LOG_FILE
