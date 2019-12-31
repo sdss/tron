@@ -6,7 +6,7 @@ Change Log
 
 This document records the main changes to the tron code.
 
-.. _changelog-5.0.0:
+.. _tron-5.0.0:
 
 5.0.0 (unreleased)
 ------------------
