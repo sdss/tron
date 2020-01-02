@@ -3,7 +3,7 @@ __all__ = ['Logfile']
 import os
 import os.path
 from math import modf
-from time import gmtime, sleep, strftime, time
+from time import gmtime, strftime, time
 
 
 class Logfile(object):
