@@ -87,6 +87,18 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
 
         self.rollAt = next_rollover
 
+    def _open(self):
+        """Opens the stream and creates a symlink to it."""
+
+        super(SDSSRotatingFileHandler, self)._open()
+
+        current_name = os.path.join(os.path.dirname(self.baseFilename), 'current.log')
+        try:
+            os.unlink(current_name)
+        except BaseException:
+            pass
+        os.symlink(self.baseFilename, current_name)
+
     def doRollover(self):
         """Do a rollover."""
 
