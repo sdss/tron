@@ -44,7 +44,7 @@ actors = dict(alerts=    dict(host="localhost", port=9995, actorName='alertsActo
               boss=      dict(host="sdss4-boss-icc.apo.nmsu.edu", port=9998, actorName='bossICC'),
               benchboss= dict(host="sdss4-boss-icc.apo.nmsu.edu", port=9991, actorName='bossICC'),
 
-              hartmann=   dict(host="sdss4-eboss.apo.nmsu.edu", port=9988, actorName='hartmannActor'),
+              hartmann=   dict(host="localhost", port=9988, actorName='hartmannActor'),
 
               tcc=       dict(host="sdss4-tcc.apo.nmsu.edu", port=2500, actorName='tcc'),
               bmo=       dict(host="localhost", port=9999, actorName='bmo'),

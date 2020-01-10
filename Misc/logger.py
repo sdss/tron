@@ -90,7 +90,7 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
     def _open(self):
         """Opens the stream and creates a symlink to it."""
 
-        super(SDSSRotatingFileHandler, self)._open()
+        stream = super(SDSSRotatingFileHandler, self)._open()
 
         current_name = os.path.join(os.path.dirname(self.baseFilename), 'current.log')
         try:
@@ -98,6 +98,8 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
         except BaseException:
             pass
         os.symlink(self.baseFilename, current_name)
+
+        return stream
 
     def doRollover(self):
         """Do a rollover."""
@@ -153,5 +155,5 @@ class Logfile(object):
 
             self._logger.addHandler(self.fh)
 
-    def log(self, txt, note='', level=10):
+    def log(self, txt, note='', level=1):
         self._logger.log(level, note + ' ' + txt)
