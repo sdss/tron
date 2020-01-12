@@ -26,7 +26,7 @@ actors = dict(alerts=    dict(host="localhost", port=9995, actorName='alertsActo
               toy=       dict(host="localhost", port=9000, actorName='toyActor'),
               sop=       dict(host="localhost", port=9989, actorName='sopActor'),
 
-              # platedb=   dict(host="localhost", port=9992, actorName='platedbActor'),
+              platedb=   dict(host="localhost", port=9992, actorName='platedbActor'),
 
               # NOTE: eventually!
               # apogee=    dict(host="apogee-ics.lco.cl", port=33221, actorName='apogeeICC'),

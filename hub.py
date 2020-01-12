@@ -29,7 +29,6 @@ import time
 import json
 from collections import OrderedDict
 
-import svnVersion
 import Misc
 from Misc.cdict import cdict
 
@@ -38,6 +37,10 @@ import Hub.KV.KVDict
 import Hub.Command.Command
 import Auth
 import g
+
+
+__version__ = 'v4.2.3'
+
 
 def init(programsFile=None):
     g.home = sys.path[0]
@@ -118,7 +121,7 @@ def handleSIGTERM(signal, frame):
 def getSetHubVersion():
     """ Put the uncached svn version info into the hub.version keyword. """
 
-    version = Misc.qstr(svnVersion.svnTagOrRevision())
+    version = Misc.qstr(__version__)
     g.KVs.setKV('hub', 'version', version, None)
 
 def loadKeys():
