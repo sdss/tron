@@ -114,8 +114,7 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
             os.remove(dfn)
         self.baseFilename = dfn
 
-        if not self.delay:
-            self.stream = self._open()
+        self.stream = self._open()
 
         self._set_next_rollover()
 
@@ -125,6 +124,7 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
         If the time is grater than ``rollAt``, rolls over.
 
         """
+        return True
 
         if datetime.datetime.utcnow() > self.rollAt:
             return True
