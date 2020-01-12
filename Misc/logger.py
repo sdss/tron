@@ -124,7 +124,6 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
         If the time is grater than ``rollAt``, rolls over.
 
         """
-        return True
 
         if datetime.datetime.utcnow() > self.rollAt:
             return True
