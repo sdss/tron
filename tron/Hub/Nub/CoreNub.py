@@ -44,7 +44,7 @@ class CoreNub(IO.IOHandler):
 
         logDir = argv.get('logDir', None)
         if logDir:
-            self.log = Misc.Logfile(logDir, EOL='', doEncode=True)
+            self.log = Misc.Logfile('nub.' + self.name, logDir)
         else:
             self.log = None
 

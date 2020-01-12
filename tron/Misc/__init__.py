@@ -4,8 +4,8 @@ from .Exceptions import *
 from .ID import *
 from .LLock import *
 from .location import *
-from .log import *
-from .Logfile import *
+from .hub_log import *
+from .logger import *
 from .Object import *
 from .qstr import *
 from .tback import *
