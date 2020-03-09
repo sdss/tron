@@ -39,7 +39,7 @@ import Auth
 import g
 
 
-__version__ = 'v4.2.3'
+__version__ = 'v4.2.4'
 
 
 def init(programsFile=None):
