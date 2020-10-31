@@ -42,11 +42,6 @@ module-whatis "Sets up $product/$version in your environment."
 # A mandatory dependency is a module load command followed by a prereq
 # command.  An optional dependency is not followed by a prereq statement.
 #
-
-# JKP TBD: we'll add the opscore dependency once Conor has fixed logging to use it.
-#module load opscore
-#prereq opscore
-
 #
 # ENVIRONMENT SECTION
 #
