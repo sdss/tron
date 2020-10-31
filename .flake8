@@ -7,3 +7,5 @@ ignore =
 max-line-length = 99
 per-file-ignores =
 	**/__init__.py:E,F
+exclude =
+	**/deprecated/*
