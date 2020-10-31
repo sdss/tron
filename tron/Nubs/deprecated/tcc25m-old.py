@@ -1,9 +1,9 @@
 import os.path
 
+from tron import g, hub
 from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from tron.Hub.Nub.TCCShellNub import TCCShellNub
 from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
-from tron import g, hub
 
 
 name = 'tcc'

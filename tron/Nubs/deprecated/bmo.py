@@ -1,8 +1,8 @@
 import os.path
 
+from tron import Misc.cfg
 from tron import g as hub_globals
 from tron import hub
-from tron import Misc.cfg
 from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from tron.Hub.Nub.SocketActorNub import SocketActorNub
 from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder

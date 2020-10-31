@@ -3,8 +3,7 @@ __all__ = ['Reply']
 import time
 from collections import OrderedDict
 
-from tron import Misc
-from tron import Parsing
+from tron import Misc, Parsing
 
 
 """

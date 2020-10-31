@@ -3,8 +3,7 @@
 
 __all__ = ['Auth']
 
-from tron import g
-from tron import Misc
+from tron import Misc, g
 
 
 class Auth(Misc.Object):

@@ -11,51 +11,53 @@
         "apogee",
         "apogeeql",
         "alerts",
-        "TUI"
+        "TUI",
+        "jaeger",
+        "fliswarm"
     ],
     "actors": {
         "alerts": {
-            "host": "sdss5-hub.apo.nmsu.edu",
+            "host": "sdss-hub",
             "port": 9995,
             "actorName": "alertsActor"
         },
         "apo": {
-            "host": "sdss5-hub.apo.nmsu.edu",
+            "host": "sdss-hub",
             "port": 9990,
             "actorName": "apoActor"
         },
         "apogee": {
-            "host": "apogee-ics.apo.nmsu.edu",
+            "host": "apogee-ics",
             "port": 33221,
             "actorName": "apogeeICC"
         },
         "apogeecal": {
-            "host": "apogee-ics.apo.nmsu.edu",
+            "host": "apogee-ics",
             "port": 33222,
             "actorName": "apogeecalICC"
         },
         "apogeeql": {
-            "host": "sdss5-apogee.apo.nmsu.edu",
+            "host": "sdss-apogee",
             "port": 18282,
             "actorName": "apogeeqlActor"
         },
         "boss": {
-            "host": "sdss5-boss-icc.apo.nmsu.edu",
+            "host": "sdss-boss-icc",
             "port": 9998,
             "actorName": "bossICC"
         },
         "benchboss": {
-            "host": "sdss5-boss-icc.apo.nmsu.edu",
+            "host": "sdss-boss-icc",
             "port": 9991,
             "actorName": "bossICC"
         },
         "hartmann": {
-            "host": "sdss5-eboss.apo.nmsu.edu",
+            "host": "sdss-eboss",
             "port": 9988,
             "actorName": "hartmannActor"
         },
         "tcc": {
-            "host": "sdss5-tcc.apo.nmsu.edu",
+            "host": "sdss-tcc",
             "port": 2500,
             "actorName": "tcc"
         },
@@ -63,8 +65,18 @@
             "host": "sdssmcp",
             "port": 31012,
             "actorName": "mcp"
+        },
+        "jaeger": {
+            "host": "sdss-fps",
+            "port": 19990,
+            "actorName": "jaeger"
+        },
+        "fliswarm": {
+            "host": "sdss-fps",
+            "port": 19996,
+            "actorName": "fliswarm"
         }
     },
-    "httpHost": "sdss-hub.apo.nmsu.edu",
+    "httpHost": "sdss-hub",
     "httpRoot": "/"
 }

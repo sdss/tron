@@ -14,7 +14,7 @@ export LOG_DIR=/data/logs/tron
 #fi
 
 echo
-echo ====================== Using tron with TRON_PACKAGE_DIR=$TRON_PACKAGE_DIR
+echo ====================== Using tron with TRON_DIR=$(dirname $TRON_PACKAGE_DIR)
 echo
 
 usage() {

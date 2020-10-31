@@ -1,7 +1,6 @@
 import os
 
-from tron import g
-from tron import hub
+from tron import g, hub
 from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from tron.Hub.Nub.Listeners import SocketListener
 from tron.Hub.Nub.SocketActorNub import SocketActorNub

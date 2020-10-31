@@ -1,5 +1,5 @@
-import time
 import socket
+import time
 
 from tron import g, hub
 from tron.Hub.Command.Decoders.ASCIICmdDecoder import ASCIICmdDecoder

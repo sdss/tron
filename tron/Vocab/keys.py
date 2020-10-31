@@ -1,9 +1,9 @@
 __all__ = ['keys']
 
-from tron import g
-from tron import Misc
-from tron.Hub.KV.KVDict import kvAsASCII
 from Vocab.InternalCmd import InternalCmd
+
+from tron import Misc, g
+from tron.Hub.KV.KVDict import kvAsASCII
 
 
 class keys(InternalCmd):

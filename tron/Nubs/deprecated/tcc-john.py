@@ -1,9 +1,9 @@
 import os.path
 
+import IO
+
 from tron import g as hub_globals
 from tron import hub
-from tron import hub
-import IO
 from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from tron.Hub.Nub.Listeners import SocketListener
 from tron.Hub.Nub.SocketActorNub import SocketActorNub

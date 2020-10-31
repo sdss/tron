@@ -2,8 +2,9 @@ __all__ = ['msg']
 
 import time
 
-from tron import Misc
 import Vocab.InternalCmd as InternalCmd
+
+from tron import Misc
 
 
 """ A simple instant messaging system.

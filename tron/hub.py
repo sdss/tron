@@ -21,13 +21,13 @@
 
 """
 
+import importlib
+import json
 import os
 import re
-import sys
-import json
-import time
 import signal
-import importlib
+import sys
+import time
 from collections import OrderedDict
 
 import tron.Auth

@@ -2,8 +2,7 @@ __all__ = ['ActorNub']
 
 import re
 
-from tron import g
-from tron import Misc
+from tron import Misc, g
 from tron.Hub.Command.Command import Command
 
 from .CoreNub import CoreNub

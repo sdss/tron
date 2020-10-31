@@ -1,7 +1,7 @@
 __all__ = ['TCCShellNub']
 
-from tron.Hub import Reply
 from tron import Misc
+from tron.Hub import Reply
 
 from .ShellNub import ShellNub
 

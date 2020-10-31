@@ -4,9 +4,7 @@ import re
 import time
 from collections import OrderedDict
 
-from tron import g
-from tron import Misc
-from tron import Parsing
+from tron import Misc, Parsing, g
 from tron.Hub.Reply.Reply import Reply
 
 

@@ -1,8 +1,6 @@
 __all__ = ['CoreNub']
 
-from tron import hub
-from tron import IO
-from tron import Misc
+from tron import IO, Misc, hub
 
 
 class CoreNub(IO.IOHandler):

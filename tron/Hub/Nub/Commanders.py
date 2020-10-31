@@ -1,7 +1,6 @@
 __all__ = ['CommanderNub', 'AuthCommanderNub', 'StdinNub', 'AuthStdinNub']
 
-from tron import hub
-from tron import Misc
+from tron import Misc, hub
 from tron.Hub.Reply.ReplyTaster import ReplyTaster
 
 from .CoreNub import CoreNub
