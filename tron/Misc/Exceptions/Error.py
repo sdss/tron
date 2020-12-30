@@ -22,5 +22,5 @@ class Error(Exception):
         try:
             return self.argv[name]
         except BaseException:
-            raise AttributeError('%s instance has no attribute %s'
+            raise AttributeError('%s instance has no attribute %s' %
                                  (self.__class__.__name__, name))

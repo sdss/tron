@@ -209,7 +209,7 @@ class NubAuth(object):
         else:
             if cmdWord == 'login':
                 ret = self.checkLogin(cmd)
-                if ret:
+                if ret is True:
                     self.state = self.CONNECTED
                     cmd.finish(('loggedIn', 'cmdrID=%s' % Misc.qstr(self.name)), src='auth')
                     Misc.log('auth', 'logged in %s' % (self))
