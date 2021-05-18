@@ -7,7 +7,7 @@ from tron.Hub.Nub.SocketActorNub import SocketActorNub
 from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
-name = 'fliswarm'
+name = 'jaeger'
 
 
 def start(poller):
@@ -17,7 +17,7 @@ def start(poller):
 
     initCmds = ('ping', 'status')
 
-    safeCmdsList = ['info', 'ping', 'version', 'status']
+    safeCmdsList = ['ping', 'version', 'status']
     safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
     d = ASCIIReplyDecoder(CIDfirst=False, debug=1)
