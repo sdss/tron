@@ -67,12 +67,12 @@
             "actorName": "mcp"
         },
         "jaeger": {
-            "host": "sdss-fps",
+            "host": "sdss-hub",
             "port": 19990,
             "actorName": "jaeger"
         },
         "fliswarm": {
-            "host": "sdss-fps",
+            "host": "sdss-hub",
             "port": 19996,
             "actorName": "fliswarm"
         }
