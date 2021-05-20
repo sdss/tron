@@ -20,8 +20,8 @@ def start(poller):
     safeCmdsList = ['ping', 'version', 'status']
     safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
-    d = ASCIIReplyDecoder(CIDfirst=False, debug=1)
-    e = ASCIICmdEncoder(useCID=False, CIDfirst=False, debug=1)
+    d = ASCIIReplyDecoder(cidFirst=True, debug=1)
+    e = ASCIICmdEncoder(sendCommander=False, useCID=False, debug=1)
     nub = SocketActorNub(
         poller,
         cfg['host'],

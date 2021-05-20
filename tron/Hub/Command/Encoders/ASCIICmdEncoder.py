@@ -44,7 +44,7 @@ class ASCIICmdEncoder(CommandEncoder):
             e = '%s%s %s%s%s' % (cmdrInfo, cmd.actorName, ids, cmd.cmd, self.EOL)
         else:
             e = '%s%s%s%s' % (cmdrInfo, ids, cmd.cmd, self.EOL)
-
+        print(e)
         if self.debug > 5:
             Misc.log('ASCIIEncoder', 'encoded: %s' % (e))
 

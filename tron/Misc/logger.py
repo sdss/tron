@@ -93,11 +93,15 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
         stream = super(SDSSRotatingFileHandler, self)._open()
 
         current_name = os.path.join(os.path.dirname(self.baseFilename), 'current.log')
-        try:
-            os.unlink(current_name)
-        except BaseException:
-            pass
-        os.symlink(self.baseFilename, current_name)
+        current_target = os.path.realpath(os.readlink(current_name))
+
+        if current_target != os.path.realpath(self.baseFilename):
+            try:
+                os.unlink(current_name)
+            except BaseException:
+                pass
+
+            os.symlink(self.baseFilename, current_name)
 
         return stream
 
