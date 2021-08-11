@@ -21,21 +21,15 @@ def start(poller):
     safeCmdsList = ['info', 'ping', 'version', 'status']
     safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
-    d = ASCIIReplyDecoder(debug=1)
-    e = ASCIICmdEncoder(sendCommander=True, useCID=False, debug=1)
-    nub = SocketActorNub(
-        poller,
-        my_cfg['host'],
-        my_cfg['port'],
-        name=name,
-        encoder=e,
-        decoder=d,
-        grabCID=True,  # the actor spontaneously generates a line we can eat.
-        initCmds=initCmds,
-        safeCmds=safeCmds,
-        needsAuth=True,
-        logDir=os.path.join(g.logDir, name),
-        debug=1)
+    d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
+    e = ASCIICmdEncoder(EOL='\r', sendCommander=True, useCID=False, CIDfirst=False, debug=1)
+    nub = SocketActorNub(poller, my_cfg['host'], my_cfg['port'],
+                         name=name, encoder=e, decoder=d,
+                         grabCID=True, # the actor spontaneously generates a line we can eat.
+                         initCmds=initCmds, safeCmds=safeCmds,
+                         needsAuth=True,
+                         logDir=os.path.join(g.logDir, name),
+                         debug=1)
     hub.addActor(nub)
 
 
