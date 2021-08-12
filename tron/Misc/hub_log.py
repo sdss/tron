@@ -14,7 +14,7 @@ ERROR = 'E'
 FATAL = 'F'
 UNDEFINED = '?'
 
-logfileDir = '/data/logs/tron'
+logfileDir = '/data/logs5/tron'
 logfileName = None
 logID = 'log'
 logfile = None
@@ -79,13 +79,14 @@ def rollover(t):
         if rolloverTime < t:
             rolloverTime += rolloverChunk
         logfileName = '%s.log' % (strftime('%Y-%m-%dT%H:%M:%S', gmtime(t)))
+        os.makedirs(os.path.join(logfileDir, logID), exist_ok=True)
         logfile = open(os.path.join(logfileDir, logID, logfileName), 'w', 1)
         currentName = os.path.join(logfileDir, logID, 'current.log')
         try:
             os.unlink(currentName)
+            os.symlink(logfileName, currentName)
         except BaseException:
             pass
-        os.symlink(logfileName, currentName)
         log('log', 'next rollover is at %d (%s)' % (rolloverTime, isoTS(rolloverTime)))
 
 
