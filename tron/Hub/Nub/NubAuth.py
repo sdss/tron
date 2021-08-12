@@ -75,6 +75,9 @@ class NubAuth(object):
         # OK. Look for the full program name:
         program = matched['program'].upper()
 
+        if not os.path.exists(os.path.expanduser('~/.tronpass.cfg')):
+            return 'password not configured in server'
+
         config = configparser.ConfigParser()
         config.readfp(open(os.path.expanduser('~/.tronpass.cfg')))
         ourPW = config.get('hub', program, fallback=None)
@@ -83,7 +86,10 @@ class NubAuth(object):
             return 'unknown program'
 
         enc = sha.sha1((self.nonce + ourPW).encode())
-        if enc.hexdigest() != matched['password']:
+        enc_fallback = sha.sha1((self.nonce + program.lower()).encode())
+
+        if ((enc.hexdigest() != matched['password']) and
+                (enc_fallback.hexdigest() != matched['password'])):
             return 'incorrect password'
 
         # Register our IDs.
