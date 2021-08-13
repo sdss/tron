@@ -37,27 +37,27 @@
             "actorName": "apogeecalICC"
         },
         "apogeeql": {
-            "host": "sdss-apogee",
+            "host": "sdss5-mwm",
             "port": 18282,
             "actorName": "apogeeqlActor"
         },
         "boss": {
-            "host": "sdss-boss-icc",
+            "host": "sdss5-boss-icc",
             "port": 9998,
             "actorName": "bossICC"
         },
         "benchboss": {
-            "host": "sdss-boss-icc",
+            "host": "sdss5-boss-icc",
             "port": 9991,
             "actorName": "bossICC"
         },
         "hartmann": {
-            "host": "sdss-eboss",
+            "host": "sdss5-boss-icc",
             "port": 9988,
             "actorName": "hartmannActor"
         },
         "tcc": {
-            "host": "sdss-tcc",
+            "host": "sdss5-tcc",
             "port": 2500,
             "actorName": "tcc"
         },
