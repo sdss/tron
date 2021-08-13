@@ -95,7 +95,7 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
         current_name = os.path.join(os.path.dirname(self.baseFilename), 'current.log')
 
         if not os.path.exists(current_name):
-            raise ValueError("No logs found.")
+            return stream
 
         current_target = os.path.realpath(os.readlink(current_name))
 
