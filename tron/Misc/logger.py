@@ -93,15 +93,18 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
         stream = super(SDSSRotatingFileHandler, self)._open()
 
         current_name = os.path.join(os.path.dirname(self.baseFilename), 'current.log')
+
+        if not os.path.exists(current_name):
+            raise ValueError("No logs found.")
+
         current_target = os.path.realpath(os.readlink(current_name))
 
         if current_target != os.path.realpath(self.baseFilename):
             try:
                 os.unlink(current_name)
+                os.symlink(self.baseFilename, current_name)
             except BaseException:
                 pass
-
-            os.symlink(self.baseFilename, current_name)
 
         return stream
 
@@ -128,7 +131,6 @@ class SDSSRotatingFileHandler(logging.handlers.BaseRotatingHandler):
         If the time is grater than ``rollAt``, rolls over.
 
         """
-        return True
 
         if datetime.datetime.utcnow() > self.rollAt:
             return True

@@ -1,4 +1,4 @@
 {
-    "logDir": "/data/logs/tron",
+    "logDir": "/data/logs5/tron",
     "vocabulary": ["perms", "hub", "keys", "msg"]
 }
