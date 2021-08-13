@@ -17,12 +17,12 @@
     ],
     "actors": {
         "alerts": {
-            "host": "sdss-hub",
+            "host": "sdss5-hub",
             "port": 9995,
             "actorName": "alertsActor"
         },
         "apo": {
-            "host": "sdss-hub",
+            "host": "sdss5-hub",
             "port": 9990,
             "actorName": "apoActor"
         },
@@ -67,16 +67,16 @@
             "actorName": "mcp"
         },
         "jaeger": {
-            "host": "sdss-hub",
+            "host": "sdss5-hub",
             "port": 19990,
             "actorName": "jaeger"
         },
         "fliswarm": {
-            "host": "sdss-hub",
+            "host": "sdss5-hub",
             "port": 19996,
             "actorName": "fliswarm"
         }
     },
-    "httpHost": "sdss-hub",
+    "httpHost": "sdss5-hub",
     "httpRoot": "/"
 }
