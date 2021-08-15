@@ -1,4 +1,4 @@
 {
-    "logDir": "/data/logs5/tron",
+    "logDir": "$TRON_LOG_DIR",
     "vocabulary": ["perms", "hub", "keys", "msg"]
 }

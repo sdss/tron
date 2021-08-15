@@ -56,7 +56,7 @@ def init(programsFile=None):
     Misc.cfg.init(path=configPath)
     os.environ['CONFIG_DIR'] = configPath
 
-    g.logDir = Misc.cfg.get('hub', 'logDir')
+    g.logDir = os.path.expandvars(Misc.cfg.get('hub', 'logDir'))
     Misc.setLogdir(g.logDir)
     Misc.setID('hub')
     Misc.log('hub.init', 'logger started...')

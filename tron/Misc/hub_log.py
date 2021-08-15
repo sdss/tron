@@ -14,7 +14,7 @@ ERROR = 'E'
 FATAL = 'F'
 UNDEFINED = '?'
 
-logfileDir = '/data/logs5/tron'
+logfileDir = os.environ["TRON_LOG_DIR"]
 logfileName = None
 logID = 'log'
 logfile = None

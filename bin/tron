@@ -6,12 +6,7 @@ if test -z "$TRON_PACKAGE_DIR"; then
     echo "TRON_PACKAGE_DIR is not set, and needs to be setup" >&1
     exit 1
 fi
-export LOG_DIR=/data/logs5/tron
-
-#if test -z "$PYGUIDE_DIR"; then
-#    echo "PYGUIDE_DIR is not set, and needs to be setup" >&1
-#    exit 1
-#fi
+export TRON_LOG_DIR=${TRON_LOG_DIR:-"/data/logs/tron"}
 
 echo
 echo ====================== Using tron with TRON_DIR=$(dirname $TRON_PACKAGE_DIR)
@@ -60,7 +55,7 @@ do_start() {
     #now=`now`.log
     #(cd $LOG_DIR; rm -f current.log; ln -s $now current.log)
     cd $TRON_PACKAGE_DIR
-    LOG_FILE=$LOG_DIR/run.log
+    LOG_FILE=$TRON_LOG_DIR/run.log
     echo "top-level run log is appended to $LOG_FILE"
     echo "=========== restarting at `TZ=GMT date +"%Y-%m-%dT%H:%M:%S"`" >> $LOG_FILE
     python runhub.py >>$LOG_FILE 2>&1 &
