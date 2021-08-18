@@ -1,16 +1,17 @@
 import os.path
 
-from tron import Misc.cfg, g, hub
+import tron.Misc
+from tron import g, hub
 from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from tron.Hub.Nub.SocketActorNub import SocketActorNub
 from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
-name = 'guider'
+name = 'gcamera'
 
 
 def start(poller):
-    cfg = Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
+    cfg = tron.Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
 
     stop()
 

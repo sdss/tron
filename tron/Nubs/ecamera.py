@@ -1,16 +1,17 @@
 import os.path
 
-from tron import Misc.cfg, g, hub
+import tron.Misc
+from tron import g, hub
 from tron.Hub.Command.Encoders.ASCIICmdEncoder import ASCIICmdEncoder
 from tron.Hub.Nub.SocketActorNub import SocketActorNub
 from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
-name = 'sop'
+name = 'ecamera'
 
 
 def start(poller):
-    cfg = Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
+    cfg = tron.Misc.cfg.get(g.location, 'actors', doFlush=True)[name]
 
     stop()
 
@@ -28,7 +29,7 @@ def start(poller):
         name=name,
         encoder=e,
         decoder=d,
-        grabCID=True,  # BOSS spontaneously generates a line we can eat.
+        grabCID=True,  # the actor spontaneously generates a line we can eat.
         initCmds=initCmds,
         safeCmds=safeCmds,
         needsAuth=True,
