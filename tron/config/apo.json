@@ -13,7 +13,9 @@
     "alerts",
     "TUI",
     "jaeger",
-    "fliswarm"
+    "fliswarm",
+    "ecamera",
+    "guider"
   ],
   "actors": {
     "alerts": {
@@ -82,12 +84,12 @@
       "actorName": "gcameraICC"
     },
     "ecamera": {
-      "host": "sdss4-hub.apo.nmsu.edu",
+      "host": "sdss5-hub.apo.nmsu.edu",
       "port": 9987,
       "actorName": "ecameraICC"
     },
     "guider": {
-      "host": "sdss4-hub.apo.nmsu.edu",
+      "host": "sdss5-hub.apo.nmsu.edu",
       "port": 9994,
       "actorName": "guiderActor"
     },
