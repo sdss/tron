@@ -12,7 +12,8 @@
         "apogeeql",
         "alerts",
         "TUI",
-        "jaeger"
+        "jaeger",
+        "fliswarm"
     ],
     "actors": {
         "alerts": {
@@ -69,7 +70,13 @@
             "host": "localhost",
             "port": 19990,
             "actorName": "jaeger"
-        }
+        },
+        "fliswarm": {
+            "host": "localhost",
+            "port": 19996,
+            "actorName": "fliswarm"
+          },
+
     },
     "httpHost": "localhost",
     "httpRoot": "/"
