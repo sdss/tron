@@ -10,6 +10,7 @@
         "apogeecal",
         "apogee",
         "apogeeql",
+        "apogeebpr",
         "alerts",
         "TUI",
         "jaeger",
@@ -35,6 +36,11 @@
             "host": "localhost",
             "port": 33222,
             "actorName": "apogeecalICC"
+        },
+        "apogeebpr": {
+            "host": "localhost",
+            "port": 33223,
+            "actorName": "apogeeBPR"
         },
         "apogeeql": {
             "host": "localhost",

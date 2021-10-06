@@ -10,6 +10,7 @@
     "apogeecal",
     "apogee",
     "apogeeql",
+    "apogeebpr",
     "alerts",
     "TUI",
     "jaeger",
@@ -38,6 +39,11 @@
       "host": "apogee-ics",
       "port": 33222,
       "actorName": "apogeecalICC"
+    },
+    "apogeebpr": {
+      "host": "apogee-ics.apo.nmsu.edu",
+      "port": 33223,
+      "actorName": "apogeeBPR"
     },
     "apogeeql": {
       "host": "sdss5-mwm",

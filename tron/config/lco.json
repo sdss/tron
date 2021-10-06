@@ -5,6 +5,7 @@
         "apogeecal",
         "apogee",
         "apogeeql",
+        "apogeebpr",
         "alerts",
         "TUI"
     ],
@@ -23,6 +24,11 @@
             "host": "apogee-ics.lco.cl",
             "port": 33222,
             "actorName": "apogeecalICC"
+        },
+        "apogeebpr": {
+            "host": "apogee-ics.lco.cl",
+            "port": 33223,
+            "actorName": "apogeeBPR"
         }
     },
     "httpHost": "sdss5-hub.lco.cl",
