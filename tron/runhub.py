@@ -26,6 +26,7 @@ def startAllConnections(names):
 # for now to store the location.
 # TODO: hub should be a class we init() anyway!
 g.location = Misc.location.determine_location()
+print(f'Detected location: {g.location}.')
 
 hub.init()
 startAllConnections(Misc.cfg.get(g.location, 'nubs', doFlush=True))

@@ -11,7 +11,8 @@
         "apogee",
         "apogeeql",
         "alerts",
-        "TUI"
+        "TUI",
+        "jaeger"
     ],
     "actors": {
         "alerts": {
@@ -63,6 +64,11 @@
             "host": "localhost",
             "port": 31012,
             "actorName": "mcp"
+        },
+        "jaeger": {
+            "host": "localhost",
+            "port": 19990,
+            "actorName": "jaeger"
         }
     },
     "httpHost": "localhost",
