@@ -14,7 +14,8 @@
         "alerts",
         "TUI",
         "jaeger",
-        "fliswarm"
+        "fliswarm",
+        "rinzler"
     ],
     "actors": {
         "alerts": {
@@ -81,7 +82,12 @@
             "host": "localhost",
             "port": 19996,
             "actorName": "fliswarm"
-          }
+          },
+        "rinzler": {
+            "host": "localhost",
+            "port": 19981,
+            "actorName": "rinzler"
+        }
     },
     "httpHost": "localhost",
     "httpRoot": "/"
