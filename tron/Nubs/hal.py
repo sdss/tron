@@ -7,7 +7,7 @@ from tron.Hub.Nub.SocketActorNub import SocketActorNub
 from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
-name = 'sop'
+name = 'hal'
 
 
 def start(poller):

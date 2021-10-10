@@ -16,7 +16,7 @@
         "jaeger",
         "fliswarm",
         "rinzler",
-        "sop"
+        "hal"
     ],
     "actors": {
         "alerts": {
@@ -89,10 +89,10 @@
             "port": 19981,
             "actorName": "rinzler"
         },
-        "sop": {
+        "hal": {
             "host": "localhost",
             "port": 19980,
-            "actorName": "sop"
+            "actorName": "hal"
         }
     },
     "httpHost": "localhost",
