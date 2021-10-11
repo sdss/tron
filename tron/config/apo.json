@@ -17,7 +17,8 @@
     "fliswarm",
     "ecamera",
     "guider",
-    "sop"
+    "sop",
+    "hal"
   ],
   "actors": {
     "alerts": {
@@ -104,6 +105,11 @@
       "host": "sdss5-hub.apo.nmsu.edu",
       "port": 19980,
       "actorName": "sopActor"
+    },
+    "hal": {
+      "host": "sdss5-hub.apo.nmsu.edu",
+      "port": 19980,
+      "actorName": "hal"
     },
     "platedb": {
       "host": "sdss4-hub.apo.nmsu.edu",
