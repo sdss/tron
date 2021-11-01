@@ -141,6 +141,10 @@ class hubCommands(InternalCmd.InternalCmd):
     def startNubs(self, cmd):
         """ (re-)start a list of nubs. """
 
+        # Flush the configuration to force a reload later. This allows to change the
+        # configuration or nubs during runtime without restarting tron.
+        Misc.cfg.flush()
+
         nubs = list(cmd.argDict.keys())[1:]
         if len(nubs) == 0:
             cmd.fail('text="must specify one or more nubs to start..."')
