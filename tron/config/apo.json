@@ -77,7 +77,7 @@
       "actorName": "mcp"
     },
     "jaeger": {
-      "host": "sdss5-hub",
+      "host": "sdss5-fps",
       "port": 19990,
       "actorName": "jaeger"
     },
