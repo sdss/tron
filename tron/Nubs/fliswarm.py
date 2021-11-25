@@ -21,7 +21,7 @@ def start(poller):
     safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
     d = ASCIIReplyDecoder(cidFirst=True, debug=1)
-    e = ASCIICmdEncoder(sendCommander=False, useCID=False, debug=1)
+    e = ASCIICmdEncoder(sendCommander=True, useCID=False, debug=1)
     nub = SocketActorNub(
         poller,
         cfg['host'],
