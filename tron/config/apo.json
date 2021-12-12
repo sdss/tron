@@ -18,7 +18,9 @@
     "ecamera",
     "guider",
     "sop",
-    "hal"
+    "hal",
+    "platedb",
+    "cherno"
   ],
   "actors": {
     "alerts": {
@@ -115,6 +117,11 @@
       "host": "sdss4-hub.apo.nmsu.edu",
       "port": 9992,
       "actorName": "platedbActor"
+    },
+    "cherno": {
+      "host": "sdss5-hub.apo.nmsu.edu",
+      "port": 19992,
+      "actorName": "cherno"
     }
   },
   "httpHost": "sdss5-hub",
