@@ -20,7 +20,7 @@ def start(poller):
     safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
     d = ASCIIReplyDecoder(debug=3)
-    e = ASCIICmdEncoder(sendCommander=True, useCID=False, debug=3)
+    e = ASCIICmdEncoder(sendCommander=False, useCID=False, debug=3)
     # nub = SocketActorNub(poller, 'hub25m-p.apo.nmsu.edu', 18281,
     # nub = SocketActorNub(poller, 'apogee-ql.apo.nmsu.edu', 18281,
     # nub = SocketActorNub(poller, 'matt-1.astro.virginia.edu', 33221,

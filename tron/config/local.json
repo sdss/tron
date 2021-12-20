@@ -2,22 +2,9 @@
     "nubs": [
         "client",
         "nclient",
-        "mcp",
-        "tcc",
-        "apo",
         "boss",
-        "hartmann",
-        "apogeecal",
-        "apogee",
-        "apogeeql",
         "apogeebpr",
-        "alerts",
-        "TUI",
-        "jaeger",
-        "fliswarm",
-        "rinzler",
-        "hal",
-        "sop"
+        "alerts"
     ],
     "actors": {
         "alerts": {
@@ -25,80 +12,15 @@
             "port": 9995,
             "actorName": "alertsActor"
         },
-        "apo": {
-            "host": "localhost",
-            "port": 9990,
-            "actorName": "apoActor"
-        },
-        "apogee": {
-            "host": "localhost",
-            "port": 33221,
-            "actorName": "apogeeICC"
-        },
-        "apogeecal": {
-            "host": "localhost",
-            "port": 33222,
-            "actorName": "apogeecalICC"
-        },
         "apogeebpr": {
             "host": "localhost",
-            "port": 33223,
+            "port": 9998,
             "actorName": "apogeeBPR"
-        },
-        "apogeeql": {
-            "host": "localhost",
-            "port": 18282,
-            "actorName": "apogeeqlActor"
         },
         "boss": {
             "host": "localhost",
-            "port": 9998,
+            "port": 9999,
             "actorName": "bossICC"
-        },
-        "benchboss": {
-            "host": "localhost",
-            "port": 9991,
-            "actorName": "bossICC"
-        },
-        "hartmann": {
-            "host": "localhost",
-            "port": 9988,
-            "actorName": "hartmannActor"
-        },
-        "tcc": {
-            "host": "localhost",
-            "port": 2500,
-            "actorName": "tcc"
-        },
-        "mcp": {
-            "host": "localhost",
-            "port": 31012,
-            "actorName": "mcp"
-        },
-        "jaeger": {
-            "host": "localhost",
-            "port": 19990,
-            "actorName": "jaeger"
-        },
-        "fliswarm": {
-            "host": "localhost",
-            "port": 19996,
-            "actorName": "fliswarm"
-          },
-        "rinzler": {
-            "host": "localhost",
-            "port": 19981,
-            "actorName": "rinzler"
-        },
-        "hal": {
-            "host": "localhost",
-            "port": 19980,
-            "actorName": "hal"
-        },
-        "sop": {
-            "host": "localhost",
-            "port": 19980,
-            "actorName": "sop"
         }
     },
     "httpHost": "localhost",
