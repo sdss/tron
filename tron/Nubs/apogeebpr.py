@@ -20,7 +20,7 @@ def start(poller):
     safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
     d = ASCIIReplyDecoder(debug=3)
-    e = ASCIICmdEncoder(sendCommander=True, useCID=False, debug=3)
+    e = ASCIICmdEncoder(sendCommander=False, useCID=False, debug=3)
 
     nub = SocketActorNub(
         poller,

@@ -4,7 +4,8 @@
         "nclient",
         "boss",
         "apogeebpr",
-        "alerts"
+        "alerts",
+        "TUI"
     ],
     "actors": {
         "alerts": {
