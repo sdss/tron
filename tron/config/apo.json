@@ -11,6 +11,7 @@
     "apogee",
     "apogeeql",
     "apogeebpr",
+    "apogeefpi",
     "alerts",
     "TUI",
     "jaeger",
@@ -122,6 +123,11 @@
       "host": "sdss5-hub.apo.nmsu.edu",
       "port": 19992,
       "actorName": "cherno"
+    },
+    "apogeefpi": {
+      "host": "sdss5-hub",
+      "port": 19981,
+      "actorName": "apogeefpi"
     }
   },
   "httpHost": "sdss5-hub",
