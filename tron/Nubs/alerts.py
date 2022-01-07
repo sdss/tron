@@ -25,7 +25,7 @@ def start(poller):
     e = ASCIICmdEncoder(EOL='\r', sendCommander=True, useCID=False, CIDfirst=False, debug=1)
     nub = SocketActorNub(poller, my_cfg['host'], my_cfg['port'],
                          name=name, encoder=e, decoder=d,
-                         grabCID=True, # the actor spontaneously generates a line we can eat.
+                         grabCID=True,  # the actor spontaneously generates a line we can eat.
                          initCmds=initCmds, safeCmds=safeCmds,
                          needsAuth=True,
                          logDir=os.path.join(g.logDir, name),
