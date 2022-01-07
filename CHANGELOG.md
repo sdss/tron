@@ -2,7 +2,7 @@
 
 This document records the main changes to the tron code.
 
-## 5.0.0 (unreleased)
+## 5.0.0 - January 7, 2022
 
 ### 🚀 New
 
