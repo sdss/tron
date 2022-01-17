@@ -94,11 +94,6 @@
             "host": "localhost",
             "port": 19980,
             "actorName": "hal"
-        },
-        "sop": {
-            "host": "localhost",
-            "port": 19980,
-            "actorName": "sop"
         }
     },
     "httpHost": "localhost",
