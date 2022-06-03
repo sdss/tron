@@ -34,7 +34,12 @@
             "host": "sdss5-hub.lco.cl",
             "port": 19981,
             "actorName": "apogeefpi"
-          }
+        },
+        "apogeeql": {
+            "host": "sdss5-mwm.lco.cl",
+            "port": 18282,
+            "actorName": "apogeeql"
+        }
     },
     "httpHost": "sdss5-hub.lco.cl",
     "httpRoot": "/"
