@@ -31,7 +31,7 @@
             "actorName": "apogeeBPR"
         },
         "apogeefpi": {
-            "host": "sdss5-hub.lco.cl",
+            "host": "sdss5-mwm.lco.cl",
             "port": 19981,
             "actorName": "apogeefpi"
         },
