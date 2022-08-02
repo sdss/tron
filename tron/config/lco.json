@@ -9,6 +9,7 @@
     "alerts",
     "tcc",
     "jaeger",
+    "fliswarm",
     "TUI"
   ],
   "actors": {
@@ -51,6 +52,11 @@
       "host": "sdss5-fps",
       "port": 19990,
       "actorName": "jaeger"
+    },
+    "fliswarm": {
+      "host": "sdss5-hub",
+      "port": 19996,
+      "actorName": "fliswarm"
     }
   },
   "httpHost": "sdss5-hub.lco.cl",
