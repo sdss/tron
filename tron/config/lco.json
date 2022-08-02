@@ -1,46 +1,58 @@
 {
-    "nubs": [
-        "client",
-        "nclient",
-        "apogeecal",
-        "apogee",
-        "apogeeql",
-        "apogeefpi",
-        "alerts",
-        "TUI"
-    ],
-    "actors": {
-        "alerts": {
-            "host": "sdss5-hub.lco.cl",
-            "port": 9995,
-            "actorName": "alertsActor"
-        },
-        "apogee": {
-            "host": "apogee-ics.lco.cl",
-            "port": 33221,
-            "actorName": "apogeeICC"
-        },
-        "apogeecal": {
-            "host": "apogee-ics.lco.cl",
-            "port": 33222,
-            "actorName": "apogeecalICC"
-        },
-        "apogeebpr": {
-            "host": "apogee-ics.lco.cl",
-            "port": 33223,
-            "actorName": "apogeeBPR"
-        },
-        "apogeefpi": {
-            "host": "sdss5-mwm.lco.cl",
-            "port": 19981,
-            "actorName": "apogeefpi"
-        },
-        "apogeeql": {
-            "host": "sdss5-mwm.lco.cl",
-            "port": 18282,
-            "actorName": "apogeeql"
-        }
+  "nubs": [
+    "client",
+    "nclient",
+    "apogeecal",
+    "apogee",
+    "apogeeql",
+    "apogeefpi",
+    "alerts",
+    "tcc",
+    "fps",
+    "TUI"
+  ],
+  "actors": {
+    "alerts": {
+      "host": "sdss5-hub.lco.cl",
+      "port": 9995,
+      "actorName": "alertsActor"
     },
-    "httpHost": "sdss5-hub.lco.cl",
-    "httpRoot": "/"
+    "apogee": {
+      "host": "apogee-ics.lco.cl",
+      "port": 33221,
+      "actorName": "apogeeICC"
+    },
+    "apogeecal": {
+      "host": "apogee-ics.lco.cl",
+      "port": 33222,
+      "actorName": "apogeecalICC"
+    },
+    "apogeebpr": {
+      "host": "apogee-ics.lco.cl",
+      "port": 33223,
+      "actorName": "apogeeBPR"
+    },
+    "apogeefpi": {
+      "host": "sdss5-mwm.lco.cl",
+      "port": 19981,
+      "actorName": "apogeefpi"
+    },
+    "apogeeql": {
+      "host": "sdss5-mwm.lco.cl",
+      "port": 18282,
+      "actorName": "apogeeql"
+    },
+    "tcc": {
+      "host": "sdss5-tcc",
+      "port": 25000,
+      "actorName": "tcc"
+    },
+    "jaeger": {
+      "host": "sdss5-fps",
+      "port": 19990,
+      "actorName": "jaeger"
+    }
+  },
+  "httpHost": "sdss5-hub.lco.cl",
+  "httpRoot": "/"
 }
