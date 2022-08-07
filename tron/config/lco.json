@@ -10,6 +10,7 @@
     "tcc",
     "jaeger",
     "fliswarm",
+    "yao",
     "TUI"
   ],
   "actors": {
@@ -57,6 +58,11 @@
       "host": "sdss5-hub",
       "port": 19996,
       "actorName": "fliswarm"
+    },
+    "yao": {
+      "host": "sdss5-boss-icc",
+      "port": 19999,
+      "actorName": "yao"
     }
   },
   "httpHost": "sdss5-hub.lco.cl",
