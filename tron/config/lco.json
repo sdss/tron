@@ -44,10 +44,10 @@
       "port": 18282,
       "actorName": "apogeeql"
     },
-    "tcc": {
+    "lcotcc": {
       "host": "sdss5-tcc",
       "port": 25000,
-      "actorName": "tcc"
+      "actorName": "lcotcc"
     },
     "jaeger": {
       "host": "sdss5-fps",

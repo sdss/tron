@@ -8,7 +8,7 @@ from tron.Hub.Nub.SocketActorNub import SocketActorNub
 from tron.Hub.Reply.Decoders.ASCIIReplyDecoder import ASCIIReplyDecoder
 
 
-name = 'tcc'
+name = 'lcotcc'
 
 
 def start(poller):
@@ -17,10 +17,10 @@ def start(poller):
 
     stop()
 
-    initCmds = ('show version', 'show users', 'show time', 'show status', 'show inst/full',
-                'show object/full', 'show axisconfig', 'show focus', 'axis status',
-                'mir status')
-
+    initCmds = (
+        'device status',
+        'show version',
+        )
     safeCmds = r'(^device )|(status$)'
 
     d = ASCIIReplyDecoder(EOL='\r', stripChars='\n', CIDfirst=False, debug=1)
