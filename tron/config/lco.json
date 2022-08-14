@@ -11,6 +11,7 @@
     "jaeger",
     "fliswarm",
     "yao",
+    "lamps",
     "TUI"
   ],
   "actors": {
@@ -63,6 +64,11 @@
       "host": "sdss5-boss-icc",
       "port": 19999,
       "actorName": "yao"
+    },
+    "lamps": {
+      "host": "sdss5-hub",
+      "port": 19992,
+      "actorName": "lcolamps"
     }
   },
   "httpHost": "sdss5-hub.lco.cl",
