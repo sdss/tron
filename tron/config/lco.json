@@ -11,7 +11,8 @@
     "jaeger",
     "fliswarm",
     "yao",
-    "lamps",
+    "cherno",
+    "hal",
     "TUI"
   ],
   "actors": {
@@ -65,10 +66,15 @@
       "port": 19999,
       "actorName": "yao"
     },
-    "lamps": {
+    "cherno": {
       "host": "sdss5-hub",
       "port": 19992,
-      "actorName": "lcolamps"
+      "actorName": "cherno"
+    },
+    "hal": {
+      "host": "sdss5-hub",
+      "port": 19980,
+      "actorName": "hal"
     }
   },
   "httpHost": "sdss5-hub.lco.cl",
