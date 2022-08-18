@@ -12,6 +12,7 @@
     "fliswarm",
     "yao",
     "cherno",
+    "lamps",
     "hal",
     "TUI"
   ],
@@ -75,6 +76,11 @@
       "host": "sdss5-hub",
       "port": 19980,
       "actorName": "hal"
+    },
+    "lcolamps": {
+      "host": "sdss5-hub",
+      "port": 19981,
+      "actorName": "lcolamps"
     }
   },
   "httpHost": "sdss5-hub.lco.cl",
