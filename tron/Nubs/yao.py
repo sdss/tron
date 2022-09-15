@@ -15,7 +15,7 @@ def start(poller):
 
     stop()
 
-    initCmds = ('ping', 'status --debug', 'mech status --debug', 'version')
+    initCmds = ('ping', 'status --debug', 'system', 'mech status --debug', 'version')
 
     safeCmdsList = ['ping', 'version', 'status']
     safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
