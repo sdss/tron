@@ -14,6 +14,7 @@
     "cherno",
     "lamps",
     "hal",
+    "hartmann",
     "TUI"
   ],
   "actors": {
@@ -81,6 +82,11 @@
       "host": "sdss5-hub",
       "port": 19981,
       "actorName": "lcolamps"
+    },
+    "hartmann": {
+      "host": "sdss5-boss-icc",
+      "port": 9988,
+      "actorName": "hartmannActor"
     }
   },
   "httpHost": "sdss5-hub.lco.cl",

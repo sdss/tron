@@ -15,13 +15,13 @@ def start(poller):
 
     stop()
 
-    initCmds = ('ping', 'status')
+    initCmds = ('ping', 'version')
 
-    safeCmdsList = ['info', 'ping', 'version', 'status']
+    safeCmdsList = ['ping', 'version']
     safeCmds = r'^\s*({0})\s*$'.format('|'.join(safeCmdsList))
 
-    d = ASCIIReplyDecoder(debug=3)
-    e = ASCIICmdEncoder(sendCommander=True, useCID=False, debug=3)
+    d = ASCIIReplyDecoder(cidFirst=True, debug=1)
+    e = ASCIICmdEncoder(sendCommander=True, useCID=False, debug=1)
     nub = SocketActorNub(
         poller,
         cfg['host'],
